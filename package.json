@@ -1,0 +1,53 @@
+{
+  "name": "file-handoff",
+  "version": "0.0.1",
+  "description": "Transfer files easily to and from team members through web sockets.",
+  "main": "forever.js",
+  "engines": {
+    "node": ">= 4.0.0"
+  },
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/whatl3y/file-handoff.git"
+  },
+  "scripts": {
+    "client": "node dist/file-handoff-client",
+    "server": "node dist/file-handoff-server",
+    "start": "npm run server",
+    "test": "mocha --compilers js:babel-core/register --recursive './src/**/*.spec.js'"
+  },
+  "bin": {
+    "fhc": "./dist/file-handoff-client.js",
+    "fhs": "./dist/file-handoff-server.js"
+  },
+  "devDependencies": {
+    "babel-core": "^6.26.0",
+    "babel-loader": "^7.1.2",
+    "babel-plugin-transform-async-to-generator": "^6.24.1",
+    "babel-plugin-transform-es2015-modules-commonjs": "^6.26.0",
+    "babel-plugin-transform-runtime": "^6.23.0",
+    "babel-polyfill": "^6.26.0",
+    "babel-preset-es2015": "^6.24.1",
+    "babel-preset-es2016": "^6.24.1",
+    "gulp": "^3.9.1",
+    "gulp-babel": "^7.0.0",
+    "gulp-insert": "^0.5.0",
+    "gulp-plumber": "^1.1.0",
+    "gulp-sequence": "^0.4.6",
+    "gulp-uglify": "^3.0.0",
+    "mocha": "^3.1.1",
+    "webpack-node-externals": "^1.6.0"
+  },
+  "dependencies": {
+    "bunyan": "^1.8.12",
+    "colors": "^1.1.2",
+    "es6-promisify": "^5.0.0",
+    "minimist": "^1.2.0",
+    "socket.io": "^2.0.4",
+    "socket.io-stream": "^0.9.1",
+    "streamifier": "^0.1.1",
+    "webpack-stream": "^4.0.0"
+  },
+  "author": "Lance Whatley",
+  "license": "MIT"
+}

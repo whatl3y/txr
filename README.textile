@@ -1,0 +1,19 @@
+h1. Transfer Files to others through Web Sockets
+
+h2. Install & Setup
+
+bc. npm install -g file-handoff
+
+h2. Server
+
+bc. fhs
+
+h2. Client
+
+h3. Send a file to someone listening for files to be sent to them
+
+bc. fhc send -u someone -f /path/to/your/file
+
+h3. Listen for files
+
+bc. fhc listen -u yourUniqueUsername
