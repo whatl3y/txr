@@ -39,8 +39,10 @@ export default async function send({ file, user }) {
   const filename  = path.basename(filePathToSend)
 
   ss(socket).emit('upload', stream, { filename: filename, user: userToSend })
-  socket.on('no-user', obj => { Vomit.error(`No user registered with username: ${obj.user}`); process.exit() })
-  socket.on('finished-uploading', () => process.exit())
+  socket.on('no-user',                  obj => { Vomit.error(`No user registered with username: ${obj.user}`); process.exit() })
+  socket.on('file-permission-waiting',  () => Vomit.success(`Waiting for user to grant or reject receiving the file.`))
+  socket.on('file-permission-denied',   () => { Vomit.error(`User did not grant permission to send file.`); process.exit() })
+  socket.on('finished-uploading',       () => { Vomit.success(`Your file has been sent!`); process.exit() })
 
   const fileHandoffReadStream = fs.createReadStream(filePathToSend)
 

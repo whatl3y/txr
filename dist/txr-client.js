@@ -1,3 +1,685 @@
 #!/usr/bin/env node
 
-!function(e){function r(n){if(t[n])return t[n].exports;var u=t[n]={i:n,l:!1,exports:{}};return e[n].call(u.exports,u,u.exports,r),u.l=!0,u.exports}var t={};r.m=e,r.c=t,r.d=function(e,t,n){r.o(e,t)||Object.defineProperty(e,t,{configurable:!1,enumerable:!0,get:n})},r.n=function(e){var t=e&&e.__esModule?function(){return e.default}:function(){return e};return r.d(t,"a",t),t},r.o=function(e,r){return Object.prototype.hasOwnProperty.call(e,r)},r.p="",r(r.s=6)}([function(e,r,t){"use strict";Object.defineProperty(r,"__esModule",{value:!0});!function(e){e&&e.__esModule}(t(10));var n=function(){};r.default={twoLinesDifferentColors:function(e,r){var t=arguments.length>2&&void 0!==arguments[2]?arguments[2]:"blue",n=arguments.length>3&&void 0!==arguments[3]?arguments[3]:"green";this.wrapInNewlines(function(){e.length>0&&console.log(e[t]),r.length>0&&console.log(r[n])})},singleLine:function(e){var r=arguments.length>1&&void 0!==arguments[1]?arguments[1]:"blue",t=arguments.length>2&&void 0!==arguments[2]?arguments[2]:1;this.wrapInNewlines(function(){return console.log(e[r])},t)},success:function(e){this.wrapInNewlines(function(){return console.log(e.green)})},error:function(e){this.wrapInNewlines(function(){return console.log(e.red)})},wrapInNewlines:function(){var e=arguments.length>0&&void 0!==arguments[0]?arguments[0]:n,r=arguments.length>1&&void 0!==arguments[1]?arguments[1]:1;r-1>0&&new Array(r-1).fill("\n").join("");e()}}},function(e,r){e.exports=require("fs")},function(e,r){e.exports=require("path")},function(e,r){e.exports=require("socket.io-client")},function(e,r){e.exports=require("socket.io-stream")},function(e,r,t){"use strict";Object.defineProperty(r,"__esModule",{value:!0}),r.default={filepath:process.env["win32"==process.platform?"USERPROFILE":"HOME"],server:{port:process.env.PORT||8e3,web_concurrency:process.env.WEB_CONCURRENCY||1,host:process.env.HOSTNAME||"http://localhost:8000"},logger:{options:{name:process.env.APP_NAME||"file-handoff",level:process.env.LOGGING_LEVEL||"info",stream:process.stdout}}}},function(e,r,t){t(7),e.exports=t(8)},function(e,r){e.exports=require("babel-polyfill")},function(e,r,t){"use strict";function n(e){return e&&e.__esModule?e:{default:e}}function u(e){return function(){var r=e.apply(this,arguments);return new Promise(function(e,t){function n(u,o){try{var i=r[u](o),a=i.value}catch(e){return void t(e)}if(!i.done)return Promise.resolve(a).then(function(e){n("next",e)},function(e){n("throw",e)});e(a)}return n("next")})}}var o=function(){function e(e,r){var t=[],n=!0,u=!1,o=void 0;try{for(var i,a=e[Symbol.iterator]();!(n=(i=a.next()).done)&&(t.push(i.value),!r||t.length!==r);n=!0);}catch(e){u=!0,o=e}finally{try{!n&&a.return&&a.return()}finally{if(u)throw o}}return t}return function(r,t){if(Array.isArray(r))return r;if(Symbol.iterator in Object(r))return e(r,t);throw new TypeError("Invalid attempt to destructure non-iterable instance")}}(),i=n(t(9)),a=n(t(0)),s=n(t(11)),c=(0,i.default)(process.argv.slice(2)),f=o(c._,3),l=f[0],d=f[1],p=f[2];!function(){var e=u(regeneratorRuntime.mark(function e(){var r,t,n;return regeneratorRuntime.wrap(function(e){for(;;)switch(e.prev=e.next){case 0:if(r=c.c||c.command||l,t=c.f||c.file||d,n=c.u||c.username||p||d,!r||!s.default[r]){e.next=8;break}return e.next=6,s.default[r]({file:t,user:n});case 6:e.next=9;break;case 8:a.default.error("Please enter a valid command (-c or --command).");case 9:case"end":return e.stop()}},e,this)}));return function(){return e.apply(this,arguments)}}()()},function(e,r){e.exports=require("minimist")},function(e,r){e.exports=require("colors")},function(e,r,t){"use strict";function n(e){return e&&e.__esModule?e:{default:e}}Object.defineProperty(r,"__esModule",{value:!0});var u=n(t(12)),o=n(t(13));r.default={listen:u.default,send:o.default}},function(e,r,t){"use strict";function n(e){return e&&e.__esModule?e:{default:e}}function u(e){return function(){var r=e.apply(this,arguments);return new Promise(function(e,t){function n(u,o){try{var i=r[u](o),a=i.value}catch(e){return void t(e)}if(!i.done)return Promise.resolve(a).then(function(e){n("next",e)},function(e){n("throw",e)});e(a)}return n("next")})}}Object.defineProperty(r,"__esModule",{value:!0});var o=n(t(1)),i=n(t(2)),a=n(t(3)),s=n(t(4)),c=n(t(0)),f=n(t(5));r.default=function(){var e=u(regeneratorRuntime.mark(function e(r){r.file;var t,n=r.user;return regeneratorRuntime.wrap(function(e){for(;;)switch(e.prev=e.next){case 0:if(n){e.next=2;break}return e.abrupt("return",c.default.error("Make sure you pass a user (-u or --username) to listen for files that could be sent to you.\n"));case 2:(t=a.default.connect(f.default.server.host)).emit("regiser-listen",{user:n}),t.on("user-taken",function(){c.default.error("The user you chose, "+n+", is already registered with the server. Please try another username."),process.exit()}),t.on("user-registered-success",function(e){return c.default.success("Successfully registered name: "+e+". You are now listening for files.")}),(0,s.default)(t).on("file",function(e){var r=arguments.length>1&&void 0!==arguments[1]?arguments[1]:{};c.default.success("Received 'file' event with data "+JSON.stringify(r));var t=i.default.join(f.default.filepath,i.default.basename(r.filename||"file-handler-file")),n=o.default.createWriteStream(t);e.on("data",function(e){return c.default.success("Wrote "+e.length+" bytes of data.")}),e.on("error",function(e){return c.default.error("Error reading stream: "+e.toString())}),e.on("end",function(){c.default.success("Completed receiving file with data: "+JSON.stringify(r)+"!"),c.default.success("Target file path: "+t)}),e.pipe(n)});case 7:case"end":return e.stop()}},e,this)}));return function(r){return e.apply(this,arguments)}}()},function(e,r,t){"use strict";function n(e){return e&&e.__esModule?e:{default:e}}function u(e){return function(){var r=e.apply(this,arguments);return new Promise(function(e,t){function n(u,o){try{var i=r[u](o),a=i.value}catch(e){return void t(e)}if(!i.done)return Promise.resolve(a).then(function(e){n("next",e)},function(e){n("throw",e)});e(a)}return n("next")})}}Object.defineProperty(r,"__esModule",{value:!0});var o=n(t(1)),i=n(t(2)),a=n(t(14)),s=n(t(3)),c=n(t(4)),f=n(t(0)),l=n(t(5)),d=(0,a.default)(o.default.access),p=(0,a.default)(o.default.lstat);r.default=function(){var e=u(regeneratorRuntime.mark(function e(r){var t,n,a,v,h,m,g,y,b=this,x=r.file,w=r.user;return regeneratorRuntime.wrap(function(e){for(;;)switch(e.prev=e.next){case 0:if(t=x,n=w,t){e.next=4;break}return e.abrupt("return",f.default.error("Make sure you pass an absolute filepath (-f or --file) to send a file.\n"));case 4:if(n){e.next=6;break}return e.abrupt("return",f.default.error("Make sure you pass a user (-u or --username) to send a file to.\n"));case 6:return e.next=8,function(){var e=u(regeneratorRuntime.mark(function e(r){return regeneratorRuntime.wrap(function(e){for(;;)switch(e.prev=e.next){case 0:return e.prev=0,e.next=3,d(t);case 3:return e.abrupt("return",!0);case 6:return e.prev=6,e.t0=e.catch(0),e.abrupt("return",!1);case 9:case"end":return e.stop()}},e,b,[[0,6]])}));return function(r){return e.apply(this,arguments)}}()(t);case 8:if(a=e.sent){e.next=11;break}return e.abrupt("return",f.default.error("We couldn't find a file located in the following location:\n"+t+"\n"));case 11:return e.next=13,p(t);case 13:if(v=e.sent.isFile()){e.next=16;break}return e.abrupt("return",f.default.error("The parth specified is not a file. Only files are available to send:\n"+t+"\n"));case 16:h=s.default.connect(l.default.server.host),m=c.default.createStream(),g=i.default.basename(t),(0,c.default)(h).emit("upload",m,{filename:g,user:n}),h.on("no-user",function(e){f.default.error("No user registered with username: "+e.user),process.exit()}),h.on("finished-uploading",function(){return process.exit()}),(y=o.default.createReadStream(t)).on("data",function(e){return f.default.success("Received "+e.length+" bytes of data.")}),y.on("end",function(){return f.default.success("Completed sending file!\n")}),y.pipe(m);case 26:case"end":return e.stop()}},e,this)}));return function(r){return e.apply(this,arguments)}}()},function(e,r){e.exports=require("es6-promisify")}]);
+/******/ (function(modules) { // webpackBootstrap
+/******/ 	// The module cache
+/******/ 	var installedModules = {};
+/******/
+/******/ 	// The require function
+/******/ 	function __webpack_require__(moduleId) {
+/******/
+/******/ 		// Check if module is in cache
+/******/ 		if(installedModules[moduleId]) {
+/******/ 			return installedModules[moduleId].exports;
+/******/ 		}
+/******/ 		// Create a new module (and put it into the cache)
+/******/ 		var module = installedModules[moduleId] = {
+/******/ 			i: moduleId,
+/******/ 			l: false,
+/******/ 			exports: {}
+/******/ 		};
+/******/
+/******/ 		// Execute the module function
+/******/ 		modules[moduleId].call(module.exports, module, module.exports, __webpack_require__);
+/******/
+/******/ 		// Flag the module as loaded
+/******/ 		module.l = true;
+/******/
+/******/ 		// Return the exports of the module
+/******/ 		return module.exports;
+/******/ 	}
+/******/
+/******/
+/******/ 	// expose the modules object (__webpack_modules__)
+/******/ 	__webpack_require__.m = modules;
+/******/
+/******/ 	// expose the module cache
+/******/ 	__webpack_require__.c = installedModules;
+/******/
+/******/ 	// define getter function for harmony exports
+/******/ 	__webpack_require__.d = function(exports, name, getter) {
+/******/ 		if(!__webpack_require__.o(exports, name)) {
+/******/ 			Object.defineProperty(exports, name, {
+/******/ 				configurable: false,
+/******/ 				enumerable: true,
+/******/ 				get: getter
+/******/ 			});
+/******/ 		}
+/******/ 	};
+/******/
+/******/ 	// getDefaultExport function for compatibility with non-harmony modules
+/******/ 	__webpack_require__.n = function(module) {
+/******/ 		var getter = module && module.__esModule ?
+/******/ 			function getDefault() { return module['default']; } :
+/******/ 			function getModuleExports() { return module; };
+/******/ 		__webpack_require__.d(getter, 'a', getter);
+/******/ 		return getter;
+/******/ 	};
+/******/
+/******/ 	// Object.prototype.hasOwnProperty.call
+/******/ 	__webpack_require__.o = function(object, property) { return Object.prototype.hasOwnProperty.call(object, property); };
+/******/
+/******/ 	// __webpack_public_path__
+/******/ 	__webpack_require__.p = "";
+/******/
+/******/ 	// Load entry module and return exports
+/******/ 	return __webpack_require__(__webpack_require__.s = 6);
+/******/ })
+/************************************************************************/
+/******/ ([
+/* 0 */
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+
+
+Object.defineProperty(exports, "__esModule", {
+  value: true
+});
+
+var _colors = __webpack_require__(10);
+
+var _colors2 = _interopRequireDefault(_colors);
+
+function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
+
+var NOOP = function NOOP() {};
+
+exports.default = {
+  twoLinesDifferentColors: function twoLinesDifferentColors(str1, str2) {
+    var color1 = arguments.length > 2 && arguments[2] !== undefined ? arguments[2] : 'blue';
+    var color2 = arguments.length > 3 && arguments[3] !== undefined ? arguments[3] : 'green';
+
+    this.wrapInNewlines(function () {
+      if (str1.length > 0) console.log(str1[color1]);
+      if (str2.length > 0) console.log(str2[color2]);
+    });
+  },
+  singleLine: function singleLine(str) {
+    var color = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : 'blue';
+    var numWrappedRows = arguments.length > 2 && arguments[2] !== undefined ? arguments[2] : 1;
+
+    this.wrapInNewlines(function () {
+      return console.log(str[color]);
+    }, numWrappedRows);
+  },
+  success: function success(string) {
+    this.wrapInNewlines(function () {
+      return console.log(string.green);
+    });
+  },
+  error: function error(string) {
+    this.wrapInNewlines(function () {
+      return console.log(string.red);
+    });
+  },
+  wrapInNewlines: function wrapInNewlines() {
+    var functionToWriteMoreOutput = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : NOOP;
+    var howMany = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : 1;
+
+    var newlineString = howMany - 1 > 0 ? new Array(howMany - 1).fill('\n').join('') : '';
+    // if (howMany > 0) console.log(newlineString)
+    functionToWriteMoreOutput();
+    // if (howMany > 0) console.log(newlineString)
+  }
+};
+
+/***/ }),
+/* 1 */
+/***/ (function(module, exports) {
+
+module.exports = require("fs");
+
+/***/ }),
+/* 2 */
+/***/ (function(module, exports) {
+
+module.exports = require("path");
+
+/***/ }),
+/* 3 */
+/***/ (function(module, exports) {
+
+module.exports = require("socket.io-client");
+
+/***/ }),
+/* 4 */
+/***/ (function(module, exports) {
+
+module.exports = require("socket.io-stream");
+
+/***/ }),
+/* 5 */
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+
+
+Object.defineProperty(exports, "__esModule", {
+  value: true
+});
+exports.default = {
+  filepath: process.env.TXR_PATH || process.env[process.platform == 'win32' ? 'USERPROFILE' : 'HOME'],
+
+  server: {
+    port: process.env.PORT || 8000,
+    web_conc: process.env.WEB_CONCURRENCY || 1,
+    host: process.env.TXR_HOST || "http://txr.herokuapp.com"
+  },
+
+  logger: {
+    options: {
+      name: process.env.APP_NAME || "txr",
+      level: process.env.LOGGING_LEVEL || "info",
+      stream: process.stdout
+      /*streams: [
+        {
+          level: process.env.LOGGING_LEVEL || "info",
+          path: path.join(__dirname, "logs", "txr.log")
+        }
+      ]*/
+    }
+  }
+};
+
+/***/ }),
+/* 6 */
+/***/ (function(module, exports, __webpack_require__) {
+
+__webpack_require__(7);
+module.exports = __webpack_require__(8);
+
+
+/***/ }),
+/* 7 */
+/***/ (function(module, exports) {
+
+module.exports = require("babel-polyfill");
+
+/***/ }),
+/* 8 */
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+
+
+var _slicedToArray = function () { function sliceIterator(arr, i) { var _arr = []; var _n = true; var _d = false; var _e = undefined; try { for (var _i = arr[Symbol.iterator](), _s; !(_n = (_s = _i.next()).done); _n = true) { _arr.push(_s.value); if (i && _arr.length === i) break; } } catch (err) { _d = true; _e = err; } finally { try { if (!_n && _i["return"]) _i["return"](); } finally { if (_d) throw _e; } } return _arr; } return function (arr, i) { if (Array.isArray(arr)) { return arr; } else if (Symbol.iterator in Object(arr)) { return sliceIterator(arr, i); } else { throw new TypeError("Invalid attempt to destructure non-iterable instance"); } }; }();
+
+var _minimist = __webpack_require__(9);
+
+var _minimist2 = _interopRequireDefault(_minimist);
+
+var _Vomit = __webpack_require__(0);
+
+var _Vomit2 = _interopRequireDefault(_Vomit);
+
+var _commands = __webpack_require__(11);
+
+var _commands2 = _interopRequireDefault(_commands);
+
+function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
+
+function _asyncToGenerator(fn) { return function () { var gen = fn.apply(this, arguments); return new Promise(function (resolve, reject) { function step(key, arg) { try { var info = gen[key](arg); var value = info.value; } catch (error) { reject(error); return; } if (info.done) { resolve(value); } else { return Promise.resolve(value).then(function (value) { step("next", value); }, function (err) { step("throw", err); }); } } return step("next"); }); }; }
+
+var argv = (0, _minimist2.default)(process.argv.slice(2));
+
+var _argv$_ = _slicedToArray(argv._, 3),
+    first = _argv$_[0],
+    second = _argv$_[1],
+    third = _argv$_[2];
+
+(function () {
+  var _ref = _asyncToGenerator( /*#__PURE__*/regeneratorRuntime.mark(function _callee() {
+    var command, filePathToSend, user, auth;
+    return regeneratorRuntime.wrap(function _callee$(_context) {
+      while (1) {
+        switch (_context.prev = _context.next) {
+          case 0:
+            command = argv.c || argv.command || first;
+            filePathToSend = argv.f || argv.file || second;
+            user = argv.u || argv.username || third || second;
+            auth = argv.a || argv.auth;
+
+            if (!(command && _commands2.default[command])) {
+              _context.next = 9;
+              break;
+            }
+
+            _context.next = 7;
+            return _commands2.default[command]({ file: filePathToSend, user: user, auth: auth });
+
+          case 7:
+            _context.next = 10;
+            break;
+
+          case 9:
+            _Vomit2.default.error('Please enter a valid command (-c or --command).');
+
+          case 10:
+          case 'end':
+            return _context.stop();
+        }
+      }
+    }, _callee, this);
+  }));
+
+  function go() {
+    return _ref.apply(this, arguments);
+  }
+
+  return go;
+})()();
+
+/***/ }),
+/* 9 */
+/***/ (function(module, exports) {
+
+module.exports = require("minimist");
+
+/***/ }),
+/* 10 */
+/***/ (function(module, exports) {
+
+module.exports = require("colors");
+
+/***/ }),
+/* 11 */
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+
+
+Object.defineProperty(exports, "__esModule", {
+  value: true
+});
+
+var _listen = __webpack_require__(12);
+
+var _listen2 = _interopRequireDefault(_listen);
+
+var _send = __webpack_require__(15);
+
+var _send2 = _interopRequireDefault(_send);
+
+function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
+
+exports.default = {
+  listen: _listen2.default,
+  send: _send2.default
+};
+
+/***/ }),
+/* 12 */
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+
+
+Object.defineProperty(exports, "__esModule", {
+  value: true
+});
+
+var _fs = __webpack_require__(1);
+
+var _fs2 = _interopRequireDefault(_fs);
+
+var _path = __webpack_require__(2);
+
+var _path2 = _interopRequireDefault(_path);
+
+var _socket = __webpack_require__(3);
+
+var _socket2 = _interopRequireDefault(_socket);
+
+var _socket3 = __webpack_require__(4);
+
+var _socket4 = _interopRequireDefault(_socket3);
+
+var _Vomit = __webpack_require__(0);
+
+var _Vomit2 = _interopRequireDefault(_Vomit);
+
+var _Readline = __webpack_require__(13);
+
+var _Readline2 = _interopRequireDefault(_Readline);
+
+var _config = __webpack_require__(5);
+
+var _config2 = _interopRequireDefault(_config);
+
+function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
+
+function _asyncToGenerator(fn) { return function () { var gen = fn.apply(this, arguments); return new Promise(function (resolve, reject) { function step(key, arg) { try { var info = gen[key](arg); var value = info.value; } catch (error) { reject(error); return; } if (info.done) { resolve(value); } else { return Promise.resolve(value).then(function (value) { step("next", value); }, function (err) { step("throw", err); }); } } return step("next"); }); }; }
+
+exports.default = function () {
+  var _ref2 = _asyncToGenerator( /*#__PURE__*/regeneratorRuntime.mark(function _callee2(_ref) {
+    var _this = this;
+
+    var file = _ref.file,
+        user = _ref.user,
+        auth = _ref.auth;
+    var socket;
+    return regeneratorRuntime.wrap(function _callee2$(_context2) {
+      while (1) {
+        switch (_context2.prev = _context2.next) {
+          case 0:
+            if (user) {
+              _context2.next = 2;
+              break;
+            }
+
+            return _context2.abrupt('return', _Vomit2.default.error('Make sure you pass a user (-u or --username) to listen for files that could be sent to you.\n'));
+
+          case 2:
+            socket = _socket2.default.connect(_config2.default.server.host);
+
+            socket.emit('regiser-listen', { user: user, auth: auth });
+
+            socket.on('user-taken', function () {
+              _Vomit2.default.error('The user you chose, ' + user + ', is already registered with the server. Please try another username.');
+              process.exit();
+            });
+
+            socket.on('user-registered-success', function (name) {
+              _Vomit2.default.success('Successfully registered name: ' + name + '. You are now listening for files.');
+            });
+
+            socket.on('file-permission', function () {
+              var _ref3 = _asyncToGenerator( /*#__PURE__*/regeneratorRuntime.mark(function _callee(fileData) {
+                var answer;
+                return regeneratorRuntime.wrap(function _callee$(_context) {
+                  while (1) {
+                    switch (_context.prev = _context.next) {
+                      case 0:
+                        _context.next = 2;
+                        return (0, _Readline2.default)().ask('Someone wants to send you a file. Are you okay receiving a file with this data: ' + JSON.stringify(fileData) + ' -- answer (yes/no): ');
+
+                      case 2:
+                        answer = _context.sent;
+
+                        _Vomit2.default.success('You answered \'' + answer + '\', we\'re letting the server know now!');
+                        socket.emit('file-permission-response', answer);
+
+                      case 5:
+                      case 'end':
+                        return _context.stop();
+                    }
+                  }
+                }, _callee, _this);
+              }));
+
+              return function (_x2) {
+                return _ref3.apply(this, arguments);
+              };
+            }());
+
+            (0, _socket4.default)(socket).on('file', function (stream) {
+              var data = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : {};
+
+              _Vomit2.default.success('Received \'file\' event with data ' + JSON.stringify(data));
+              var targetFilePath = _path2.default.join(_config2.default.filepath, _path2.default.basename(data.filename || "file-handler-file"));
+              var writeStream = _fs2.default.createWriteStream(targetFilePath);
+
+              stream.on('data', function (chunk) {
+                return _Vomit2.default.success('Wrote ' + chunk.length + ' bytes of data.');
+              });
+              stream.on('error', function (err) {
+                return _Vomit2.default.error('Error reading stream: ' + err.toString());
+              });
+              stream.on('end', function () {
+                _Vomit2.default.success('Completed receiving file with data: ' + JSON.stringify(data) + '!');
+                _Vomit2.default.success('Target file path: ' + targetFilePath);
+                // socket.emit('finished-uploading')
+              });
+
+              stream.pipe(writeStream);
+            });
+
+          case 8:
+          case 'end':
+            return _context2.stop();
+        }
+      }
+    }, _callee2, this);
+  }));
+
+  function listen(_x) {
+    return _ref2.apply(this, arguments);
+  }
+
+  return listen;
+}();
+
+/***/ }),
+/* 13 */
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+
+
+Object.defineProperty(exports, "__esModule", {
+  value: true
+});
+exports.default = Readline;
+
+var _readline = __webpack_require__(14);
+
+var _readline2 = _interopRequireDefault(_readline);
+
+function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
+
+function Readline() {
+  return {
+    rl: _readline2.default.createInterface({ input: process.stdin, output: process.stdout }),
+
+    ask: function ask(question) {
+      var _this = this;
+
+      var close = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : true;
+
+      return new Promise(function (resolve, reject) {
+        _this.rl.question(question, function (answer) {
+          resolve(answer);
+
+          if (close) _this.close();
+        });
+      });
+    },
+    close: function close() {
+      this.rl.close();
+    }
+  };
+}
+
+/***/ }),
+/* 14 */
+/***/ (function(module, exports) {
+
+module.exports = require("readline");
+
+/***/ }),
+/* 15 */
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+
+
+Object.defineProperty(exports, "__esModule", {
+  value: true
+});
+
+var _fs = __webpack_require__(1);
+
+var _fs2 = _interopRequireDefault(_fs);
+
+var _path = __webpack_require__(2);
+
+var _path2 = _interopRequireDefault(_path);
+
+var _es6Promisify = __webpack_require__(16);
+
+var _es6Promisify2 = _interopRequireDefault(_es6Promisify);
+
+var _socket = __webpack_require__(3);
+
+var _socket2 = _interopRequireDefault(_socket);
+
+var _socket3 = __webpack_require__(4);
+
+var _socket4 = _interopRequireDefault(_socket3);
+
+var _Vomit = __webpack_require__(0);
+
+var _Vomit2 = _interopRequireDefault(_Vomit);
+
+var _config = __webpack_require__(5);
+
+var _config2 = _interopRequireDefault(_config);
+
+function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
+
+function _asyncToGenerator(fn) { return function () { var gen = fn.apply(this, arguments); return new Promise(function (resolve, reject) { function step(key, arg) { try { var info = gen[key](arg); var value = info.value; } catch (error) { reject(error); return; } if (info.done) { resolve(value); } else { return Promise.resolve(value).then(function (value) { step("next", value); }, function (err) { step("throw", err); }); } } return step("next"); }); }; }
+
+var access = (0, _es6Promisify2.default)(_fs2.default.access);
+var lstat = (0, _es6Promisify2.default)(_fs2.default.lstat);
+
+exports.default = function () {
+  var _ref2 = _asyncToGenerator( /*#__PURE__*/regeneratorRuntime.mark(function _callee2(_ref) {
+    var _this = this;
+
+    var file = _ref.file,
+        user = _ref.user;
+    var filePathToSend, userToSend, fileExists, isFile, socket, stream, filename, fileHandoffReadStream;
+    return regeneratorRuntime.wrap(function _callee2$(_context2) {
+      while (1) {
+        switch (_context2.prev = _context2.next) {
+          case 0:
+            filePathToSend = file;
+            userToSend = user;
+
+            if (filePathToSend) {
+              _context2.next = 4;
+              break;
+            }
+
+            return _context2.abrupt('return', _Vomit2.default.error('Make sure you pass an absolute filepath (-f or --file) to send a file.\n'));
+
+          case 4:
+            if (userToSend) {
+              _context2.next = 6;
+              break;
+            }
+
+            return _context2.abrupt('return', _Vomit2.default.error('Make sure you pass a user (-u or --username) to send a file to.\n'));
+
+          case 6:
+            _context2.next = 8;
+            return function () {
+              var _ref3 = _asyncToGenerator( /*#__PURE__*/regeneratorRuntime.mark(function _callee(filePath) {
+                return regeneratorRuntime.wrap(function _callee$(_context) {
+                  while (1) {
+                    switch (_context.prev = _context.next) {
+                      case 0:
+                        _context.prev = 0;
+                        _context.next = 3;
+                        return access(filePathToSend);
+
+                      case 3:
+                        return _context.abrupt('return', true);
+
+                      case 6:
+                        _context.prev = 6;
+                        _context.t0 = _context['catch'](0);
+                        return _context.abrupt('return', false);
+
+                      case 9:
+                      case 'end':
+                        return _context.stop();
+                    }
+                  }
+                }, _callee, _this, [[0, 6]]);
+              }));
+
+              return function (_x2) {
+                return _ref3.apply(this, arguments);
+              };
+            }()(filePathToSend);
+
+          case 8:
+            fileExists = _context2.sent;
+
+            if (fileExists) {
+              _context2.next = 11;
+              break;
+            }
+
+            return _context2.abrupt('return', _Vomit2.default.error('We couldn\'t find a file located in the following location:\n' + filePathToSend + '\n'));
+
+          case 11:
+            _context2.next = 13;
+            return lstat(filePathToSend);
+
+          case 13:
+            isFile = _context2.sent.isFile();
+
+            if (isFile) {
+              _context2.next = 16;
+              break;
+            }
+
+            return _context2.abrupt('return', _Vomit2.default.error('The parth specified is not a file. Only files are available to send:\n' + filePathToSend + '\n'));
+
+          case 16:
+            socket = _socket2.default.connect(_config2.default.server.host);
+            stream = _socket4.default.createStream();
+            filename = _path2.default.basename(filePathToSend);
+
+
+            (0, _socket4.default)(socket).emit('upload', stream, { filename: filename, user: userToSend });
+            socket.on('no-user', function (obj) {
+              _Vomit2.default.error('No user registered with username: ' + obj.user);process.exit();
+            });
+            socket.on('file-permission-waiting', function () {
+              return _Vomit2.default.success('Waiting for user to grant or reject receiving the file.');
+            });
+            socket.on('file-permission-denied', function () {
+              _Vomit2.default.error('User did not grant permission to send file.');process.exit();
+            });
+            socket.on('finished-uploading', function () {
+              _Vomit2.default.success('Your file has been sent!');process.exit();
+            });
+
+            fileHandoffReadStream = _fs2.default.createReadStream(filePathToSend);
+
+
+            fileHandoffReadStream.on('data', function (chunk) {
+              return _Vomit2.default.success('Received ' + chunk.length + ' bytes of data.');
+            });
+            fileHandoffReadStream.on('end', function () {
+              return _Vomit2.default.success('Completed sending file!\n');
+            });
+
+            fileHandoffReadStream.pipe(stream);
+
+          case 28:
+          case 'end':
+            return _context2.stop();
+        }
+      }
+    }, _callee2, this);
+  }));
+
+  function send(_x) {
+    return _ref2.apply(this, arguments);
+  }
+
+  return send;
+}();
+
+/***/ }),
+/* 16 */
+/***/ (function(module, exports) {
+
+module.exports = require("es6-promisify");
+
+/***/ })
+/******/ ]);

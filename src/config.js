@@ -4,13 +4,13 @@ export default {
   server: {
     port:     process.env.PORT || 8000,
     web_conc: process.env.WEB_CONCURRENCY || 1,
-    host:     process.env.HOSTNAME || "https://txr.herokuapp.com"
+    host:     process.env.TXR_HOST || "http://txr.herokuapp.com"
   },
 
   logger: {
     options: {
-      name: process.env.APP_NAME || "txr",
-      level: process.env.LOGGING_LEVEL || "info",
+      name:   process.env.APP_NAME || "txr",
+      level:  process.env.LOGGING_LEVEL || "info",
       stream: process.stdout
       /*streams: [
         {

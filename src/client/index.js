@@ -9,9 +9,10 @@ const [ first, second, third ] = argv._
   const command         = argv.c || argv.command || first
   const filePathToSend  = argv.f || argv.file || second
   const user            = argv.u || argv.username || third || second
+  const auth            = argv.a || argv.auth
 
   if (command && allCommands[command]) {
-    await allCommands[command]({ file: filePathToSend, user: user })
+    await allCommands[command]({ file: filePathToSend, user: user, auth: auth })
   } else {
     Vomit.error(`Please enter a valid command (-c or --command).`)
   }

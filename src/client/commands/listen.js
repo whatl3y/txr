@@ -3,19 +3,30 @@ import path from 'path'
 import io from 'socket.io-client'
 import ss from 'socket.io-stream'
 import Vomit from '../../libs/Vomit'
+import Readline from '../../libs/Readline'
 import config from '../../config'
 
-export default async function listen({ file, user }) {
+export default async function listen({ file, user, auth }) {
   if (!user)
     return Vomit.error(`Make sure you pass a user (-u or --username) to listen for files that could be sent to you.\n`)
 
   const socket  = io.connect(config.server.host)
-  socket.emit('regiser-listen', { user: user })
+  socket.emit('regiser-listen', { user, auth })
+
   socket.on('user-taken', () => {
     Vomit.error(`The user you chose, ${user}, is already registered with the server. Please try another username.`)
     process.exit()
   })
-  socket.on('user-registered-success', name => Vomit.success(`Successfully registered name: ${name}. You are now listening for files.`))
+
+  socket.on('user-registered-success', name => {
+    Vomit.success(`Successfully registered name: ${name}. You are now listening for files.`)
+  })
+
+  socket.on('file-permission', async fileData => {
+    const answer = await Readline().ask(`Someone wants to send you a file. Are you okay receiving a file with this data: ${JSON.stringify(fileData)} -- answer (yes/no): `)
+    Vomit.success(`You answered '${answer}', we're letting the server know now!`)
+    socket.emit('file-permission-response', answer)
+  })
 
   ss(socket).on('file', function(stream, data={}) {
     Vomit.success(`Received 'file' event with data ${JSON.stringify(data)}`)
