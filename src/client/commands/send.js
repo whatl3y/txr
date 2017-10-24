@@ -32,7 +32,7 @@ export default async function send({ file, user }) {
 
   const isFile = (await lstat(filePathToSend)).isFile()
   if (!isFile)
-    return Vomit.error(`The parth specified is not a file. Only files are available to send:\n${filePathToSend}\n`)
+    return Vomit.error(`The path specified is not a file. Only files are available to send:\n${filePathToSend}\n`)
 
   const socket    = io.connect(config.server.host)
   const stream    = ss.createStream()

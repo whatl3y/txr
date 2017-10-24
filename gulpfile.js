@@ -15,7 +15,7 @@ gulp.task('transpile-client', function() {
   return gulp.src("./src/client/**/*.js")
     .pipe(plumber())
     .pipe(webpack(clientWebpackConfig))
-    // .pipe(uglify().on('error', console.log))
+    .pipe(uglify().on('error', console.log))
     .pipe(gulp.dest("./dist"))
 })
 
@@ -30,7 +30,7 @@ gulp.task('transpile-server', function() {
   return gulp.src("./src/client/**/*.js")
     .pipe(plumber())
     .pipe(webpack(serverWebpackConfig))
-    // .pipe(uglify().on('error', console.log))
+    .pipe(uglify().on('error', console.log))
     .pipe(gulp.dest("./dist"))
 })
 
