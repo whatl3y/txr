@@ -1,24 +1,23 @@
 {
-  "name": "file-handoff",
-  "version": "0.0.1",
+  "name": "txr",
+  "version": "0.1.0",
   "description": "Transfer files easily to and from team members through web sockets.",
-  "main": "forever.js",
   "engines": {
     "node": ">= 4.0.0"
   },
   "repository": {
     "type": "git",
-    "url": "https://github.com/whatl3y/file-handoff.git"
+    "url": "https://github.com/whatl3y/txr.git"
   },
   "scripts": {
-    "client": "node dist/file-handoff-client",
-    "server": "node dist/file-handoff-server",
+    "client": "node dist/txr-client",
+    "server": "node dist/txr-server",
     "start": "npm run server",
     "test": "mocha --compilers js:babel-core/register --recursive './src/**/*.spec.js'"
   },
   "bin": {
-    "fhc": "./dist/file-handoff-client.js",
-    "fhs": "./dist/file-handoff-server.js"
+    "txr": "./dist/txr-client.js",
+    "txr-server": "./dist/txr-server.js"
   },
   "devDependencies": {
     "babel-core": "^6.26.0",
@@ -44,8 +43,8 @@
     "es6-promisify": "^5.0.0",
     "minimist": "^1.2.0",
     "socket.io": "^2.0.4",
+    "socket.io-client": "^2.0.4",
     "socket.io-stream": "^0.9.1",
-    "streamifier": "^0.1.1",
     "webpack-stream": "^4.0.0"
   },
   "author": "Lance Whatley",

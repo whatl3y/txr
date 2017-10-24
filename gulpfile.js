@@ -20,7 +20,7 @@ gulp.task('transpile-client', function() {
 })
 
 gulp.task('index-client', function() {
-  return gulp.src("./dist/file-handoff-client.js")
+  return gulp.src("./dist/txr-client.js")
     .pipe(insert.prepend("#!/usr/bin/env node\n\n"))
     .pipe(gulp.dest("./dist"))
 })
@@ -35,7 +35,7 @@ gulp.task('transpile-server', function() {
 })
 
 gulp.task('index-server', function() {
-  return gulp.src("./dist/file-handoff-server.js")
+  return gulp.src("./dist/txr-server.js")
     .pipe(insert.prepend("#!/usr/bin/env node\n\n"))
     .pipe(gulp.dest("./dist"))
 })
@@ -44,4 +44,4 @@ gulp.task('index-server', function() {
 // Entry points
 gulp.task('build-client', gulpSequence('transpile-client', 'index-client'))
 gulp.task('build-server', gulpSequence('transpile-server', 'index-server'))
-gulp.task('build', gulpSequence('build-client', 'build-server'))
+gulp.task('build', [ 'build-client', 'build-server' ])

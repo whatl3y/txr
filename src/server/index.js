@@ -2,7 +2,6 @@ import fs from 'fs'
 import path from 'path'
 import socket_io from 'socket.io'
 import ss from 'socket.io-stream'
-import streamifier from 'streamifier'
 import bunyan from 'bunyan'
 import config from '../config'
 

@@ -1,19 +1,19 @@
-h1. Transfer Files to others through Web Sockets
+h1. Transfer Files to and from team members through Web Sockets
 
 h2. Install & Setup
 
-bc. npm install -g file-handoff
+bc. npm install -g txr
 
 h2. Server
 
-bc. fhs
+bc. txr-server
 
 h2. Client
 
 h3. Send a file to someone listening for files to be sent to them
 
-bc. fhc send -u someone -f /path/to/your/file
+bc. txr send -u yourFriendsUniqueUsername -f /path/to/your/file
 
 h3. Listen for files
 
-bc. fhc listen -u yourUniqueUsername
+bc. txr listen -u yourUniqueUsername

@@ -6,10 +6,10 @@ function baseWebpackConfig(clientOrServer) {
   let entryPoint, filename
   if (clientOrServer == 'server') {
     entryPoint = './src/server/index.js'
-    filename = 'file-handoff-server.js'
+    filename = 'txr-server.js'
   } else {
     entryPoint = './src/client/index.js'
-    filename = 'file-handoff-client.js'
+    filename = 'txr-client.js'
   }
 
   return {
