@@ -30,14 +30,16 @@ export default async function send({ file, user }) {
   if (!fileExists)
     return Vomit.error(`We couldn't find a file located in the following location:\n${filePathToSend}\n`)
 
-  const isFile = (await lstat(filePathToSend)).isFile()
+  const fileStats = await lstat(filePathToSend)
+  const isFile    = fileStats.isFile()
+  const fileSize  = fileStats.size
   if (!isFile)
     return Vomit.error(`The path specified is not a file. Only files are available to send:\n${filePathToSend}\n`)
 
   const socket            = io.connect(config.server.host)
   const stream            = ss.createStream()
   const filename          = path.basename(filePathToSend)
-  const dataForFileToSend = { filename: filename, user: userToSend }
+  const dataForFileToSend = { filename: filename, filesizebytes: fileSize, user: userToSend }
 
   socket.emit('send-file-check-auth', dataForFileToSend)
   socket.on('no-user',                  obj => { Vomit.error(`No user registered with username: ${obj.user}`); process.exit() })
@@ -48,8 +50,9 @@ export default async function send({ file, user }) {
   socket.on('disconnect',               () => { Vomit.error(`You were disconnected from the server.`); process.exit() })
 
   const fileHandoffReadStream = fs.createReadStream(filePathToSend)
+  let numTimes = 1
 
-  fileHandoffReadStream.on('data', chunk => Vomit.success(`Received ${chunk.length} bytes of data.`))
+  fileHandoffReadStream.on('data', chunk => { Vomit.success(`${numTimes}. Sent ${chunk.length} bytes of data.`); numTimes++; })
   fileHandoffReadStream.on('end', () => Vomit.success('Completed sending file!\n'))
 
   fileHandoffReadStream.pipe(stream)

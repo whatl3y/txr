@@ -21,7 +21,7 @@ export default function listeners(io, socket, socketApp) {
         }
       },
 
-      'send-file-check-auth': function({ filename, user }) {
+      'send-file-check-auth': function({ filename, filesizebytes, user }) {
         const destinationSocketId = socketApp['names'][user]
         const sendingRequiresAuth = socketApp['auth'][destinationSocketId]
         if (user && destinationSocketId) {
@@ -36,7 +36,7 @@ export default function listeners(io, socket, socketApp) {
                   socket.emit('file-permission-denied')
                 }
               })
-              destinationSocket.emit('file-permission', { filename, user })
+              destinationSocket.emit('file-permission', { filename, filesizebytes, user })
           } else {
             socket.emit('file-permission-granted')
           }

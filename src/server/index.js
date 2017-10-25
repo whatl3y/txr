@@ -9,6 +9,7 @@ import config from '../config'
 
 const log = bunyan.createLogger(config.logger.options)
 const io  = socket_io().listen(config.server.port)
+log.info(`socket.io server listening on port: ${config.server.port}`)
 
 io.on('connection', function(socket) {
   log.info(`got socket: ${socket.id}`)

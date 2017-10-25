@@ -37,7 +37,9 @@ export default async function listen({ file, user, auth }) {
     const targetFilePath  = path.join(config.filepath, path.basename(newFileName))
     const writeStream     = fs.createWriteStream(targetFilePath)
 
-    stream.on('data', chunk => Vomit.success(`Wrote ${chunk.length} bytes of data.`))
+    let numTimes = 1
+
+    stream.on('data', chunk => { Vomit.success(`${numTimes}. Received ${chunk.length} bytes of data.`); numTimes++ })
     stream.on('error', err => Vomit.error(`Error reading stream: ${err.toString()}`))
     stream.on('end', () => {
       Vomit.success(`Completed receiving file with data: ${JSON.stringify(data)}!`)
