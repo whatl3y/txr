@@ -1,14 +1,14 @@
 # txr
 
-## Transfer Files Hilariously Easily to others using Web Sockets
+## Transfer Files Hilariously Easily to others through Web Sockets
 
 This tool provides a quick and simple way to send files from your
-machine to whomever you want (team members, family, etc.)
-as long as both of you have an internet connection. It contains both a server
-and client component, both of which communicate with each other through
-web sockets.
+machine to another (to team members, family, remote machines, etc.)
+as long as both of you have an internet connection and txr installed and running.
+It contains both a server and client component, both of which communicate
+with each other through web sockets.
 
-## High Level Description
+## How does txr ("transfer") work?
 
 **Server**: the server listens for clients to connect and manages registering
 client connections based on a specified "username" provided by a "listener"
@@ -60,6 +60,9 @@ customize your clients:
 
 1. TXR_HOST: The full URL (including protocol and port) of the txr-server
 you are connecting to. DEFAULT: http://txr.herokuapp.com
+2. TXR_PATH: For "listener" clients, this is the path to a directory
+where files you receive will be delivered to.
+DEFAULT: $HOME-unix/linux, $USERPROFILE-windows
 
 ### Client types
 
@@ -72,5 +75,5 @@ txr listen -u yourUniqueUsername
 #### "sender": send a file to someone listening for files to be sent to them
 
 ```
-txr send -u yourFriendsUniqueUsername -f /local/file/path/to/file
+txr send -u yourFriendsUniqueUsername -f /local/path/to/file
 ```

@@ -2,8 +2,9 @@ import fs from 'fs'
 import path from 'path'
 import io from 'socket.io-client'
 import ss from 'socket.io-stream'
-import Vomit from '../../libs/Vomit'
+import FileHelpers from '../../libs/FileHelpers'
 import Readline from '../../libs/Readline'
+import Vomit from '../../libs/Vomit'
 import config from '../../config'
 
 export default async function listen({ file, user, auth }) {
@@ -30,15 +31,15 @@ export default async function listen({ file, user, auth }) {
 
   ss(socket).on('file', function(stream, data={}) {
     Vomit.success(`Received 'file' event with data ${JSON.stringify(data)}`)
-    const targetFilePath = path.join(config.filepath, path.basename(data.filename || "file-handler-file"))
-    const writeStream = fs.createWriteStream(targetFilePath)
+    const newFileName     = FileHelpers.getFileName(data.filename || "txr.file")
+    const targetFilePath  = path.join(config.filepath, path.basename(newFileName))
+    const writeStream     = fs.createWriteStream(targetFilePath)
 
     stream.on('data', chunk => Vomit.success(`Wrote ${chunk.length} bytes of data.`))
     stream.on('error', err => Vomit.error(`Error reading stream: ${err.toString()}`))
     stream.on('end', () => {
       Vomit.success(`Completed receiving file with data: ${JSON.stringify(data)}!`)
       Vomit.success(`Target file path: ${targetFilePath}`)
-      // socket.emit('finished-uploading')
     })
 
     stream.pipe(writeStream)
