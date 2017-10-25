@@ -68,11 +68,23 @@ DEFAULT: $HOME-unix/linux, $USERPROFILE-windows
 
 #### "listener": listen for files to be sent to you
 
+##### Parameters:
+
+1. Required: -u/--user: The username you want to register with the server as.
+2. Optional: -a/--auth: If present, you will need to authorize any files
+attempted to be sent to you.
+
 ```
 txr listen -u yourUniqueUsername
+txr listen -u yourUniqueUsername -a
 ```
 
 #### "sender": send a file to someone listening for files to be sent to them
+
+##### Parameters
+
+1. Required: -f/--file: The local filepath to the file you're sending to a "listener"
+2. Required: -u/--user: The "listener" client's username you're sending a file to.
 
 ```
 txr send -u yourFriendsUniqueUsername -f /local/path/to/file

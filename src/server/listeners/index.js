@@ -21,6 +21,32 @@ export default function listeners(io, socket, socketApp) {
         }
       },
 
+      'send-file-check-auth': function({ filename, user }) {
+        const destinationSocketId = socketApp['names'][user]
+        const sendingRequiresAuth = socketApp['auth'][destinationSocketId]
+        if (user && destinationSocketId) {
+          const destinationSocket = io.sockets.connected[destinationSocketId]
+
+          if (sendingRequiresAuth) {
+              socket.emit('file-permission-waiting')
+              destinationSocket.on('file-permission-response', answer => {
+                if (answer.toLowerCase() === 'yes') {
+                  socket.emit('file-permission-granted')
+                } else {
+                  socket.emit('file-permission-denied')
+                }
+              })
+              destinationSocket.emit('file-permission', { filename, user })
+          } else {
+            socket.emit('file-permission-granted')
+          }
+
+        } else {
+          log.error(`Tried to send a file to '${user}' who has not registered.`)
+          socket.emit('no-user', { user })
+        }
+      },
+
       'disconnect': function() {
         log.info(`socket disconnected: ${socket.id}`)
         const name = socketApp['ids'][socket.id]
@@ -31,12 +57,11 @@ export default function listeners(io, socket, socketApp) {
     },
 
     stream: {
-      'upload': function(stream, data={}) {
+      'upload': function(stream, data) {
         log.info(`Received 'upload' event with data: ${JSON.stringify(data)}`)
 
         const userToSend          = data.user
         const destinationSocketId = socketApp['names'][userToSend]
-        const sendingRequiresAuth = socketApp['auth'][destinationSocketId]
         if (userToSend && destinationSocketId) {
           const destinationSocket = io.sockets.connected[destinationSocketId]
           const destinationStream = ss.createStream()
@@ -46,21 +71,8 @@ export default function listeners(io, socket, socketApp) {
           stream.on('end', () => log.info(`Completed receiving file with data: ${JSON.stringify(data)}!`))
 
           destinationStream.on('end', () => socket.emit('finished-uploading'))
-
-          if (sendingRequiresAuth) {
-            socket.emit('file-permission-waiting')
-            destinationSocket.on('file-permission-response', answer => {
-              if (answer.toLowerCase() === 'yes') {
-                sendFileToTargetUser(stream, destinationStream, destinationSocket, data)
-              } else {
-                socket.emit('file-permission-denied')
-              }
-            })
-            destinationSocket.emit('file-permission', data)
-
-          } else {
-            sendFileToTargetUser(stream, destinationStream, destinationSocket, data)
-          }
+          stream.pipe(destinationStream)
+          ss(destinationSocket).emit('file', destinationStream, data)
 
         } else {
           log.error(`Tried to send a file to '${userToSend}' who has not registered.`)
@@ -68,10 +80,5 @@ export default function listeners(io, socket, socketApp) {
         }
       }
     }
-  }
-
-  function sendFileToTargetUser(sourceStream, destinationStream, destinationSocket, data) {
-    sourceStream.pipe(destinationStream)
-    ss(destinationSocket).emit('file', destinationStream, data)
   }
 }

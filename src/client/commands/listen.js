@@ -24,10 +24,12 @@ export default async function listen({ file, user, auth }) {
   })
 
   socket.on('file-permission', async fileData => {
-    const answer = await Readline().ask(`Someone wants to send you a file. Are you okay receiving a file with this data: ${JSON.stringify(fileData)} -- answer (yes/no): `)
+    const answer = await Readline().ask(`\nSomeone wants to send you a file. Are you okay receiving a file with this data: ${JSON.stringify(fileData)} -- answer (yes/no): `)
     Vomit.success(`You answered '${answer}', we're letting the server know now!`)
     socket.emit('file-permission-response', answer)
   })
+
+  socket.on('disconnect', () => { Vomit.error(`You were disconnected from the server.`); process.exit() })
 
   ss(socket).on('file', function(stream, data={}) {
     Vomit.success(`Received 'file' event with data ${JSON.stringify(data)}`)

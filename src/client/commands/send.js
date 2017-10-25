@@ -34,15 +34,18 @@ export default async function send({ file, user }) {
   if (!isFile)
     return Vomit.error(`The path specified is not a file. Only files are available to send:\n${filePathToSend}\n`)
 
-  const socket    = io.connect(config.server.host)
-  const stream    = ss.createStream()
-  const filename  = path.basename(filePathToSend)
+  const socket            = io.connect(config.server.host)
+  const stream            = ss.createStream()
+  const filename          = path.basename(filePathToSend)
+  const dataForFileToSend = { filename: filename, user: userToSend }
 
-  ss(socket).emit('upload', stream, { filename: filename, user: userToSend })
+  socket.emit('send-file-check-auth', dataForFileToSend)
   socket.on('no-user',                  obj => { Vomit.error(`No user registered with username: ${obj.user}`); process.exit() })
+  socket.on('file-permission-granted',  () => ss(socket).emit('upload', stream, dataForFileToSend))
   socket.on('file-permission-waiting',  () => Vomit.success(`Waiting for user to grant or reject receiving the file.`))
   socket.on('file-permission-denied',   () => { Vomit.error(`User did not grant permission to send file.`); process.exit() })
   socket.on('finished-uploading',       () => { Vomit.success(`Your file has been sent!`); process.exit() })
+  socket.on('disconnect',               () => { Vomit.error(`You were disconnected from the server.`); process.exit() })
 
   const fileHandoffReadStream = fs.createReadStream(filePathToSend)
 
