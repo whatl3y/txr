@@ -25,7 +25,7 @@ export default async function listen({ file, user, auth, host }) {
 
   socket.on('file-permission', async fileData => {
     const answer = await Readline().ask(`\nSomeone wants to send you a file. Are you okay receiving a file with this data: ${JSON.stringify(fileData)} -- answer (yes/no): `)
-    Vomit.success(`You answered '${answer}', we're letting the server know now!`)
+    Vomit.success(`You answered '${answer}', we're letting the server know now.`)
     socket.emit('file-permission-response', answer)
   })
 
@@ -41,7 +41,7 @@ export default async function listen({ file, user, auth, host }) {
     stream.on('data', chunk => { Vomit.success(`${numTimes}. Received ${chunk.length} bytes of data.`); numTimes++ })
     stream.on('error', err => Vomit.error(`Error reading stream: ${err.toString()}`))
     stream.on('end', () => {
-      Vomit.success(`Completed receiving file with data: ${JSON.stringify(data)}!`)
+      Vomit.success(`Finished receiving file with data: ${JSON.stringify(data)}`)
       Vomit.success(`Target file path: ${targetFilePath}`)
     })
 

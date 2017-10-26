@@ -1,5 +1,6 @@
 import bunyan from 'bunyan'
 import ss from 'socket.io-stream'
+import Encryption from '../../libs/Encryption'
 import config from '../../config'
 
 const log = bunyan.createLogger(config.logger.options)
@@ -24,6 +25,7 @@ export default function listeners(io, socket, socketApp) {
       'send-file-check-auth': function({ filename, filesizebytes, user }) {
         const destinationSocketId = socketApp['names'][user]
         const sendingRequiresAuth = socketApp['auth'][destinationSocketId]
+        const dataHash            = Encryption.stringToHash(JSON.stringify({ filename, filesizebytes, user }))
         if (user && destinationSocketId) {
           const destinationSocket = io.sockets.connected[destinationSocketId]
 
@@ -31,6 +33,7 @@ export default function listeners(io, socket, socketApp) {
               socket.emit('file-permission-waiting')
               destinationSocket.on('file-permission-response', answer => {
                 if (answer.toLowerCase() === 'yes') {
+                  socketApp['unlocked'][dataHash] = socket.id
                   socket.emit('file-permission-granted')
                 } else {
                   socket.emit('file-permission-denied')
@@ -38,6 +41,7 @@ export default function listeners(io, socket, socketApp) {
               })
               destinationSocket.emit('file-permission', { filename, filesizebytes, user })
           } else {
+            socketApp['unlocked'][dataHash] = socket.id
             socket.emit('file-permission-granted')
           }
 
@@ -62,17 +66,24 @@ export default function listeners(io, socket, socketApp) {
 
         const userToSend          = data.user
         const destinationSocketId = socketApp['names'][userToSend]
+        const dataHash            = Encryption.stringToHash(JSON.stringify(data))
         if (userToSend && destinationSocketId) {
-          const destinationSocket = io.sockets.connected[destinationSocketId]
-          const destinationStream = ss.createStream()
+          if (socketApp['unlocked'][dataHash] && socketApp['unlocked'][dataHash] == socket.id) {
+            const destinationSocket = io.sockets.connected[destinationSocketId]
+            const destinationStream = ss.createStream()
 
-          stream.on('data', chunk => log.info(`Received ${chunk.length} bytes of data.`))
-          stream.on('error', err => log.error(`socket: ${socket.id}`, err))
-          stream.on('end', () => log.info(`Completed receiving file with data: ${JSON.stringify(data)}!`))
+            stream.on('data', chunk => log.info(`Received ${chunk.length} bytes of data.`))
+            stream.on('error', err => log.error(`socket: ${socket.id}`, err))
+            stream.on('end', () => log.info(`Completed receiving file with data: ${JSON.stringify(data)}!`))
 
-          destinationStream.on('end', () => socket.emit('finished-uploading'))
-          stream.pipe(destinationStream)
-          ss(destinationSocket).emit('file', destinationStream, data)
+            destinationStream.on('end', () => socket.emit('finished-uploading'))
+            stream.pipe(destinationStream)
+            ss(destinationSocket).emit('file', destinationStream, data)
+
+          } else {
+            socket.emit('file-data-hash-mismatch')
+          }
+          delete(socketApp['unlocked'][dataHash])
 
         } else {
           log.error(`Tried to send a file to '${userToSend}' who has not registered.`)

@@ -46,14 +46,15 @@ export default async function send({ file, user, host }) {
   socket.on('file-permission-granted',  () => ss(socket).emit('upload', stream, dataForFileToSend))
   socket.on('file-permission-waiting',  () => Vomit.success(`Waiting for user to grant or reject receiving the file.`))
   socket.on('file-permission-denied',   () => { Vomit.error(`User did not grant permission to send file.`); process.exit() })
+  socket.on('file-data-hash-mismatch',  () => { Vomit.error(`We can't validate the file you're sending.`); process.exit() })
   socket.on('finished-uploading',       () => { Vomit.success(`Your file has successfully sent to ${userToSend}!`); process.exit() })
   socket.on('disconnect',               () => { Vomit.error(`You were disconnected from the server.`); process.exit() })
 
-  const fileHandoffReadStream = fs.createReadStream(filePathToSend)
+  const txrReadStream = fs.createReadStream(filePathToSend)
   let numTimes = 1
 
-  fileHandoffReadStream.on('data', chunk => { Vomit.success(`${numTimes}. Sent ${chunk.length} bytes of data.`); numTimes++; })
-  fileHandoffReadStream.on('end', () => Vomit.success('All bytes have been sent to the server!\n'))
+  txrReadStream.on('data', chunk => { Vomit.success(`${numTimes}. Got ${chunk.length} bytes of data from the file.`); numTimes++; })
+  txrReadStream.on('end', () => Vomit.success(`All bytes have been read from file: ${filePathToSend}.`))
 
-  fileHandoffReadStream.pipe(stream)
+  txrReadStream.pipe(stream)
 }
