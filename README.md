@@ -36,7 +36,7 @@ client connections. If you install this package you can start a listening client
 with that server without doing anything else other than running the
 client "listener" command below. If you want to run a txr-server separately
 than the Heroku dyno, follow instructions below and be sure the
-point the TXR_HOST environment variable (or -p parameter) of your clients
+point the TXR_HOST environment variable (or -h/--host parameter) of your clients
 to the appropriate endpoint.
 
 ### Config
@@ -87,6 +87,7 @@ that points to the server you'll connect to.
 ```
 txr listen -u yourUniqueUsername
 txr listen -u yourUniqueUsername -a
+txr listen -u yourUniqueUsername -h http://localhost:8000
 ```
 
 #### "sender": send a file to someone listening for files to be sent to them
@@ -100,6 +101,7 @@ that points to the server you'll connect to.
 
 ```
 txr send -u yourFriendsUniqueUsername -f /local/path/to/file
+txr send -u yourFriendsUniqueUsername -f /local/path/to/file -h http://localhost:8000
 ```
 
 ## Development
