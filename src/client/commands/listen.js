@@ -7,11 +7,11 @@ import Readline from '../../libs/Readline'
 import Vomit from '../../libs/Vomit'
 import config from '../../config'
 
-export default async function listen({ file, user, auth }) {
+export default async function listen({ file, user, auth, host }) {
   if (!user)
     return Vomit.error(`Make sure you pass a user (-u or --username) to listen for files that could be sent to you.\n`)
 
-  const socket  = io.connect(config.server.host)
+  const socket  = io.connect(host || config.server.host)
   socket.emit('regiser-listen', { user, auth })
 
   socket.on('user-taken', () => {
@@ -32,7 +32,6 @@ export default async function listen({ file, user, auth }) {
   socket.on('disconnect', () => { Vomit.error(`You were disconnected from the server.`); process.exit() })
 
   ss(socket).on('file', function(stream, data={}) {
-    Vomit.success(`Received 'file' event with data ${JSON.stringify(data)}`)
     const newFileName     = FileHelpers.getFileName(data.filename || "txr.file")
     const targetFilePath  = path.join(config.filepath, path.basename(newFileName))
     const writeStream     = fs.createWriteStream(targetFilePath)

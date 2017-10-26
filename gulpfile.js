@@ -11,7 +11,7 @@ const clientWebpackConfig = webpack_config('client')
 const serverWebpackConfig = webpack_config('server')
 
 // Client
-gulp.task('transpile-client', function() {
+gulp.task('transpile-cli-client', function() {
   return gulp.src("./src/client/**/*.js")
     .pipe(plumber())
     .pipe(webpack(clientWebpackConfig))
@@ -19,14 +19,14 @@ gulp.task('transpile-client', function() {
     .pipe(gulp.dest("./dist"))
 })
 
-gulp.task('index-client', function() {
+gulp.task('index-cli-client', function() {
   return gulp.src("./dist/txr-client.js")
     .pipe(insert.prepend("#!/usr/bin/env node\n\n"))
     .pipe(gulp.dest("./dist"))
 })
 
 // Server
-gulp.task('transpile-server', function() {
+gulp.task('transpile-cli-server', function() {
   return gulp.src("./src/client/**/*.js")
     .pipe(plumber())
     .pipe(webpack(serverWebpackConfig))
@@ -34,7 +34,7 @@ gulp.task('transpile-server', function() {
     .pipe(gulp.dest("./dist"))
 })
 
-gulp.task('index-server', function() {
+gulp.task('index-cli-server', function() {
   return gulp.src("./dist/txr-server.js")
     .pipe(insert.prepend("#!/usr/bin/env node\n\n"))
     .pipe(gulp.dest("./dist"))
@@ -42,6 +42,6 @@ gulp.task('index-server', function() {
 
 
 // Entry points
-gulp.task('build-client', gulpSequence('transpile-client', 'index-client'))
-gulp.task('build-server', gulpSequence('transpile-server', 'index-server'))
-gulp.task('build', [ 'build-client', 'build-server' ])
+gulp.task('build-cli-client', gulpSequence('transpile-cli-client', 'index-cli-client'))
+gulp.task('build-cli-server', gulpSequence('transpile-cli-server', 'index-cli-server'))
+gulp.task('build', [ 'build-cli-client', 'build-cli-server' ])

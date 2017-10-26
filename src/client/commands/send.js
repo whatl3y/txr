@@ -9,7 +9,7 @@ import config from '../../config'
 const access  = promisify(fs.access)
 const lstat   = promisify(fs.lstat)
 
-export default async function send({ file, user }) {
+export default async function send({ file, user, host }) {
   const filePathToSend  = file
   const userToSend      = user
 
@@ -36,7 +36,7 @@ export default async function send({ file, user }) {
   if (!isFile)
     return Vomit.error(`The path specified is not a file. Only files are available to send:\n${filePathToSend}\n`)
 
-  const socket            = io.connect(config.server.host)
+  const socket            = io.connect(host || config.server.host)
   const stream            = ss.createStream()
   const filename          = path.basename(filePathToSend)
   const dataForFileToSend = { filename: filename, filesizebytes: fileSize, user: userToSend }
@@ -46,14 +46,14 @@ export default async function send({ file, user }) {
   socket.on('file-permission-granted',  () => ss(socket).emit('upload', stream, dataForFileToSend))
   socket.on('file-permission-waiting',  () => Vomit.success(`Waiting for user to grant or reject receiving the file.`))
   socket.on('file-permission-denied',   () => { Vomit.error(`User did not grant permission to send file.`); process.exit() })
-  socket.on('finished-uploading',       () => { Vomit.success(`Your file has been sent!`); process.exit() })
+  socket.on('finished-uploading',       () => { Vomit.success(`Your file has successfully sent to ${userToSend}!`); process.exit() })
   socket.on('disconnect',               () => { Vomit.error(`You were disconnected from the server.`); process.exit() })
 
   const fileHandoffReadStream = fs.createReadStream(filePathToSend)
   let numTimes = 1
 
   fileHandoffReadStream.on('data', chunk => { Vomit.success(`${numTimes}. Sent ${chunk.length} bytes of data.`); numTimes++; })
-  fileHandoffReadStream.on('end', () => Vomit.success('Completed sending file!\n'))
+  fileHandoffReadStream.on('end', () => Vomit.success('All bytes have been sent to the server!\n'))
 
   fileHandoffReadStream.pipe(stream)
 }

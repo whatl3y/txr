@@ -2,6 +2,7 @@
   "name": "txr",
   "version": "0.1.7",
   "description": "Transfer files easily to and from team members through web sockets.",
+  "main": "dist",
   "engines": {
     "node": ">= 4.0.0"
   },
