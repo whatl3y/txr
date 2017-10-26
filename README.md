@@ -1,15 +1,19 @@
 # txr
 
-## Transfer Files Hilariously Easily to others streaming through Web Sockets
+## Transfer Files/Directories to others hilariously easily streaming through Web Sockets
 
-txr is a CLI utility that provides a quick and simple way to send files from one
-machine to another (i.e. to team members, remote machines, servers, family, etc.)
+txr is a CLI utility that provides a quick and simple way to send files or directories
+from one machine to another (i.e. to team members, remote machines, servers, family, etc.)
 as long as both machines can connect to a txr-server (either locally or on the internet)
 and have a txr client installed and running. This package contains a
 server and two client components. The server and clients communicate with each other
-through web sockets to stream files back and forth between clients. Files are
+through web sockets to stream files or directories back and forth between clients. Files are
 **never** stored anywhere on the server, as it simply acts as a proxy between
 listening and sending clients.
+
+- If sending a file, it's streamed to the listening client through fs.createReadStream
+- If sending a directory, the entire directory is zipped up on the sender's machine,
+then the output zipped buffer is sent to the listening client
 
 ## How does txr ("transfer") work?
 
@@ -20,7 +24,7 @@ listening and sending clients.
 
 1. A "listener", who registers a desired username with the server and waits
 for anyone who wants to send files to him/her.
-2. A "sender", who can send files from his/her local machine to a listener
+2. A "sender", who can send files/directories from his/her local machine to a listener
 based on the listener's username they registered with.
 
 ## Install & Setup
@@ -94,19 +98,20 @@ txr listen -u yourUniqueUsername -h http://localhost:8000
 
 ##### Parameters
 
-1. Required: -f/--file: The full path of the file you're sending to a "listener"
+1. Required: -f/--file or -d/--dir: The full path of the file or directory you're sending to a "listener"
 2. Required: -u/--user: The "listener" client's username you're sending a file to.
 3. Optional: -h/--host: If present, this will override the TXR_HOST config
 that points to the server you'll connect to.
 
 ```
-txr send -u yourFriendsUniqueUsername -f /local/path/to/file
-txr send -u yourFriendsUniqueUsername -f /local/path/to/file -h http://localhost:8000
+txr send -u yourFriendsUniqueUsername -f /local/path/to/file/or/dir
+txr send -u yourFriendsUniqueUsername -d /local/path/to/file/or/dir
+txr send -u yourFriendsUniqueUsername -f /local/path/to/file/or/dir -h http://localhost:8000
 ```
 
 ## Development
 
-### Build bin files
+### Build dist files
 
 ```
 gulp build

@@ -7,7 +7,7 @@ const [ first, second, third ] = argv._
 
 ;(async function go() {
   const command = argv.c || argv.command || first
-  const file    = argv.f || argv.file || second
+  const file    = argv.f || argv.file || argv.d || argv.dir || second
   const user    = argv.u || argv.username || third || second
   const auth    = argv.a || argv.auth
   const host    = argv.h || argv.host

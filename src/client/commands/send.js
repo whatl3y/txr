@@ -3,11 +3,14 @@ import path from 'path'
 import promisify from 'es6-promisify'
 import io from 'socket.io-client'
 import ss from 'socket.io-stream'
+import streamifier from 'streamifier'
+import zd from 'zip-dir'
 import Vomit from '../../libs/Vomit'
 import config from '../../config'
 
 const access  = promisify(fs.access)
 const lstat   = promisify(fs.lstat)
+const zipdir  = promisify(zd)
 
 export default async function send({ file, user, host }) {
   const filePathToSend  = file
@@ -28,17 +31,27 @@ export default async function send({ file, user, host }) {
     }
   })(filePathToSend)
   if (!fileExists)
-    return Vomit.error(`We couldn't find a file located in the following location:\n${filePathToSend}\n`)
+    return Vomit.error(`We couldn't find a file or directory located in the following location:\n${filePathToSend}\n`)
 
   const fileStats = await lstat(filePathToSend)
+  const isDir     = fileStats.isDirectory()
   const isFile    = fileStats.isFile()
   const fileSize  = fileStats.size
-  if (!isFile)
-    return Vomit.error(`The path specified is not a file. Only files are available to send:\n${filePathToSend}\n`)
+
+  let finalFilePathOrBuffer, finalFilename
+  if (isDir) {
+    finalFilePathOrBuffer = await zipdir(filePathToSend)
+    finalFilename         = `${filePathToSend}.zip`
+  } else if (!isFile) {
+    return Vomit.error(`The path specified is not a file or directory. The specified path needs to be a file or directory.\n${filePathToSend}\n`)
+  } else {
+    finalFilePathOrBuffer = filePathToSend
+    finalFilename         = filePathToSend
+  }
 
   const socket            = io.connect(host || config.server.host)
   const stream            = ss.createStream()
-  const filename          = path.basename(filePathToSend)
+  const filename          = path.basename(finalFilename)
   const dataForFileToSend = { filename: filename, filesizebytes: fileSize, user: userToSend }
 
   socket.emit('send-file-check-auth', dataForFileToSend)
@@ -50,11 +63,13 @@ export default async function send({ file, user, host }) {
   socket.on('finished-uploading',       () => { Vomit.success(`Your file has successfully sent to ${userToSend}!`); process.exit() })
   socket.on('disconnect',               () => { Vomit.error(`You were disconnected from the server.`); process.exit() })
 
-  const txrReadStream = fs.createReadStream(filePathToSend)
+  const txrReadStream = (finalFilePathOrBuffer instanceof Buffer)
+    ? streamifier.createReadStream(finalFilePathOrBuffer)
+    : fs.createReadStream(finalFilePathOrBuffer)
   let numTimes = 1
 
   txrReadStream.on('data', chunk => { Vomit.success(`${numTimes}. Got ${chunk.length} bytes of data from the file.`); numTimes++; })
-  txrReadStream.on('end', () => Vomit.success(`All bytes have been read from file: ${filePathToSend}.`))
+  txrReadStream.on('end', () => Vomit.success(`All bytes have been read from file: ${finalFilename}.`))
 
   txrReadStream.pipe(stream)
 }

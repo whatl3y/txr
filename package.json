@@ -46,7 +46,9 @@
     "socket.io": "^2.0.4",
     "socket.io-client": "^2.0.4",
     "socket.io-stream": "^0.9.1",
-    "webpack-stream": "^4.0.0"
+    "streamifier": "^0.1.1",
+    "webpack-stream": "^4.0.0",
+    "zip-dir": "^1.0.2"
   },
   "author": "Lance Whatley",
   "license": "MIT"
