@@ -1,6 +1,6 @@
 {
   "name": "txr",
-  "version": "0.1.8",
+  "version": "0.1.9",
   "description": "Transfer files easily to and from team members through web sockets.",
   "main": "dist",
   "engines": {
