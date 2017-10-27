@@ -42,11 +42,11 @@ export default async function send({ file, user, host }) {
   if (isDir) {
     finalFilePathOrBuffer = await zipdir(filePathToSend)
     finalFilename         = `${filePathToSend}.zip`
-  } else if (!isFile) {
-    return Vomit.error(`The path specified is not a file or directory. The specified path needs to be a file or directory.\n${filePathToSend}\n`)
-  } else {
+  } else if (isFile) {
     finalFilePathOrBuffer = filePathToSend
     finalFilename         = filePathToSend
+  } else {
+    return Vomit.error(`The path specified is not a file or directory. The specified path needs to be a file or directory.\n${filePathToSend}\n`)
   }
 
   const socket            = io.connect(host || config.server.host)
