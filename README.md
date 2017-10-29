@@ -1,7 +1,5 @@
 # txr
 
-![Easily setup a server and 2 clients!](https://user-images.githubusercontent.com/13718950/32149608-89e29732-bcdd-11e7-96cf-ee9fbb1aeca8.gif)
-
 ## Transfer Files/Directories to others hilariously easily streaming through Web Sockets
 
 txr is a CLI utility that provides a quick and simple way to send files or directories
@@ -16,6 +14,8 @@ listening and sending clients.
 - If sending a file, it's streamed to the listening client through fs.createReadStream
 - If sending a directory, the entire directory is zipped up on the sender's machine,
 then the output zipped file is streamed to the listening client
+
+![Easily setup a server and 2 clients!](https://user-images.githubusercontent.com/13718950/32149608-89e29732-bcdd-11e7-96cf-ee9fbb1aeca8.gif)
 
 ## How does txr ("transfer") work?
 
