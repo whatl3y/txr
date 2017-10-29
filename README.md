@@ -1,5 +1,7 @@
 # txr
 
+![Easily setup a server and 2 clients!][https://user-images.githubusercontent.com/13718950/32149608-89e29732-bcdd-11e7-96cf-ee9fbb1aeca8.gif]
+
 ## Transfer Files/Directories to others hilariously easily streaming through Web Sockets
 
 txr is a CLI utility that provides a quick and simple way to send files or directories
