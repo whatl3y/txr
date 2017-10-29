@@ -13,7 +13,7 @@ listening and sending clients.
 
 - If sending a file, it's streamed to the listening client through fs.createReadStream
 - If sending a directory, the entire directory is zipped up on the sender's machine,
-then the output zipped buffer is sent to the listening client
+then the output zipped file is streamed to the listening client
 
 ## How does txr ("transfer") work?
 
@@ -71,7 +71,7 @@ The following are environment variables you can configure to
 customize your clients:
 
 1. TXR_HOST: The full URL (including protocol and port) of the txr-server
-you are connecting to. DEFAULT: http://txr.herokuapp.com
+you are connecting to. DEFAULT: wss://txr.herokuapp.com
 2. TXR_PATH: For "listener" clients, this is the path to a directory
 where files you receive will be delivered to.
 DEFAULT: $HOME-unix/linux, $USERPROFILE-windows

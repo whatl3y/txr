@@ -3,14 +3,16 @@ import path from 'path'
 import promisify from 'es6-promisify'
 import io from 'socket.io-client'
 import ss from 'socket.io-stream'
-import streamifier from 'streamifier'
 import zd from 'zip-dir'
+import FileHelpers from '../../libs/FileHelpers'
 import Vomit from '../../libs/Vomit'
 import config from '../../config'
 
-const access  = promisify(fs.access)
-const lstat   = promisify(fs.lstat)
-const zipdir  = promisify(zd)
+const access    = promisify(fs.access)
+const lstat     = promisify(fs.lstat)
+const delFile   = promisify(fs.unlink)
+const writeFile = promisify(fs.writeFile)
+const zipdir    = promisify(zd)
 
 export default async function send({ file, user, host }) {
   const filePathToSend  = file
@@ -38,10 +40,12 @@ export default async function send({ file, user, host }) {
   const isFile    = fileStats.isFile()
   const fileSize  = fileStats.size
 
-  let finalFilePathOrBuffer, finalFilename
+  let finalFilePathOrBuffer, finalFilename, deleteFileAfterSend
   if (isDir) {
+    Vomit.success(`We are zipping and sending the directory: ${filePathToSend}. This may take some time depending on how large the directory is...`)
     finalFilePathOrBuffer = await zipdir(filePathToSend)
-    finalFilename         = `${filePathToSend}.zip`
+    finalFilename         = FileHelpers.getFileName(`${filePathToSend}.zip`)
+    deleteFileAfterSend   = true
   } else if (isFile) {
     finalFilePathOrBuffer = filePathToSend
     finalFilename         = filePathToSend
@@ -55,21 +59,31 @@ export default async function send({ file, user, host }) {
   const dataForFileToSend = { filename: filename, filesizebytes: fileSize, user: userToSend }
 
   socket.emit('send-file-check-auth', dataForFileToSend)
-  socket.on('no-user',                  obj => { Vomit.error(`No user registered with username: ${obj.user}`); process.exit() })
+  socket.on('no-user',                  obj => { exitGracefully(() => Vomit.error(`No user registered with username: ${obj.user}`)) })
   socket.on('file-permission-granted',  () => ss(socket).emit('upload', stream, dataForFileToSend))
   socket.on('file-permission-waiting',  () => Vomit.success(`Waiting for user to grant or reject receiving the file.`))
-  socket.on('file-permission-denied',   () => { Vomit.error(`User did not grant permission to send file.`); process.exit() })
-  socket.on('file-data-hash-mismatch',  () => { Vomit.error(`We can't validate the file you're sending.`); process.exit() })
-  socket.on('finished-uploading',       () => { Vomit.success(`Your file has successfully sent to ${userToSend}!`); process.exit() })
-  socket.on('disconnect',               () => { Vomit.error(`You were disconnected from the server.`); process.exit() })
+  socket.on('file-permission-denied',   () => { exitGracefully(() => Vomit.error(`User did not grant permission to send file.`)) })
+  socket.on('file-data-hash-mismatch',  () => { exitGracefully(() => Vomit.error(`We can't validate the file you're sending.`)) })
+  socket.on('finished-uploading',       () => { exitGracefully(() => Vomit.success(`Your file has successfully sent to ${userToSend}!`)) })
+  socket.on('disconnect',               () => { exitGracefully(() => Vomit.error(`You were disconnected from the server.`)) })
 
-  const txrReadStream = (finalFilePathOrBuffer instanceof Buffer)
-    ? streamifier.createReadStream(finalFilePathOrBuffer)
-    : fs.createReadStream(finalFilePathOrBuffer)
-  let numTimes = 1
+  if (finalFilePathOrBuffer instanceof Buffer) {    // directory was zipped to a buffer
+    await writeFile(finalFilename, finalFilePathOrBuffer)
+  }
 
-  txrReadStream.on('data', chunk => { Vomit.success(`${numTimes}. Got ${chunk.length} bytes of data from the file.`); numTimes++; })
-  txrReadStream.on('end', () => Vomit.success(`All bytes have been read from file: ${finalFilename}.`))
+  const txrReadStream = fs.createReadStream(finalFilename)
+  let bytesTracker = 0
+
+  txrReadStream.on('data', chunk => { bytesTracker = bytesTracker + chunk.length; Vomit.progress('.') })
+  txrReadStream.on('end', () => Vomit.success(`\nAll bytes have been read from file: ${finalFilename}.`))
 
   txrReadStream.pipe(stream)
+
+  async function exitGracefully(callback=()=>{}) {
+    if (deleteFileAfterSend)
+      await delFile(finalFilename)
+
+    callback()
+    process.exit()
+  }
 }

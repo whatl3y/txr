@@ -32,16 +32,17 @@ export default async function listen({ file, user, auth, host }) {
   socket.on('disconnect', () => { Vomit.error(`You were disconnected from the server.`); process.exit() })
 
   ss(socket).on('file', function(stream, data={}) {
+    Vomit.success(`Starting to receive file with data: ${JSON.stringify(data)}`)
     const newFileName     = FileHelpers.getFileName(data.filename || "txr.file")
     const targetFilePath  = path.join(config.filepath, path.basename(newFileName))
     const writeStream     = fs.createWriteStream(targetFilePath)
 
-    let numTimes = 1
+    let bytesTracker = 0
 
-    stream.on('data', chunk => { Vomit.success(`${numTimes}. Received ${chunk.length} bytes of data.`); numTimes++ })
-    stream.on('error', err => Vomit.error(`Error reading stream: ${err.toString()}`))
+    stream.on('data', chunk => { bytesTracker = bytesTracker + chunk.length; Vomit.progress('.') })
+    stream.on('error', err => Vomit.error(`\nError reading stream: ${err.toString()}`))
     stream.on('end', () => {
-      Vomit.success(`Finished receiving file with data: ${JSON.stringify(data)}`)
+      Vomit.success(`\nFinished receiving file with data: ${JSON.stringify(data)}`)
       Vomit.success(`Target file path: ${targetFilePath}`)
     })
 
