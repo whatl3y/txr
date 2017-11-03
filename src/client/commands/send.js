@@ -38,7 +38,7 @@ export default async function send({ file, user, host }) {
   const fileStats = await lstat(filePathToSend)
   const isDir     = fileStats.isDirectory()
   const isFile    = fileStats.isFile()
-  const fileSize  = fileStats.size
+  let fileSize    = fileStats.size
 
   let finalFilePathOrBuffer, finalFilename, deleteFileAfterSend
   if (isDir) {
@@ -46,6 +46,7 @@ export default async function send({ file, user, host }) {
     finalFilePathOrBuffer = await zipdir(filePathToSend)
     finalFilename         = FileHelpers.getFileName(`${filePathToSend}.zip`)
     deleteFileAfterSend   = true
+    fileSize              = `${fileSize} (directory)`
   } else if (isFile) {
     finalFilePathOrBuffer = filePathToSend
     finalFilename         = filePathToSend
@@ -59,13 +60,13 @@ export default async function send({ file, user, host }) {
   const dataForFileToSend = { filename: filename, filesizebytes: fileSize, user: userToSend }
 
   socket.emit('send-file-check-auth', dataForFileToSend)
-  socket.on('no-user',                  obj => { exitGracefully(() => Vomit.error(`No user registered with username: ${obj.user}`)) })
+  socket.on('no-user',                  obj => exitGracefully(() => Vomit.error(`No user registered with username: ${obj.user}`)))
   socket.on('file-permission-granted',  () => ss(socket).emit('upload', stream, dataForFileToSend))
   socket.on('file-permission-waiting',  () => Vomit.success(`Waiting for user to grant or reject receiving the file.`))
-  socket.on('file-permission-denied',   () => { exitGracefully(() => Vomit.error(`User did not grant permission to send file.`)) })
-  socket.on('file-data-hash-mismatch',  () => { exitGracefully(() => Vomit.error(`We can't validate the file you're sending.`)) })
-  socket.on('finished-uploading',       () => { exitGracefully(() => Vomit.success(`Your file has successfully sent to ${userToSend}!`)) })
-  socket.on('disconnect',               () => { exitGracefully(() => Vomit.error(`You were disconnected from the server.`)) })
+  socket.on('file-permission-denied',   () => exitGracefully(() => Vomit.error(`User did not grant permission to send file.`)))
+  socket.on('file-data-hash-mismatch',  () => exitGracefully(() => Vomit.error(`We can't validate the file you're sending.`)))
+  socket.on('finished-uploading',       () => exitGracefully(() => Vomit.success(`Your file has successfully sent to ${userToSend}!`)))
+  socket.on('disconnect',               () => exitGracefully(() => Vomit.error(`You were disconnected from the server.`)))
 
   if (finalFilePathOrBuffer instanceof Buffer) {    // directory was zipped to a buffer
     await writeFile(finalFilename, finalFilePathOrBuffer)
