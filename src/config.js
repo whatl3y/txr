@@ -4,7 +4,7 @@ export default {
   server: {
     port:     process.env.PORT || 8000,
     web_conc: process.env.WEB_CONCURRENCY || 1,
-    host:     process.env.TXR_HOST || "wss://txr.herokuapp.com"
+    host:     process.env.TXR_HOST || "https://txr.euphoritech.com"
   },
 
   logger: {
