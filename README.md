@@ -34,12 +34,12 @@ npm install -g txr
 ## Server
 
 As of today, there is a Heroku hobby dyno that has a server waiting for
-client connections. If you install this package you can start a listening client
-with that server without doing anything else other than running the
-client "listener" command below. If you want to run a txr-server separately
-than the Heroku dyno, follow instructions below and be sure the
-point the TXR_HOST environment variable (or -h/--host parameter) of your clients
-to the appropriate endpoint.
+client connections (https://txr.euphoritech.com). If you install this
+package you can start a listening client with that server without doing
+anything else other than running the client "listener" command below.
+If you want to run a txr-server separately than the Heroku dyno,
+follow instructions below and be sure the point the TXR_HOST environment
+variable (or -h/--host parameter) of your clients to the appropriate endpoint.
 
 ### Config
 
@@ -69,7 +69,7 @@ The following are environment variables you can configure to
 customize your clients:
 
 1. TXR_HOST: The full URL (including protocol and port) of the txr-server
-you are connecting to. DEFAULT: wss://txr.herokuapp.com
+you are connecting to. DEFAULT: https://txr.euphoritech.com
 2. TXR_PATH: For "listener" clients, this is the path to a directory
 where files you receive will be delivered to.
 DEFAULT: process.env.HOME - unix/linux, process.env.USERPROFILE - windows

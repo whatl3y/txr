@@ -26,10 +26,10 @@ export default {
     process.stdout.write(progressString)
   },
 
-  wrapInNewlines(functionToWriteMoreOutput=NOOP, howMany=1) {
+  wrapInNewlines(functionToWriteMoreOutput=NOOP, howMany=0) {
     const newlineString = (howMany-1 > 0) ? new Array(howMany-1).fill('\n').join('') : ''
-    // if (howMany > 0) console.log(newlineString)
+    if (howMany > 0) console.log(newlineString)
     functionToWriteMoreOutput()
-    // if (howMany > 0) console.log(newlineString)
+    if (howMany > 0) console.log(newlineString)
   }
 }
