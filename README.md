@@ -25,10 +25,10 @@ for anyone who wants to send files to him/her.
 2. A "sender", who can send files or directories from his/her local machine
 to a listener based on the listener's username they registered with.
 
-## Install & Setup
+## Install
 
-```
-npm install -g txr
+```bash
+$ npm install -g txr
 ```
 
 ## Server
@@ -56,9 +56,9 @@ that determines what port for the server to listen on.
 
 ### Start server
 
-```
-txr-server
-txr-server -p 3000
+```bash
+$ txr-server
+$ txr-server -p 3000
 ```
 
 ## Clients
@@ -86,11 +86,11 @@ attempted to be sent to you before they'll be sent.
 3. Optional: -h/--host: If present, this will override the TXR_HOST config
 that points to the server you'll connect to.
 
-```
-txr listen -u yourUniqueUsername
-txr listen -u yourUniqueUsername -a
-txr listen -u yourUniqueUsername -h http://localhost:8000
-txr listen -u yourUniqueUsername -h ws://localhost:8000
+```bash
+$ txr listen -u yourUniqueUsername
+$ txr listen -u yourUniqueUsername -a
+$ txr listen -u yourUniqueUsername -h http://localhost:8000
+$ txr listen -u yourUniqueUsername -h ws://localhost:8000
 ```
 
 #### "sender": send a file to someone listening for files to be sent to them
@@ -102,17 +102,17 @@ txr listen -u yourUniqueUsername -h ws://localhost:8000
 3. Optional: -h/--host: If present, this will override the TXR_HOST config
 that points to the server you'll connect to.
 
-```
-txr send -u yourFriendsUniqueUsername -f /local/path/to/file/or/dir
-txr send -u yourFriendsUniqueUsername -d /local/path/to/file/or/dir
-txr send -u yourFriendsUniqueUsername -f /local/path/to/file/or/dir -h http://localhost:8000
-txr send -u yourFriendsUniqueUsername -f /local/path/to/file/or/dir -h ws://localhost:8000
+```bash
+$ txr send -u yourFriendsUniqueUsername -f /local/path/to/file/or/dir
+$ txr send -u yourFriendsUniqueUsername -d /local/path/to/file/or/dir
+$ txr send -u yourFriendsUniqueUsername -f /local/path/to/file/or/dir -h http://localhost:8000
+$ txr send -u yourFriendsUniqueUsername -f /local/path/to/file/or/dir -h ws://localhost:8000
 ```
 
 ## Development
 
 ### Build dist files
 
-```
-gulp build
+```bash
+$ gulp build
 ```

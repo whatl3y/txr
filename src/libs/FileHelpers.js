@@ -1,8 +1,20 @@
 import fs from 'fs'
-import md from 'markdown'
+import hljs from 'highlight.js'
+import MarkdownIt from 'markdown-it'
 import promisify from 'es6-promisify'
 
-const markdown  = md.markdown
+const markdown  = new MarkdownIt({
+  highlight: function (str, lang) {
+    if (lang && hljs.getLanguage(lang)) {
+      try {
+        return `<pre class="hljs"><code>${hljs.highlight(lang, str, true).value}</code></pre>`
+      } catch (__) {}
+    }
+
+    return ''; // use external default escaping
+  }
+})
+
 const readFile  = promisify(fs.readFile)
 
 export default {
@@ -15,7 +27,7 @@ export default {
   expressjs: {
     async convertReadmeToHtml(res) {
       const mdRaw   = await readFile('README.md', 'utf8')
-      const mdHtml  = markdown.toHTML(mdRaw)
+      const mdHtml  = markdown.render(mdRaw)
       return res.send(this.createHtmlPage(mdHtml))
     },
 
@@ -36,10 +48,11 @@ export default {
                 color: inherit;
               }
 
-              code {
+              pre.hljs {
                 border-radius: 5px;
                 border: 1px solid #a0a0a0;
                 background: #f5f5f5;
+                overflow-x: scroll;
                 padding: 5px;
               }
 
