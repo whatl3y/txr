@@ -3,7 +3,7 @@ var nodeExternals = require('webpack-node-externals')
 module.exports = baseWebpackConfig
 
 function baseWebpackConfig(clientOrServer) {
-  let entryPoint, filename
+  var entryPoint, filename
   if (clientOrServer == 'server') {
     entryPoint = './src/server/index.js'
     filename = 'txr-server.js'
@@ -13,19 +13,16 @@ function baseWebpackConfig(clientOrServer) {
   }
 
   return {
-    entry: ['babel-polyfill', entryPoint],
+    entry: [ 'babel-polyfill', entryPoint ],
     target: 'node',
     output: {
       filename: filename,
     },
-    externals: [nodeExternals()],
+    externals: [ nodeExternals() ],
     module: {
       loaders: [{
         test: /^.+\.js$/,
-        loader: 'babel-loader',
-        options: {
-          presets: ['es2015']
-        }
+        loader: 'babel-loader'
       }]
     }
   }
