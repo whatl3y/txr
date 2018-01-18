@@ -3,7 +3,7 @@ var nodeExternals = require('webpack-node-externals')
 module.exports = baseWebpackConfig
 
 function baseWebpackConfig(clientOrServer) {
-  let entryPoint, filename
+  var entryPoint, filename
   if (clientOrServer == 'server') {
     entryPoint = './src/server/index.js'
     filename = 'txr-server.js'
