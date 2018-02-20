@@ -1,6 +1,37 @@
 # txr
 
-## Transfer Files/Directories to others hilariously easily
+Painlessly stream files from one machine to another by simply registering a
+username with a txr-server and sending the files to that listening client.
+
+## Install
+
+```
+$ npm install -g txr
+```
+
+## Quick Start
+
+### Setup listening client
+
+```
+$ # Connect to https://txr.euphoritech.com to listen for files sent to your username
+$ txr listen -u myname123
+Successfully registered name: myname123. You are now listening for files.
+```
+
+### Send a file to your listening client
+
+```
+$ # Connect to https://txr.euphoritech.com to send the specified file to your listening client's username
+$ txr send -u myname123 -f /path/to/file/to/send
+........
+All bytes have been read from file: /path/to/file/to/send.
+Your file has successfully sent to myname123!
+```
+
+## What is txr ("transfer")?
+
+### Transfer files/directories to other machines hilariously easily
 
 txr is a CLI utility that provides an easy way to transfer files or directories
 from one machine to another (i.e. team members, servers, remote machines, etc.)
@@ -13,7 +44,7 @@ listening and sending clients.
 
 ![Easily setup a server and 2 clients!](https://user-images.githubusercontent.com/13718950/32149608-89e29732-bcdd-11e7-96cf-ee9fbb1aeca8.gif)
 
-## How does txr ("transfer") work?
+## How does txr work?
 
 **Server**: the server listens for clients to connect and manages registering
 "listener" clients based on a provided username.
@@ -24,12 +55,6 @@ listening and sending clients.
 for anyone who wants to send files to him/her.
 2. A "sender", who can send files or directories from his/her local machine
 to a listener based on the listener's username they registered with.
-
-## Install
-
-```bash
-$ npm install -g txr
-```
 
 ## Server
 
@@ -56,7 +81,7 @@ that determines what port for the server to listen on.
 
 ### Start server
 
-```bash
+```
 $ txr-server
 $ txr-server -p 3000
 ```
@@ -86,7 +111,7 @@ attempted to be sent to you before they'll be sent.
 3. Optional: -h/--host: If present, this will override the TXR_HOST config
 that points to the server you'll connect to.
 
-```bash
+```
 $ txr listen -u yourUniqueUsername
 $ txr listen -u yourUniqueUsername -a
 $ txr listen -u yourUniqueUsername -h http://localhost:8000
@@ -102,7 +127,7 @@ $ txr listen -u yourUniqueUsername -h ws://localhost:8000
 3. Optional: -h/--host: If present, this will override the TXR_HOST config
 that points to the server you'll connect to.
 
-```bash
+```
 $ txr send -u yourFriendsUniqueUsername -f /local/path/to/file/or/dir
 $ txr send -u yourFriendsUniqueUsername -d /local/path/to/file/or/dir
 $ txr send -u yourFriendsUniqueUsername -f /local/path/to/file/or/dir -h http://localhost:8000
@@ -113,6 +138,6 @@ $ txr send -u yourFriendsUniqueUsername -f /local/path/to/file/or/dir -h ws://lo
 
 ### Build dist files
 
-```bash
+```
 $ gulp build
 ```

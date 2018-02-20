@@ -77,8 +77,8 @@ export default {
             <div class="container">
               <div class="notice">
                 You navigated to a txr server to transfer files easily to and
-                from other machines. Learn more below or by visiting
-                <a href="https://www.npmjs.com/package/txr">https://www.npmjs.com/package/txr</a>
+                from machines/servers. Learn more below or by visiting
+                <a href="https://github.com/whatl3y/txr">https://github.com/whatl3y/txr</a>
               </div>
               ${bodyHtml}
             </div>
