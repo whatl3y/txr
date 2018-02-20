@@ -5,7 +5,7 @@ username with a txr-server and sending the files to that listening client.
 
 ## Install
 
-```
+```bash
 $ npm install -g txr
 ```
 
@@ -13,7 +13,7 @@ $ npm install -g txr
 
 ### Setup listening client
 
-```
+```bash
 $ # Connect to https://txr.euphoritech.com to listen for files sent to your username
 $ txr listen -u myname123
 Successfully registered name: myname123. You are now listening for files.
@@ -21,7 +21,7 @@ Successfully registered name: myname123. You are now listening for files.
 
 ### Send a file to your listening client
 
-```
+```bash
 $ # Connect to https://txr.euphoritech.com to send the specified file to your listening client's username
 $ txr send -u myname123 -f /path/to/file/to/send
 ........
@@ -81,7 +81,7 @@ that determines what port for the server to listen on.
 
 ### Start server
 
-```
+```bash
 $ txr-server
 $ txr-server -p 3000
 ```
@@ -111,7 +111,7 @@ attempted to be sent to you before they'll be sent.
 3. Optional: -h/--host: If present, this will override the TXR_HOST config
 that points to the server you'll connect to.
 
-```
+```bash
 $ txr listen -u yourUniqueUsername
 $ txr listen -u yourUniqueUsername -a
 $ txr listen -u yourUniqueUsername -h http://localhost:8000
@@ -127,7 +127,7 @@ $ txr listen -u yourUniqueUsername -h ws://localhost:8000
 3. Optional: -h/--host: If present, this will override the TXR_HOST config
 that points to the server you'll connect to.
 
-```
+```bash
 $ txr send -u yourFriendsUniqueUsername -f /local/path/to/file/or/dir
 $ txr send -u yourFriendsUniqueUsername -d /local/path/to/file/or/dir
 $ txr send -u yourFriendsUniqueUsername -f /local/path/to/file/or/dir -h http://localhost:8000
@@ -138,6 +138,6 @@ $ txr send -u yourFriendsUniqueUsername -f /local/path/to/file/or/dir -h ws://lo
 
 ### Build dist files
 
-```
+```bash
 $ gulp build
 ```
