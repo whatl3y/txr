@@ -14,7 +14,7 @@
     "client": "node dist/txr-client",
     "server": "node dist/txr-server",
     "start": "npm run server",
-    "test": "mocha --compilers js:babel-core/register --recursive './src/**/*.spec.js'"
+    "test": "mocha --require babel-core/register --recursive './src/**/*.spec.js'"
   },
   "bin": {
     "txr": "./dist/txr-client.js",
@@ -30,7 +30,6 @@
     "gulp-plumber": "^1.1.0",
     "gulp-sequence": "^0.4.6",
     "gulp-uglify": "^3.0.0",
-    "mocha": "^3.1.1",
     "webpack-node-externals": "^1.6.0"
   },
   "dependencies": {
@@ -43,6 +42,7 @@
     "highlight.js": "^9.12.0",
     "markdown-it": "^8.4.0",
     "minimist": "^1.2.0",
+    "mocha": "^5.2.0",
     "socket.io": "^2.0.4",
     "socket.io-client": "^2.0.4",
     "socket.io-stream": "^0.9.1",
