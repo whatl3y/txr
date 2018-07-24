@@ -1,12 +1,12 @@
 # txr
 
-Painlessly stream files from one machine to another by simply registering a
+Painlessly stream files from one client to another by simply registering a
 username with a txr-server and sending the files to that listening client.
 
 ## Install
 
 ```bash
-$ npm install -g txr
+$ npm install -g node-txr
 ```
 
 ## Quick Start

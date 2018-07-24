@@ -4,19 +4,16 @@ import config from '../../config'
 
 const NOOP = () => {}
 
-export default async function listen({ client, file, user, auth, host }) {
+export default async function chat({ client, user, targetUser, host }) {
   const socket    = io.connect(host || config.server.host)
-  const clientObj = client({ socket, socketStream, file, user, auth, host })
+  const clientObj = client({ socket, user, targetUser, host })
 
   if (!user)
     return clientObj.reject(`Make sure you pass a user (-u or --username) to listen for files that could be sent to you.\n`)
 
-  socket.emit('regiser-listen', { user, auth })
+  socket.emit('regiser-listen', { user })
 
-  const listenersRoot   = clientObj.listen
+  const listenersRoot   = clientObj.chat
   const normalListeners = listenersRoot.normal
-  const streamListeners = listenersRoot.stream
-
   Object.keys(normalListeners).forEach(listener => socket.on(listener, normalListeners[listener].bind(listenersRoot)))
-  Object.keys(streamListeners).forEach(listener => socketStream(socket).on(listener, streamListeners[listener].bind(listenersRoot)))
 }

@@ -26,6 +26,10 @@ export default {
     process.stdout.write(progressString)
   },
 
+  chatMessage(string) {
+    this.wrapInNewlines(() => console.log(string.cyan))
+  },
+
   wrapInNewlines(functionToWriteMoreOutput=NOOP, howMany=0) {
     const newlineString = (howMany-1 > 0) ? new Array(howMany-1).fill('\n').join('') : ''
     if (howMany > 0) console.log(newlineString)

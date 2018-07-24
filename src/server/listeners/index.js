@@ -51,6 +51,24 @@ export default function listeners(io, socket, socketApp) {
         }
       },
 
+      'send-chat-message': function({ targetUser, user, message }) {
+        const destinationSocketId = socketApp['names'][targetUser]
+        if (!destinationSocketId)
+          return socket.emit('destination-user-not-registered', targetUser)
+
+        const destinationSocket = io.sockets.connected[destinationSocketId]
+        destinationSocket.emit('receive-chat-message', { targetUser: user, message })
+      },
+
+      'reply-to-chat-message': function({ user, replyMessage }) {
+        const replyingUserName    = socketApp['ids'][socket.id]
+        const destinationSocketId = socketApp['names'][user]
+        if (destinationSocketId) {
+          const destinationSocket = io.sockets.connected[destinationSocketId]
+          destinationSocket.emit('receive-reply', { user: replyingUserName, replyMessage })
+        }
+      },
+
       'disconnect': function() {
         log.info(`socket disconnected: ${socket.id}`)
         const name = socketApp['ids'][socket.id]

@@ -4,7 +4,7 @@ import minimist from 'minimist'
 import http from 'http'
 import express from 'express'
 import socket_io from 'socket.io'
-import ss from 'socket.io-stream'
+import socketStream from 'socket.io-stream'
 import bunyan from 'bunyan'
 import listeners from './listeners'
 import socketApp from './socketApp.js'
@@ -26,7 +26,7 @@ httpServer.listen(port, () => log.info(`server listening on *: ${port}`))
 io.on('connection', function(socket) {
   log.info(`got socket: ${socket.id}`)
 
-  const ssSocket  = ss(socket)
+  const ssSocket  = socketStream(socket)
   const list      = listeners(io, socket, socketApp)
 
   Object.keys(list.normal).forEach(key => socket.on(key, list.normal[key]))
