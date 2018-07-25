@@ -5,10 +5,10 @@ module.exports = baseWebpackConfig
 function baseWebpackConfig(clientOrServer) {
   var entryPoint, filename
   if (clientOrServer == 'server') {
-    entryPoint = './src/server/index.js'
+    entryPoint = './src/bin/server.js'
     filename = 'txr-server.js'
   } else {
-    entryPoint = './src/client/index.js'
+    entryPoint = './src/bin/client-cli.js'
     filename = 'txr-client.js'
   }
 

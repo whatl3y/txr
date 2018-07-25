@@ -2,16 +2,16 @@ import io from 'socket.io-client'
 import socketStream from 'socket.io-stream'
 import config from '../../config'
 
-const NOOP = () => {}
-
-export default async function chat({ client, user, targetUser, host }) {
+export default async function chat({ client, user, targetUser, host, reject, resolve }) {
   const socket    = io.connect(host || config.server.host)
-  const clientObj = client({ socket, user, targetUser, host })
+  const clientObj = client({ socket, user, targetUser, host, reject, resolve })
 
   if (!user)
     return clientObj.reject(`Make sure you pass a user (-u or --username) to listen for files that could be sent to you.\n`)
+  if (!targetUser)
+    return clientObj.reject(`Make sure you pass a target user (-t or --target_user) to send chat messages to.\n`)
 
-  socket.emit('regiser-listen', { user })
+  socket.emit('txr-regiser-listen', { user })
 
   const listenersRoot   = clientObj.chat
   const normalListeners = listenersRoot.normal

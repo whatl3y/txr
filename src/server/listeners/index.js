@@ -8,21 +8,21 @@ const log = bunyan.createLogger(config.logger.options)
 export default function listeners(io, socket, socketApp) {
   return {
     normal: {
-      'regiser-listen': function({ auth, user }) {
+      'txr-regiser-listen': function({ auth, user }) {
         if (socketApp['names'][user]) {
-          socket.emit('user-taken', true)
+          socket.emit('txr-user-taken', true)
           log.error(`User could not register name: ${user}`)
         } else {
           socketApp['names'][user] = socket.id
           socketApp['ids'][socket.id] = user
           socketApp['auth'][socket.id] = !!auth
 
-          socket.emit('user-registered-success', user)
+          socket.emit('txr-user-registered-success', user)
           log.info(`User successfully registered name: ${user}`)
         }
       },
 
-      'send-file-check-auth': function({ filename, filesizebytes, user }) {
+      'txr-send-file-check-auth': function({ filename, filesizebytes, user }) {
         const destinationSocketId = socketApp['names'][user]
         const sendingRequiresAuth = socketApp['auth'][destinationSocketId]
         const dataHash            = Encryption.stringToHash(JSON.stringify({ filename, filesizebytes, user }))
@@ -30,42 +30,42 @@ export default function listeners(io, socket, socketApp) {
           const destinationSocket = io.sockets.connected[destinationSocketId]
 
           if (sendingRequiresAuth) {
-              socket.emit('file-permission-waiting')
+              socket.emit('txr-file-permission-waiting')
               destinationSocket.on('file-permission-response', answer => {
                 if (answer.toLowerCase() === 'yes') {
                   socketApp['unlocked'][dataHash] = socket.id
-                  socket.emit('file-permission-granted')
+                  socket.emit('txr-file-permission-granted')
                 } else {
-                  socket.emit('file-permission-denied')
+                  socket.emit('txr-file-permission-denied')
                 }
               })
-              destinationSocket.emit('file-permission', { filename, filesizebytes, user })
+              destinationSocket.emit('txr-file-permission', { filename, filesizebytes, user })
           } else {
             socketApp['unlocked'][dataHash] = socket.id
-            socket.emit('file-permission-granted')
+            socket.emit('txr-file-permission-granted')
           }
 
         } else {
           log.error(`Tried to send a file to '${user}' who has not registered.`)
-          socket.emit('no-user', { user })
+          socket.emit('txr-no-user', { user })
         }
       },
 
-      'send-chat-message': function({ targetUser, user, message }) {
+      'txr-send-chat-message': function({ targetUser, user, message }) {
         const destinationSocketId = socketApp['names'][targetUser]
         if (!destinationSocketId)
-          return socket.emit('destination-user-not-registered', targetUser)
+          return socket.emit('txr-destination-user-not-registered', targetUser)
 
         const destinationSocket = io.sockets.connected[destinationSocketId]
-        destinationSocket.emit('receive-chat-message', { targetUser: user, message })
+        destinationSocket.emit('txr-receive-chat-message', { targetUser: user, message })
       },
 
-      'reply-to-chat-message': function({ user, replyMessage }) {
+      'txr-reply-to-chat-message': function({ user, replyMessage }) {
         const replyingUserName    = socketApp['ids'][socket.id]
         const destinationSocketId = socketApp['names'][user]
         if (destinationSocketId) {
           const destinationSocket = io.sockets.connected[destinationSocketId]
-          destinationSocket.emit('receive-reply', { user: replyingUserName, replyMessage })
+          destinationSocket.emit('txr-receive-reply', { user: replyingUserName, replyMessage })
         }
       },
 
@@ -79,7 +79,7 @@ export default function listeners(io, socket, socketApp) {
     },
 
     stream: {
-      'upload': function(stream, data) {
+      'txr-upload': function(stream, data) {
         log.info(`Received 'upload' event with data: ${JSON.stringify(data)}`)
 
         const userToSend          = data.user
@@ -94,18 +94,18 @@ export default function listeners(io, socket, socketApp) {
             stream.on('error', err => log.error(`socket: ${socket.id}`, err))
             stream.on('end', () => log.info(`Completed receiving file with data: ${JSON.stringify(data)}!`))
 
-            destinationStream.on('end', () => socket.emit('finished-uploading'))
+            destinationStream.on('end', () => socket.emit('txr-finished-uploading'))
             stream.pipe(destinationStream)
-            ss(destinationSocket).emit('file', destinationStream, data)
+            ss(destinationSocket).emit('txr-file', destinationStream, data)
 
           } else {
-            socket.emit('file-data-hash-mismatch')
+            socket.emit('txr-file-data-hash-mismatch')
           }
           delete(socketApp['unlocked'][dataHash])
 
         } else {
           log.error(`Tried to send a file to '${userToSend}' who has not registered.`)
-          socket.emit('no-user', { user: userToSend })
+          socket.emit('txr-no-user', { user: userToSend })
         }
       }
     }

@@ -13,10 +13,10 @@ const lstat     = promisify(fs.lstat)
 const writeFile = promisify(fs.writeFile)
 const zipdir    = promisify(zd)
 
-export default async function send({ client, file, user, host }) {
+export default async function send({ client, file, user, host, reject, resolve }) {
   const socket      = io.connect(host || config.server.host)
   const writeStream = socketStream.createStream()
-  const clientObj   = client({ socket, socketStream, writeStream, file, user, host })
+  const clientObj   = client({ socket, socketStream, writeStream, file, user, host, reject, resolve })
 
   const filePathToSend  = file
   const userToSend      = user
@@ -58,17 +58,23 @@ export default async function send({ client, file, user, host }) {
     return clientObj.reject(`The path specified is not a file or directory. The specified path needs to be a file or directory.\n${filePathToSend}\n`)
   }
 
+  // Needs to be before creating the txrReadStream so the file
+  // will exist on disk before beginning to stream data over
+  if (finalFilePathOrBuffer instanceof Buffer) {    // directory was zipped to a buffer
+    await writeFile(finalFilename, finalFilePathOrBuffer)
+  }
+
   const filename          = path.basename(finalFilename)
   const dataForFileToSend = { filename: filename, filesizebytes: fileSize, user: userToSend }
 
-  socket.emit('send-file-check-auth', dataForFileToSend)
+  socket.emit('txr-send-file-check-auth', dataForFileToSend)
 
   const txrReadStream = fs.createReadStream(finalFilename)
   const listenersRoot = clientObj.send
 
-  listenersRoot.setFinalFilename(finalFilename)
-  listenersRoot.setDataForFileToSend(dataForFileToSend)
-  listenersRoot.setDeleteFileAfterSend(deleteFileAfterSend)
+  listenersRoot.finalFilename = finalFilename
+  listenersRoot.dataForFileToSend = dataForFileToSend
+  listenersRoot.deleteFileAfterSend = deleteFileAfterSend
   const normalListeners = listenersRoot.normal
   const streamListeners = listenersRoot.stream
 
@@ -76,8 +82,4 @@ export default async function send({ client, file, user, host }) {
   Object.keys(streamListeners).forEach(listener => txrReadStream.on(listener, streamListeners[listener].bind(listenersRoot)))
 
   txrReadStream.pipe(writeStream)
-
-  if (finalFilePathOrBuffer instanceof Buffer) {    // directory was zipped to a buffer
-    await writeFile(finalFilename, finalFilePathOrBuffer)
-  }
 }

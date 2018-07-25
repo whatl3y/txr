@@ -8,9 +8,8 @@ import config from '../../config'
 
 const delFile = promisify(fs.unlink)
 
-const reject = message => { Vomit.error.bind(Vomit)(message); process.exit() }
-const resolve = process.exit
-
+const thereWasAnError = message => { Vomit.error.bind(Vomit)(message); process.exit() }
+const everythingWorked = process.exit
 
 export default function cliClientInterface({
   socket,
@@ -20,8 +19,13 @@ export default function cliClientInterface({
   user,
   targetUser,
   auth,
-  host
+  host,
+  reject,
+  resolve
 }) {
+  reject = reject || thereWasAnError
+  resolve = resolve || everythingWorked
+
   return {
     reject,
     resolve,
@@ -43,22 +47,27 @@ export default function cliClientInterface({
         if (message.length === 0)
           return await this.waitAndSendMessage()
 
-        socket.emit('send-chat-message', { user, targetUser, message })
+        socket.emit('txr-send-chat-message', { user, targetUser, message })
         await this.waitAndSendMessage()
       },
 
       normal: {
-        'user-taken': function() {
+        'txr-user-taken': function() {
           Vomit.error(`The user you chose, ${user}, is already registered with the server. Please try another username.`)
           resolve()
         },
 
-        'destination-user-not-registered': function(user) {
+        'txr-destination-user-not-registered': function(user) {
           Vomit.error(`(There is no user currently registered with the username ${user}.)`)
           resolve()
         },
 
-        'receive-reply': async function({ user, replyMessage }) {
+        'txr-receive-chat-message': async function({ targetUser, message }) {
+          Vomit.chatMessage(`[${targetUser}]: ${message}`)
+          await this.waitAndSendMessage()
+        },
+
+        'txr-receive-reply': async function({ user, replyMessage }) {
           if (this.readline) {
             this.readline.close()
             this.readonly = null
@@ -69,7 +78,7 @@ export default function cliClientInterface({
           await this.waitAndSendMessage()
         },
 
-        'user-registered-success': async function(name) {
+        'txr-user-registered-success': async function(name) {
           Vomit.success(`Successfully registered name: ${name}. You can now send messages to ${targetUser} below.\n`)
           Vomit.success(`(type 'exit' or 'quit' to stop sending messages)`)
           await this.waitAndSendMessage()
@@ -87,30 +96,31 @@ export default function cliClientInterface({
         this.readline = Readline()
         const replyMessage = await this.readline.ask(`reply to ${targetUser} - [${user}]: `)
         if (replyMessage.length > 0) {
-          socket.emit('reply-to-chat-message', { user: targetUser, replyMessage })
+          socket.emit('txr-reply-to-chat-message', { user: targetUser, replyMessage })
+          Vomit.success(`Thanks, your reply was sent to ${targetUser}!`)
         } else {
           await this.askToReply(targetUser)
         }
       },
 
       normal: {
-        'user-taken': function() {
+        'txr-user-taken': function() {
           Vomit.error(`The user you chose, ${user}, is already registered with the server. Please try another username.`)
           resolve()
         },
 
-        'user-registered-success': function(name) {
+        'txr-user-registered-success': function(name) {
           Vomit.success(`Successfully registered name: ${name}. You are now listening for files.`)
         },
 
-        'file-permission': async function(fileData) {
+        'txr-file-permission': async function(fileData) {
           delete(fileData.user)
           const answer = await Readline().ask(`\nSomeone wants to send you a file. Are you okay receiving a file with this data: ${JSON.stringify(fileData)} -- answer (yes/no): `)
           Vomit.success(`You answered '${answer}', we're letting the server and sender know now.`)
-          socket.emit('file-permission-response', answer)
+          socket.emit('txr-file-permission-response', answer)
         },
 
-        'receive-chat-message': async function({ targetUser, message }) {
+        'txr-receive-chat-message': async function({ targetUser, message }) {
           Vomit.chatMessage(`[${targetUser}]: ${message}`)
           await this.askToReply(targetUser)
         },
@@ -122,7 +132,7 @@ export default function cliClientInterface({
       },
 
       stream: {
-        'file': function(stream, data={}) {
+        'txr-file': function(stream, data={}) {
           delete(data.user)
           Vomit.success(`Starting to receive file with data: ${JSON.stringify(data)}`)
           const newFileName     = FileHelpers.getFileName(data.filename || "txr.file")
@@ -149,45 +159,41 @@ export default function cliClientInterface({
       deleteFileAfterSend: false,
       finalFilename: null,
 
-      setDataForFileToSend(data) {
-        return this.dataForFileToSend = data
-      },
+      async exitGracefully(callback=()=>{}) {
+        if (this.deleteFileAfterSend)
+          await delFile(this.finalFilename)
 
-      setDeleteFileAfterSend(shouldDelete) {
-        return this.deleteFileAfterSend = shouldDelete
-      },
-
-      setFinalFilename(file) {
-        return this.finalFilename = file
+        callback()
+        resolve()
       },
 
       normal: {
-        'no-user': function(obj) {
-          exitGracefully(this.finalFilename, this.deleteFileAfterSend, () => Vomit.error(`No user registered with username: ${obj.user}`))
+        'txr-no-user': function(obj) {
+          this.exitGracefully(() => Vomit.error(`No user registered with username: ${obj.user}`))
         },
 
-        'file-permission-granted': function() {
-          socketStream(socket).emit('upload', writeStream, this.dataForFileToSend)
+        'txr-file-permission-granted': function() {
+          socketStream(socket).emit('txr-upload', writeStream, this.dataForFileToSend)
         },
 
-        'file-permission-waiting': function() {
+        'txr-file-permission-waiting': function() {
           Vomit.success(`Waiting for user to grant or reject receiving the file.`)
         },
 
-        'file-permission-denied': function() {
-          exitGracefully(this.finalFilename, this.deleteFileAfterSend, () => Vomit.error(`User did not grant permission to send file.`))
+        'txr-file-permission-denied': function() {
+          this.exitGracefully(() => Vomit.error(`User did not grant permission to send file.`))
         },
 
-        'file-data-hash-mismatch': function() {
-          exitGracefully(this.finalFilename, this.deleteFileAfterSend, () => Vomit.error(`We can't validate the file you're sending.`))
+        'txr-file-data-hash-mismatch': function() {
+          this.exitGracefully(() => Vomit.error(`We can't validate the file you're sending.`))
         },
 
-        'finished-uploading': function() {
-          exitGracefully(this.finalFilename, this.deleteFileAfterSend, () => Vomit.success(`Your file has successfully sent to ${user}!`))
+        'txr-finished-uploading': function() {
+          this.exitGracefully(() => Vomit.success(`Your file has successfully sent to ${user}!`))
         },
 
         'disconnect': function() {
-          exitGracefully(this.finalFilename, this.deleteFileAfterSend, () => Vomit.error(`You were disconnected from the server.`))
+          this.exitGracefully(() => Vomit.error(`You were disconnected from the server.`))
         }
       },
 
@@ -203,12 +209,4 @@ export default function cliClientInterface({
       }
     }
   }
-}
-
-async function exitGracefully(finalFilename, deleteFileAfterSend, callback=()=>{}) {
-  if (deleteFileAfterSend)
-    await delFile(finalFilename)
-
-  callback()
-  process.exit()
 }
