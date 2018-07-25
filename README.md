@@ -156,3 +156,8 @@ $ txr chat -u myUsername -t myFriendsUsername
 ```bash
 $ npm run build
 ```
+
+## TODO
+
+- Extend Test Coverage
+- Improve documentation

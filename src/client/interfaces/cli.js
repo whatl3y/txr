@@ -53,13 +53,11 @@ export default function cliClientInterface({
 
       normal: {
         'txr-user-taken': function() {
-          Vomit.error(`The user you chose, ${user}, is already registered with the server. Please try another username.`)
-          resolve()
+          reject(`The user you chose, ${user}, is already registered with the server. Please try another username.`)
         },
 
         'txr-destination-user-not-registered': function(user) {
-          Vomit.error(`(There is no user currently registered with the username ${user}.)`)
-          resolve()
+          reject(`(There is no user currently registered with the username ${user}.)`)
         },
 
         'txr-receive-chat-message': async function({ targetUser, message }) {
@@ -105,8 +103,7 @@ export default function cliClientInterface({
 
       normal: {
         'txr-user-taken': function() {
-          Vomit.error(`The user you chose, ${user}, is already registered with the server. Please try another username.`)
-          resolve()
+          reject(`The user you chose, ${user}, is already registered with the server. Please try another username.`)
         },
 
         'txr-user-registered-success': function(name) {
@@ -126,8 +123,7 @@ export default function cliClientInterface({
         },
 
         'disconnect': function() {
-          Vomit.error(`You were disconnected from the server.`)
-          resolve()
+          reject(`You were disconnected from the server.`)
         }
       },
 

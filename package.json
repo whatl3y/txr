@@ -2,7 +2,7 @@
   "name": "node-txr",
   "version": "0.2.8",
   "description": "Transfer files easily to and from team members through web sockets.",
-  "main": "dist",
+  "main": "dist/txr-library.js",
   "engines": {
     "node": ">=4.0.0"
   },
@@ -16,7 +16,7 @@
     "postinstall": "npm run build",
     "server": "node dist/txr-server",
     "start": "npm run server",
-    "test": "mocha --require babel-core/register --recursive './src/**/*.spec.js'"
+    "test": "mocha --exit --require babel-core/register --recursive './src/**/*.spec.js'"
   },
   "bin": {
     "txr": "./dist/txr-client.js",

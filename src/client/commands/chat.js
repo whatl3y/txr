@@ -13,7 +13,10 @@ export default async function chat({ client, user, targetUser, host, reject, res
 
   socket.emit('txr-regiser-listen', { user })
 
-  const listenersRoot   = clientObj.chat
+  const listenersRoot = clientObj.chat
+  if (!listenersRoot)
+    return clientObj.reject(`The interface provided does not support the chat command.\n`)
+
   const normalListeners = listenersRoot.normal
   Object.keys(normalListeners).forEach(listener => socket.on(listener, normalListeners[listener].bind(listenersRoot)))
 }

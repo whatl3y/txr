@@ -9,13 +9,14 @@ export default async function createClient({
   targetUser,
   auth,
   host,
+  logger,
   reject,
   resolve
 }) {
   if (typeInterface && interfaces[typeInterface]) {
     const client = interfaces[typeInterface]
     if (command && allCommands[command]) {
-      await allCommands[command]({ client, file, user, targetUser, auth, host, reject, resolve })
+      await allCommands[command]({ client, file, user, targetUser, auth, host, logger, reject, resolve })
     } else {
       throw new Error(`We don't recognize the command provided: ${command}`)
     }
