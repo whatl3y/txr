@@ -14,6 +14,7 @@ export default function libraryClientInterface({
   targetUser,
   host,
   logger,
+  callback,
   reject,
   resolve
 }) {
@@ -36,6 +37,7 @@ export default function libraryClientInterface({
 
       stream: {
         'txr-file': function(stream, data={}) {
+          const resolveFile     = (typeof callback === 'function') ? callback : resolve
           const newFileName     = FileHelpers.getFileName(data.filename || "txr.file")
           const targetFilePath  = path.join(config.filepath, path.basename(newFileName))
           const fileWriteStream = fs.createWriteStream(targetFilePath)
@@ -44,7 +46,7 @@ export default function libraryClientInterface({
 
           stream.on('data', chunk => { bytesTracker = bytesTracker + chunk.length; logger.debug('.') })
           stream.on('error', reject)
-          stream.on('end', () => resolve(targetFilePath))
+          stream.on('end', () => resolveFile(targetFilePath))
 
           stream.pipe(fileWriteStream)
         }

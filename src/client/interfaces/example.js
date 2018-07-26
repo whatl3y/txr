@@ -9,6 +9,7 @@
   *   targetUser (OPTIONAL): the user you're sending chat messages to if setting up a chat client
   *   auth (OPTIONAL): boolean to indicate whether a listening client wants to require auth to receive a file
   *   host (OPTIONAL): host to connect to the SocketIO server
+  *   logger (OPTIONAL): [Library-only] A logger implementing node-bunyan's logging interface to log information when sending/receiving files using the library
   *   reject: function of what to do at the end of the streaming activities if something went WRONG
   *   resolve: function of what to do at the end of the streaming activities if everything went RIGHT
 **/
@@ -21,6 +22,7 @@ export default function exampleClientInterface({
   targetUser,
   auth,
   host,
+  logger,
   reject,
   resolve
 }) {

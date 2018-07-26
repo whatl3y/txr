@@ -1,4 +1,4 @@
-# txr
+# txr (transfer)
 
 Painlessly stream files from one client to another by simply registering a
 username with a txr-server and sending the files to that listening client.
@@ -6,15 +6,19 @@ username with a txr-server and sending the files to that listening client.
 ## Install
 
 ```bash
-$ npm install -g node-txr
+# to install globally for CLI use anywhere on machine
+$ npm install -g txr
+
+# to install in local repo for library use
+$ npm install txr
 ```
 
-## Quick Start
+## Quick Start (cli)
 
 ### Setup listening client
 
 ```bash
-$ # Connect to https://txr.euphoritech.com to listen for files sent to your username
+$ # Connect to the default server (https://txr.euphoritech.com) to listen for files sent to your username
 $ txr listen -u myname123
 Successfully registered name: myname123. You are now listening for files.
 ```
@@ -22,7 +26,7 @@ Successfully registered name: myname123. You are now listening for files.
 ### Send a file to your listening client
 
 ```bash
-$ # Connect to https://txr.euphoritech.com to send the specified file to your listening client's username
+$ # Connect to the default server (https://txr.euphoritech.com) to send the specified file to your listening client
 $ txr send -u myname123 -f /path/to/file/to/send
 ........
 All bytes have been read from file: /path/to/file/to/send.
@@ -31,7 +35,7 @@ Your file has successfully sent to myname123!
 
 ## What is txr ("transfer")?
 
-### Transfer files/directories to other machines hilariously easily
+### Transfer files/directories to other clients hilariously easily
 
 txr is a CLI utility that provides an easy way to transfer files or directories
 from one machine to another (i.e. team members, servers, remote machines, etc.)
@@ -138,6 +142,9 @@ $ txr send -u yourFriendsUniqueUsername -f /local/path/to/file/or/dir -h ws://lo
 
 #### "chat": send chat messages to someone listening with a particular username. The target user can be a "listening" or "chatting" client.
 
+Note: As of today a chat client can only be created if the listener and chatter
+are using the CLI interface.
+
 ##### Parameters
 
 1. Required: -u/--user: Your username you're registering as.
@@ -161,3 +168,4 @@ $ npm run build
 
 - Extend Test Coverage
 - Improve documentation
+- Add additional interfaces

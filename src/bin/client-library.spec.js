@@ -18,14 +18,14 @@ describe('Client interfaces', function() {
     const [ filepathOfNewFileCreated, senderResult ] = await Promise.all([
       libraryClient({
         command: 'listen',
-        user: 'listener-testing123',
+        username: 'listener-testing123',
         host: 'http://localhost:8899'
       }),
       (async function() {
         await sleep(1000)
         await libraryClient({
           command: 'send',
-          user: 'listener-testing123',
+          username: 'listener-testing123',
           file: './README.md',
           host: 'http://localhost:8899'
         })
@@ -46,7 +46,7 @@ describe('Client interfaces', function() {
     try {
       await libraryClient({
         command: 'send',
-        user: 'user-that-does-not-exist',
+        username: 'user-that-does-not-exist',
         file: './README.md',
         host: 'http://localhost:8899'
       })
