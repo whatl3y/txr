@@ -3,6 +3,5 @@
 *.rdb
 *.DS_Store
 /node_modules
-/dist
 /config.js
 *.env

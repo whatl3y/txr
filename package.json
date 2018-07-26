@@ -1,8 +1,8 @@
 {
-  "name": "node-txr",
+  "name": "txr",
   "version": "0.2.8",
   "description": "Transfer files easily to and from team members through web sockets.",
-  "main": "dist/txr-library.js",
+  "main": "./dist/txr-library.js",
   "engines": {
     "node": ">=4.0.0"
   },
@@ -12,18 +12,16 @@
   },
   "scripts": {
     "build": "gulp build",
-    "client": "node dist/txr-client",
-    "postinstall": "npm run build",
-    "server": "node dist/txr-server",
-    "start": "npm run server",
+    "start": "node dist/txr-server",
     "test": "mocha --exit --require babel-core/register --recursive './src/**/*.spec.js'"
   },
   "bin": {
-    "txr": "./dist/txr-client.js",
-    "txr-server": "./dist/txr-server.js"
+    "txr": "./bin/txr-client",
+    "txr-server": "./bin/txr-server"
   },
   "devDependencies": {
     "babel-core": "^6.26.0",
+    "babel-loader": "^7.1.2",
     "babel-plugin-transform-runtime": "^6.23.0",
     "babel-preset-env": "^1.6.1",
     "gulp": "^3.9.1",
@@ -31,13 +29,12 @@
     "gulp-insert": "^0.5.0",
     "gulp-plumber": "^1.1.0",
     "gulp-sequence": "^0.4.6",
-    "gulp-uglify": "^3.0.0",
+    "gulp-uglify": "^3.0.1",
     "mocha": "^5.2.0",
+    "uglify-es": "^3.3.9",
     "webpack-node-externals": "^1.6.0"
   },
   "dependencies": {
-    "babel-loader": "^7.1.2",
-    "babel-polyfill": "^6.26.0",
     "bunyan": "^1.8.12",
     "colors": "^1.1.2",
     "es6-promisify": "^5.0.0",
