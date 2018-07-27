@@ -1,20 +1,24 @@
-# txr
+# txr (transfer)
 
-Painlessly stream files from one machine to another by simply registering a
+Painlessly stream files from one client to another by simply registering a
 username with a txr-server and sending the files to that listening client.
 
 ## Install
 
 ```bash
+# to install globally for CLI use anywhere on machine
 $ npm install -g txr
+
+# to install in local repo for library use
+$ npm install txr
 ```
 
-## Quick Start
+## Quick Start (cli)
 
 ### Setup listening client
 
 ```bash
-$ # Connect to https://txr.euphoritech.com to listen for files sent to your username
+$ # Connect to the default server (https://txr.euphoritech.com) to listen for files sent to your username
 $ txr listen -u myname123
 Successfully registered name: myname123. You are now listening for files.
 ```
@@ -22,7 +26,7 @@ Successfully registered name: myname123. You are now listening for files.
 ### Send a file to your listening client
 
 ```bash
-$ # Connect to https://txr.euphoritech.com to send the specified file to your listening client's username
+$ # Connect to the default server (https://txr.euphoritech.com) to send the specified file to your listening client
 $ txr send -u myname123 -f /path/to/file/to/send
 ........
 All bytes have been read from file: /path/to/file/to/send.
@@ -31,7 +35,7 @@ Your file has successfully sent to myname123!
 
 ## What is txr ("transfer")?
 
-### Transfer files/directories to other machines hilariously easily
+### Transfer files/directories to other clients hilariously easily
 
 txr is a CLI utility that provides an easy way to transfer files or directories
 from one machine to another (i.e. team members, servers, remote machines, etc.)
@@ -49,12 +53,14 @@ listening and sending clients.
 **Server**: the server listens for clients to connect and manages registering
 "listener" clients based on a provided username.
 
-**Client**: There are two types of clients:
+**Client**: There are three types of clients:
 
 1. A "listener", who registers a desired username with the server and waits
 for anyone who wants to send files to him/her.
 2. A "sender", who can send files or directories from his/her local machine
 to a listener based on the listener's username they registered with.
+3. A "chat" user, who will register a username with the txr server and
+designate another listening/chatting user who they would like to send chat messages to.
 
 ## Server
 
@@ -134,10 +140,32 @@ $ txr send -u yourFriendsUniqueUsername -f /local/path/to/file/or/dir -h http://
 $ txr send -u yourFriendsUniqueUsername -f /local/path/to/file/or/dir -h ws://localhost:8000
 ```
 
-## Development
+#### "chat": send chat messages to someone listening with a particular username. The target user can be a "listening" or "chatting" client.
 
-### Build dist files
+Note: As of today a chat client can only be created if the listener and chatter
+are using the CLI interface.
+
+##### Parameters
+
+1. Required: -u/--user: Your username you're registering as.
+2. Required: -t/--target_user: The username of the user listening for files that you're going to chat with
+3. Optional: -h/--host: If present, this will override the TXR_HOST config
+that points to the server you'll connect to.
 
 ```bash
-$ gulp build
+$ txr chat -u myUsername -t myFriendsUsername
 ```
+
+## Development
+
+### Build /dist files
+
+```bash
+$ npm run build
+```
+
+## TODO
+
+- Extend Test Coverage
+- Improve documentation
+- Add additional interfaces

@@ -5,15 +5,18 @@ module.exports = baseWebpackConfig
 function baseWebpackConfig(clientOrServer) {
   var entryPoint, filename
   if (clientOrServer == 'server') {
-    entryPoint = './src/server/index.js'
-    filename = 'txr-server.js'
+    entryPoint = './src/bin/server.js'
+    filename = 'txr-server'
+  } else if (clientOrServer == 'library') {
+    entryPoint = './src/bin/client-library.js'
+    filename = 'txr-library.js'
   } else {
-    entryPoint = './src/client/index.js'
-    filename = 'txr-client.js'
+    entryPoint = './src/bin/client-cli.js'
+    filename = 'txr-client'
   }
 
   return {
-    entry: [ 'babel-polyfill', entryPoint ],
+    entry: [ entryPoint ],
     target: 'node',
     output: {
       filename: filename,

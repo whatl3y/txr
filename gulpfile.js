@@ -3,45 +3,57 @@ const gulpSequence = require('gulp-sequence')
 const babel = require('gulp-babel')
 const plumber = require('gulp-plumber')
 const insert = require('gulp-insert')
-const uglify = require('gulp-uglify')
+const uglifyComposer = require('gulp-uglify/composer')
+const uglifyes = require('uglify-es')
 const webpack = require('webpack-stream')
 const webpack_config = require('./webpack.config.js')
+const uglify = uglifyComposer(uglifyes, console)
 
-const clientWebpackConfig = webpack_config('client')
-const serverWebpackConfig = webpack_config('server')
+const libraryClientWebpackConfig  = webpack_config('library')
+const cliClientWebpackConfig      = webpack_config('client')
+const serverWebpackConfig         = webpack_config('server')
 
-// Client
+// Client Library
+gulp.task('build-library-client', function() {
+  return gulp.src("./src/client/**/*.js")
+    .pipe(plumber())
+    .pipe(webpack(libraryClientWebpackConfig))
+    .pipe(uglify())
+    .pipe(gulp.dest("./dist"))
+})
+
+// Client CLI
 gulp.task('transpile-cli-client', function() {
   return gulp.src("./src/client/**/*.js")
     .pipe(plumber())
-    .pipe(webpack(clientWebpackConfig))
-    .pipe(uglify().on('error', console.log))
-    .pipe(gulp.dest("./dist"))
+    .pipe(webpack(cliClientWebpackConfig))
+    .pipe(uglify())
+    .pipe(gulp.dest("./bin"))
 })
 
 gulp.task('index-cli-client', function() {
-  return gulp.src("./dist/txr-client.js")
+  return gulp.src("./bin/txr-client")
     .pipe(insert.prepend("#!/usr/bin/env node\n\n"))
-    .pipe(gulp.dest("./dist"))
+    .pipe(gulp.dest("./bin"))
 })
 
-// Server
+// Server CLI
 gulp.task('transpile-cli-server', function() {
   return gulp.src("./src/client/**/*.js")
     .pipe(plumber())
     .pipe(webpack(serverWebpackConfig))
-    .pipe(uglify().on('error', console.log))
-    .pipe(gulp.dest("./dist"))
+    .pipe(uglify())
+    .pipe(gulp.dest("./bin"))
 })
 
 gulp.task('index-cli-server', function() {
-  return gulp.src("./dist/txr-server.js")
+  return gulp.src("./bin/txr-server")
     .pipe(insert.prepend("#!/usr/bin/env node\n\n"))
-    .pipe(gulp.dest("./dist"))
+    .pipe(gulp.dest("./bin"))
 })
 
 
 // Entry points
 gulp.task('build-cli-client', gulpSequence('transpile-cli-client', 'index-cli-client'))
 gulp.task('build-cli-server', gulpSequence('transpile-cli-server', 'index-cli-server'))
-gulp.task('build', [ 'build-cli-client', 'build-cli-server' ])
+gulp.task('build', [ 'build-library-client', 'build-cli-client', 'build-cli-server' ])

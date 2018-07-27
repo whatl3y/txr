@@ -1,8 +1,8 @@
 import readline from 'readline'
 
-export default function Readline() {
+export default function Readline(inputStream=process.stdin, outputStream=process.stdout) {
   return {
-    rl: readline.createInterface({ input: process.stdin, output: process.stdout }),
+    rl: readline.createInterface({ input: inputStream, output: outputStream }),
 
     ask(question, close=true) {
       return new Promise((resolve, reject) => {
