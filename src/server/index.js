@@ -30,7 +30,7 @@ export default function createServer(port, { type }={}) {
   Object.keys(routes).forEach(method => app.get(method, routes[method]))
   httpServer.listen(port, () => log.info(`server listening on *: ${port}`))
 
-  return { app, httpServer }
+  return { app, httpServer, socketApp }
 }
 
 function getAppType(type) {

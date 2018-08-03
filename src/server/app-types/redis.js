@@ -1,3 +1,5 @@
+import memory from './memory'
+
 export default function redisApp(redis) {
   return {
     async set(namespace, key, value) {
@@ -16,6 +18,14 @@ export default function redisApp(redis) {
       let currentNamespaceData = JSON.parse((await redis.get(`txr.${namespace}`)) || '{}')
       delete(currentNamespaceData[key])
       await redis.set(`txr.${namespace}`, JSON.stringify(currentNamespaceData))
+    },
+
+    async flush(namespaces=Object.keys(memory().app)) {
+      return await Promise.all(
+        namespaces.map(async namespace => {
+          await redis.del(`txr.${namespace}`)
+        })
+      )
     }
   }
 }
