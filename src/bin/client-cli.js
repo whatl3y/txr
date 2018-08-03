@@ -20,6 +20,6 @@ const [ first, second, third ] = argv._
     user,           // username to register (if listening) or send file to if sending
     targetUser,     // username to send chat message to, if command == 'chat'
     auth,           // if listening and 'cli' interface, whether to request confirmation on receiving a file
-    host           // host of server to connect to
+    host            // host of server to connect to
   })
 })()

@@ -1,5 +1,6 @@
 import assert from 'assert'
 import net from 'net'
+import request from 'request-promise-native'
 import createServer from '../server'
 
 describe('Server', function() {
@@ -19,5 +20,17 @@ describe('Server', function() {
     })
 
     assert.equal(true, isPortInUse)
+  })
+
+  describe('/clients', function() {
+    it(`should return client information back in JSON`, async function() {
+      const response = await request.get({ uri: `http://localhost:8888/clients`, json: true })
+
+      console.log("RES", response)
+
+      assert.equal(true, response.data instanceof Array)
+      assert.equal(1, [0, 1].includes(response.number_of_pages))
+      assert.equal(1, response.current_page)
+    })
   })
 })

@@ -8,32 +8,35 @@ const log = bunyan.createLogger(config.logger.options)
 export default function listeners(io, socket, socketApp) {
   return {
     normal: {
-      'txr-regiser-listen': function({ auth, user }) {
-        if (socketApp['names'][user]) {
+      'txr-regiser-listen': async function({ auth, user }) {
+        if (await socketApp.get('names', user)) {
           socket.emit('txr-user-taken', true)
           log.error(`User could not register name: ${user}`)
         } else {
-          socketApp['names'][user] = socket.id
-          socketApp['ids'][socket.id] = user
-          socketApp['auth'][socket.id] = !!auth
+          await Promise.all([
+            socketApp.set('names', user, socket.id),
+            socketApp.set('ids', socket.id, user),
+            socketApp.set('auth', socket.id, !!auth),
+          ])
 
           socket.emit('txr-user-registered-success', user)
           log.info(`User successfully registered name: ${user}`)
         }
       },
 
-      'txr-send-file-check-auth': function({ filename, filesizebytes, user }) {
-        const destinationSocketId = socketApp['names'][user]
-        const sendingRequiresAuth = socketApp['auth'][destinationSocketId]
+      'txr-send-file-check-auth': async function({ filename, filesizebytes, user }) {
+        const destinationSocketId = await socketApp.get('names', user)
+        const sendingRequiresAuth = await socketApp.get('auth', destinationSocketId)
         const dataHash            = Encryption.stringToHash(JSON.stringify({ filename, filesizebytes, user }))
+
         if (user && destinationSocketId) {
           const destinationSocket = io.sockets.connected[destinationSocketId]
 
           if (sendingRequiresAuth) {
               socket.emit('txr-file-permission-waiting')
-              destinationSocket.on('file-permission-response', answer => {
+              destinationSocket.on('file-permission-response', async answer => {
                 if (answer.toLowerCase() === 'yes') {
-                  socketApp['unlocked'][dataHash] = socket.id
+                  await socketApp.set('unlocked', dataHash, socket.id)
                   socket.emit('txr-file-permission-granted')
                 } else {
                   socket.emit('txr-file-permission-denied')
@@ -41,7 +44,7 @@ export default function listeners(io, socket, socketApp) {
               })
               destinationSocket.emit('txr-file-permission', { filename, filesizebytes, user })
           } else {
-            socketApp['unlocked'][dataHash] = socket.id
+            await socketApp.set('unlocked', dataHash, socket.id)
             socket.emit('txr-file-permission-granted')
           }
 
@@ -51,8 +54,8 @@ export default function listeners(io, socket, socketApp) {
         }
       },
 
-      'txr-send-chat-message': function({ targetUser, user, message }) {
-        const destinationSocketId = socketApp['names'][targetUser]
+      'txr-send-chat-message': async function({ targetUser, user, message }) {
+        const destinationSocketId = await socketApp.get('names', targetUser)
         if (!destinationSocketId)
           return socket.emit('txr-destination-user-not-registered', targetUser)
 
@@ -60,33 +63,38 @@ export default function listeners(io, socket, socketApp) {
         destinationSocket.emit('txr-receive-chat-message', { targetUser: user, message })
       },
 
-      'txr-reply-to-chat-message': function({ user, replyMessage }) {
-        const replyingUserName    = socketApp['ids'][socket.id]
-        const destinationSocketId = socketApp['names'][user]
+      'txr-reply-to-chat-message': async function({ user, replyMessage }) {
+        const [ replyingUserName, destinationSocketId ] = await Promise.all([
+          socketApp.get('ids', socket.id),
+          socketApp.get('names', user)
+        ])
         if (destinationSocketId) {
           const destinationSocket = io.sockets.connected[destinationSocketId]
           destinationSocket.emit('txr-receive-reply', { user: replyingUserName, replyMessage })
         }
       },
 
-      'disconnect': function() {
+      'disconnect': async function() {
         log.info(`socket disconnected: ${socket.id}`)
-        const name = socketApp['ids'][socket.id]
-        delete(socketApp['ids'][socket.id])
-        delete(socketApp['auth'][socket.id])
-        delete(socketApp['names'][name])
+        const name = await socketApp.get('ids', socket.id)
+        await Promise.all([
+          socketApp.del('ids', socket.id),
+          socketApp.del('auth', socket.id),
+          socketApp.del('names', name)
+        ])
       }
     },
 
     stream: {
-      'txr-upload': function(stream, data) {
+      'txr-upload': async function(stream, data) {
         log.info(`Received 'upload' event with data: ${JSON.stringify(data)}`)
 
         const userToSend          = data.user
-        const destinationSocketId = socketApp['names'][userToSend]
+        const destinationSocketId = await socketApp.get('names', userToSend)
         const dataHash            = Encryption.stringToHash(JSON.stringify(data))
         if (userToSend && destinationSocketId) {
-          if (socketApp['unlocked'][dataHash] && socketApp['unlocked'][dataHash] == socket.id) {
+          const unlockedSocketId = await socketApp.get('unlocked', dataHash)
+          if (unlockedSocketId && unlockedSocketId == socket.id) {
             const destinationSocket = io.sockets.connected[destinationSocketId]
             const destinationStream = ss.createStream()
 
@@ -101,7 +109,7 @@ export default function listeners(io, socket, socketApp) {
           } else {
             socket.emit('txr-file-data-hash-mismatch')
           }
-          delete(socketApp['unlocked'][dataHash])
+          await socketApp.del('unlocked', dataHash)
 
         } else {
           log.error(`Tried to send a file to '${userToSend}' who has not registered.`)

@@ -3,19 +3,19 @@ import express from 'express'
 import socket_io from 'socket.io'
 import socketStream from 'socket.io-stream'
 import bunyan from 'bunyan'
-import listeners from '../server/listeners'
-import socketApp from '../server/socketApp.js'
-import FileHelpers from '../libs/FileHelpers'
+import Redis from 'ioredis'
+import listeners from './listeners'
+import Routes from './routes.js'
+import appTypes from './app-types'
 import config from '../config'
 
-export default function createServer(port) {
+export default function createServer(port, { type }={}) {
+  const socketApp   = getAppType(type)
   const app         = express()
   const httpServer  = http.Server(app)
   const log         = bunyan.createLogger(config.logger.options)
   const io          = socket_io(httpServer)
-
-  app.get('*', (req, res) => FileHelpers.expressjs.convertReadmeToHtml(res))
-  httpServer.listen(port, () => log.info(`server listening on *: ${port}`))
+  const routes      = Routes({ app: socketApp })
 
   io.on('connection', function(socket) {
     log.info(`got socket: ${socket.id}`)
@@ -27,5 +27,19 @@ export default function createServer(port) {
     Object.keys(list.stream).forEach(key => ssSocket.on(key, list.stream[key]))
   })
 
+  Object.keys(routes).forEach(method => app.get(method, routes[method]))
+  httpServer.listen(port, () => log.info(`server listening on *: ${port}`))
+
   return { app, httpServer }
+}
+
+function getAppType(type) {
+  switch(type) {
+    case 'memory':
+      return appTypes.memory()
+    case 'redis':
+      return appTypes.redis(new Redis(config.redis.url))
+    default:
+      return getAppType('memory')
+  }
 }
