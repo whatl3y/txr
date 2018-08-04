@@ -79,10 +79,18 @@ customize your server:
 
 1. LOGGING_LEVEL: The [bunyan](https://github.com/trentm/node-bunyan) logging level. DEFAULT: 'info'
 2. PORT: The port your server will listen on. DEFAULT: 8000
+3. REDIS_URL: Only applicable if you are using the 'redis' type parameter below, but will
+              determine the server/db combo with which connected client data will be stored.
+              DEFAULT: redis://localhost:6379
 
 ### Parameters
 
-1. Optional: -p/--port: If present, this will override the PORT config
+1. Optional: -t/--type: If present, will determine where information about the connected
+          clients will live. DEFAULT: 'memory'
+            - memory: Connected client information will be stored in memory in a Javascript object
+            - redis: Connected client information will be stored in a redis database, where the
+                    connection string for the redis server should be in process.env.REDIS_URL (default: 'redis://localhost:6379')
+2. Optional: -p/--port: If present, this will override the PORT config
 that determines what port for the server to listen on.
 
 ### Start server

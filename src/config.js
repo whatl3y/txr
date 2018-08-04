@@ -7,6 +7,10 @@ export default {
     host:     process.env.TXR_HOST || "https://txr.euphoritech.com"
   },
 
+  redis: {
+    url: process.env.REDIS_URL || 'redis://localhost:6379'
+  },
+
   logger: {
     options: {
       name:   process.env.APP_NAME || "txr",

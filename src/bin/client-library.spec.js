@@ -4,10 +4,11 @@ import promisify from 'es6-promisify'
 import libraryClient from './client-library'
 import createServer from '../server'
 
+const port    = 8889
 const getFile = promisify(fs.readFile)
 const delFile = promisify(fs.unlink)
 const lstat   = promisify(fs.lstat)
-createServer(8899)
+createServer(port)
 
 const sleep = milliseconds => new Promise(resolve => setTimeout(resolve, milliseconds))
 
@@ -19,7 +20,7 @@ describe('Client interfaces', function() {
       libraryClient({
         command: 'listen',
         username: 'listener-testing123',
-        host: 'http://localhost:8899'
+        host: `http://localhost:${port}`
       }),
       (async function() {
         await sleep(1000)
@@ -27,7 +28,7 @@ describe('Client interfaces', function() {
           command: 'send',
           username: 'listener-testing123',
           file: './README.md',
-          host: 'http://localhost:8899'
+          host: `http://localhost:${port}`
         })
       })()
     ])
@@ -48,7 +49,7 @@ describe('Client interfaces', function() {
         command: 'send',
         username: 'user-that-does-not-exist',
         file: './README.md',
-        host: 'http://localhost:8899'
+        host: `http://localhost:${port}`
       })
     } catch(err) {
       assert.equal(true, err instanceof Error || typeof err === 'string')
