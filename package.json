@@ -12,7 +12,7 @@
   },
   "scripts": {
     "build": "gulp build",
-    "start": "node dist/txr-server",
+    "start": "node bin/txr-server",
     "test": "mocha --exit --require babel-core/register --recursive './src/**/*.spec.js'"
   },
   "bin": {
