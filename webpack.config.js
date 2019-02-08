@@ -16,6 +16,7 @@ function baseWebpackConfig(clientOrServer) {
   }
 
   return {
+    mode: 'production',
     entry: [ entryPoint ],
     target: 'node',
     output: {
@@ -23,7 +24,7 @@ function baseWebpackConfig(clientOrServer) {
     },
     externals: [ nodeExternals() ],
     module: {
-      loaders: [{
+      rules: [{
         test: /^.+\.js$/,
         loader: 'babel-loader'
       }]

@@ -2,6 +2,8 @@
 *.log
 *.rdb
 *.DS_Store
+/bin
+/dist
 /node_modules
 /config.js
 *.env
