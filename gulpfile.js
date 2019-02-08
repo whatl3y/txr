@@ -1,5 +1,4 @@
 const gulp = require('gulp')
-const gulpSequence = require('gulp-sequence')
 const babel = require('gulp-babel')
 const plumber = require('gulp-plumber')
 const insert = require('gulp-insert')
@@ -54,6 +53,6 @@ gulp.task('index-cli-server', function() {
 
 
 // Entry points
-gulp.task('build-cli-client', gulpSequence('transpile-cli-client', 'index-cli-client'))
-gulp.task('build-cli-server', gulpSequence('transpile-cli-server', 'index-cli-server'))
-gulp.task('build', [ 'build-library-client', 'build-cli-client', 'build-cli-server' ])
+gulp.task('build-cli-client', gulp.series('transpile-cli-client', 'index-cli-client'))
+gulp.task('build-cli-server', gulp.series('transpile-cli-server', 'index-cli-server'))
+gulp.task('build', gulp.parallel('build-library-client', 'build-cli-client', 'build-cli-server'))
