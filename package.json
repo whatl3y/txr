@@ -4,7 +4,7 @@
   "description": "Transfer files easily to and from team members through web sockets.",
   "main": "./dist/txr-library.js",
   "engines": {
-    "node": ">=4.0.0"
+    "node": ">=6.0.0"
   },
   "repository": {
     "type": "git",
@@ -12,7 +12,6 @@
   },
   "scripts": {
     "build": "gulp build",
-    "postinstall": "npm run build",
     "start": "node bin/txr-server",
     "test": "mocha --exit --require babel-core/register --recursive './src/**/*.spec.js'"
   },
@@ -21,22 +20,25 @@
     "txr-server": "./bin/txr-server"
   },
   "devDependencies": {
-    "mocha": "^5.2.0"
-  },
-  "dependencies": {
     "@babel/core": "^7.2.2",
     "@babel/preset-env": "^7.2.3",
     "@babel/register": "^7.0.0",
     "babel-loader": "^8.0.5",
-    "bunyan": "^1.8.12",
-    "colors": "^1.1.2",
-    "es6-promisify": "^5.0.0",
-    "express": "^4.16.2",
     "gulp": "^4.0.0",
     "gulp-babel": "^8.0.0",
     "gulp-insert": "^0.5.0",
     "gulp-plumber": "^1.2.1",
     "gulp-uglify": "^3.0.1",
+    "mocha": "^5.2.0",
+    "uglify-es": "^3.3.9",
+    "webpack-node-externals": "^1.6.0",
+    "webpack-stream": "^5.2.1"
+  },
+  "dependencies": {
+    "bunyan": "^1.8.12",
+    "colors": "^1.1.2",
+    "es6-promisify": "^5.0.0",
+    "express": "^4.16.2",
     "highlight.js": "^9.12.0",
     "ioredis": "^3.2.2",
     "markdown-it": "^8.4.0",
@@ -46,9 +48,6 @@
     "socket.io": "^2.0.4",
     "socket.io-client": "^2.0.4",
     "socket.io-stream": "^0.9.1",
-    "uglify-es": "^3.3.9",
-    "webpack-node-externals": "^1.6.0",
-    "webpack-stream": "^5.2.1",
     "zip-dir": "^1.0.2"
   },
   "author": "Lance Whatley <whatl3y@gmail.com>",
