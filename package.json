@@ -1,6 +1,6 @@
 {
   "name": "txr",
-  "version": "0.4.1",
+  "version": "0.4.2",
   "description": "Transfer files easily to and from team members through web sockets.",
   "main": "./dist/txr-library.js",
   "engines": {
