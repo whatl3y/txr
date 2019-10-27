@@ -4,7 +4,7 @@
   "description": "Transfer files easily to and from team members through web sockets.",
   "main": "./dist/txr-library.js",
   "engines": {
-    "node": ">=6.0.0"
+    "node": ">=8.0.0"
   },
   "repository": {
     "type": "git",
@@ -12,19 +12,20 @@
   },
   "scripts": {
     "build": "gulp build",
+    "postinstall": "npm run build",
     "start": "node bin/txr-server",
-    "test": "mocha --exit --require babel-core/register --recursive './src/**/*.spec.js'"
+    "test": "mocha --exit --require @babel/register --recursive './src/**/*.spec.js'"
   },
   "bin": {
     "txr": "./bin/txr-client",
     "txr-server": "./bin/txr-server"
   },
   "devDependencies": {
-    "@babel/core": "^7.2.2",
-    "@babel/preset-env": "^7.2.3",
-    "@babel/register": "^7.0.0",
-    "babel-loader": "^8.0.5",
-    "gulp": "^4.0.0",
+    "@babel/core": "^7.6.4",
+    "@babel/preset-env": "^7.6.3",
+    "@babel/register": "^7.6.2",
+    "babel-loader": "^8.0.6",
+    "gulp": "^4.0.2",
     "gulp-babel": "^8.0.0",
     "gulp-insert": "^0.5.0",
     "gulp-plumber": "^1.2.1",
@@ -37,6 +38,7 @@
   "dependencies": {
     "bunyan": "^1.8.12",
     "colors": "^1.1.2",
+    "core-js": "^3.3.4",
     "es6-promisify": "^5.0.0",
     "express": "^4.16.2",
     "highlight.js": "^9.12.0",
