@@ -1,6 +1,6 @@
 # node-txr (transfer)
 
-Send files from one computer to another easier than you ever have before, regardless of the network both are on. As long as both have an internet connection, you can send files to each other.
+Send files from one computer/server to another easier than you ever have before. As long as both have an internet connection, you can send files to each other.
 
 ## Example
 
@@ -26,9 +26,15 @@ $ txr send computer1 -f ./a/config/file.json
 
 ## What is this, and why?
 
-The goal of this package is to make it stupid easy to send files to other computers/servers without needing to connect to them via ssh, scp, ftp, or any other protocol that requires some sysadmin and networking skills to setup. This package includes both a client and server component. The server listens for connections from clients and handles sending files to and from connected clients. Clients can listen for files, send files, and even chat with other clients all with a single identifier (what we call a "username").
+The goal of this package is to make it stupid easy to send files to other computers without needing to connect to them via ssh, scp, ftp, or any other protocol that requires some sysadmin and networking skills to setup. This package includes both a client and server component. The server listens for connections from clients and handles sending files to and from connected clients. Clients can listen for files, send files, and even chat with other clients all with a single identifier (what we call a "username").
 
-We have a default server listening for connections on Heroku at `https://txr.euphoritech.com`, which is what any new client will connect to by default. We encourage you to [setup your own server](#server) to use offline or in your own secure network if you're passing sensitive data to others and/or have more stringent security requirements.
+We have a default server listening for connections on Heroku at `https://txr.euphoritech.com`, which is what any new client will connect to by default. Files are **never** stored anywhere on the server since it's basically just serving as a middleman between clients, but feel free to audit the code to confirm. I also encourage you to [setup your own server](#server) to use offline or in your own secure network if you're passing sensitive data to others and/or have more stringent security requirements.
+
+![Easily setup a server and 2 clients!](https://user-images.githubusercontent.com/13718950/32149608-89e29732-bcdd-11e7-96cf-ee9fbb1aeca8.gif)
+
+## node-txr's goal
+
+Ease-of-use and simplicity, period. I'm aware there are already industry standard and well audited tools built for security (ssh, sftp, scp, etc.) to accomplish the same end goal this package serves, but all require a level of sysadmin and networking skills to setup and get running. If I setup a small EC2 machine and want to send a directory of 100 images to it that is on my computer for example, or want to send a coworker and small config file quickly and easily, this package hopefully removes the hoops you would usually have to jump through to get them there.
 
 ## Install
 
@@ -59,19 +65,6 @@ $ txr send -u myname123 -f /path/to/file/to/send
 All bytes have been read from file: /path/to/file/to/send.
 Your file has successfully sent to myname123!
 ```
-
-## What is node-txr ("transfer")?
-
-txr is a CLI utility that provides an easy way to transfer files or directories
-from one machine to another (i.e. team members, servers, remote machines, etc.)
-as long as both machines can connect to a txr-server (either locally or on the internet).
-Servers and clients communicate with each other through the WebSocket protocol
-to stream files or directories back and forth between clients.
-Files are **never** stored anywhere on the server since it's basically just serving
-as a middleman between clients, but feel free to audit our code and/or download this package
-and setup your own server if you want to be sure.
-
-![Easily setup a server and 2 clients!](https://user-images.githubusercontent.com/13718950/32149608-89e29732-bcdd-11e7-96cf-ee9fbb1aeca8.gif)
 
 ## How does txr work?
 
