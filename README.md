@@ -26,7 +26,7 @@ $ txr send computer1 -f ./a/config/file.json
 
 ## What is this, and why?
 
-The goal of this package is to make it stupid easy to send files to other computers without needing to connect to them via ssh, scp, ftp, or any other protocol that requires some sysadmin and networking skills to setup. This package includes both a client and server component. The server listens for connections from clients and handles sending files to and from connected clients. Clients can listen for files, send files, and even chat with other clients all with a single identifier (what we call a "username").
+The goal of this package is to make it stupid easy to send files to other computers without needing to connect to them via ssh, scp, ftp, or any other protocol that requires some sysadmin and networking skills to setup. This package includes both a client and server component. The server listens for connections from clients and handles sending files to and from each other. Clients can listen for files, send files, and even chat with others all with a single identifier (what we call a "username").
 
 We have a default server listening for connections on Heroku at `https://txr.euphoritech.com`, which is what any new client will connect to by default. Files are **never** stored anywhere on the server since it's basically just serving as a middleman between clients, but feel free to audit the code to confirm. I also encourage you to [setup your own server](#server) to use offline or in your own secure network if you're passing sensitive data to others and/or have more stringent security requirements.
 
