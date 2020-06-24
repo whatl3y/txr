@@ -1,3 +1,691 @@
 #!/usr/bin/env node
 
-!function(e){var t={};function n(r){if(t[r])return t[r].exports;var s=t[r]={i:r,l:!1,exports:{}};return e[r].call(s.exports,s,s.exports,n),s.l=!0,s.exports}n.m=e,n.c=t,n.d=function(e,t,r){n.o(e,t)||Object.defineProperty(e,t,{enumerable:!0,get:r})},n.r=function(e){"undefined"!=typeof Symbol&&Symbol.toStringTag&&Object.defineProperty(e,Symbol.toStringTag,{value:"Module"}),Object.defineProperty(e,"__esModule",{value:!0})},n.t=function(e,t){if(1&t&&(e=n(e)),8&t)return e;if(4&t&&"object"==typeof e&&e&&e.__esModule)return e;var r=Object.create(null);if(n.r(r),Object.defineProperty(r,"default",{enumerable:!0,value:e}),2&t&&"string"!=typeof e)for(var s in e)n.d(r,s,function(t){return e[t]}.bind(null,s));return r},n.n=function(e){var t=e&&e.__esModule?function(){return e.default}:function(){return e};return n.d(t,"a",t),t},n.o=function(e,t){return Object.prototype.hasOwnProperty.call(e,t)},n.p="",n(n.s=12)}([function(e,t){e.exports=require("socket.io-stream")},function(e,t){e.exports=require("bunyan")},function(e,t){e.exports=require("highlight.js")},function(e,t){e.exports=require("minimist")},function(e,t){e.exports=require("http")},function(e,t){e.exports=require("express")},function(e,t){e.exports=require("socket.io")},function(e,t){e.exports=require("ioredis")},function(e,t){e.exports=require("crypto")},function(e,t){e.exports=require("fs")},function(e,t){e.exports=require("markdown-it")},function(e,t){e.exports=require("es6-promisify")},function(e,t,n){e.exports=n(13)},function(e,t,n){"use strict";n.r(t);var r=n(3),s=n.n(r),i=n(4),o=n.n(i),a=n(5),c=n.n(a),u=n(6),l=n.n(u),d=n(0),p=n.n(d),f=n(1),m=n.n(f),g=n(7),h=n.n(g),y=n(8),x=n.n(y),v={stringToHash(e){const t=x.a.createHash("md5");return t.update(e),t.digest("hex")}},w={filepath:process.env.TXR_PATH||process.env["win32"==process.platform?"USERPROFILE":"HOME"],server:{port:process.env.PORT||8e3,web_conc:process.env.WEB_CONCURRENCY||1,host:process.env.TXR_HOST||"https://txr.euphoritech.com"},redis:{url:process.env.REDIS_URL||"redis://localhost:6379"},logger:{options:{name:process.env.APP_NAME||"txr",level:process.env.LOGGING_LEVEL||"info",stream:process.stdout}}};const b=m.a.createLogger(w.logger.options);var O=n(9),k=n.n(O),S=n(2),$=n.n(S),_=n(10),j=n.n(_),T=n(11),N=n.n(T);const P=new j.a({highlight:function(e,t){if(t&&$.a.getLanguage(t))try{return`<pre class="hljs"><code>${$.a.highlight(t,e,!0).value}</code></pre>`}catch(e){}return""}}),E=N()(k.a.readFile);var R={getFileName(e,t=Date.now()){const n=e.lastIndexOf("."),r=e.substring(n);return`${e.substring(0,n)}_${t}${r}`},expressjs:{async convertReadmeToHtml(e){const t=await E("README.md","utf8"),n=P.render(t);return e.send(this.createHtmlPage(n))},createHtmlPage:e=>`\n        <!DOCTYPE html>\n        <html>\n          <head>\n            <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />\n            <title>txr - Transfer Files to Friends</title>\n\n            <style>\n              body {\n                font-family: "Helvetica Neue", Helvetica, Arial, sans-serif;\n              }\n\n              a {\n                color: inherit;\n              }\n\n              pre.hljs {\n                border-radius: 5px;\n                border: 1px solid #a0a0a0;\n                background: #f5f5f5;\n                overflow-x: scroll;\n                padding: 5px;\n              }\n\n              .container {\n                max-width: 700px;\n                margin-right: auto;\n                margin-left: auto;\n              }\n\n              .notice {\n                border-radius: 5px;\n                border: 1px solid #a0a0a0;\n                background: #28a745;\n                color: white;\n                padding: 15px;\n                margin: 25px 0px;\n              }\n            </style>\n          </head>\n\n          <body>\n            <div class="container">\n              <div class="notice">\n                You navigated to a txr server to transfer files easily to and\n                from machines/servers. Learn more below or by visiting\n                <a href="https://github.com/whatl3y/txr">https://github.com/whatl3y/txr</a>\n              </div>\n              ${e}\n            </div>\n          </body>\n        </html>\n      `}},q={paginateArray(e,t=9e7,n=1){const r=t*(n-1);if(e instanceof Array){const s=e.length;return{data:e.slice(r,r+t),number_of_pages:Math.ceil(s/t),current_page:n,data_length:s}}if("object"==typeof e&&null!=e){const i=e,o=Object.keys(i).sort(),a=o.length,c=o.slice(r,r+t);let u={};for(var s=0;s<c.length;s++)u[c[s]]=i[c[s]];return{data:u,number_of_pages:Math.ceil(a/t),current_page:n,data_length:a}}return e}};function H(){return{app:{names:{},ids:{},auth:{},unlocked:{}},async set(e,t,n){return this.app[e][t]=n},async get(e,t=null){return t?this.app[e][t]:this.app[e]},async del(e,t){delete this.app[e][t]}}}var M={memory:H,redis:function(e){return{async set(t,n,r){let s=JSON.parse(await e.get(`txr.${t}`)||"{}");return s[n]=r,await e.set(`txr.${t}`,JSON.stringify(s)),r},async get(t,n=null){const r=JSON.parse(await e.get(`txr.${t}`)||"{}");return n?r[n]:r},async del(t,n){let r=JSON.parse(await e.get(`txr.${t}`)||"{}");delete r[n],await e.set(`txr.${t}`,JSON.stringify(r))},flush:async(t=Object.keys(H().app))=>await Promise.all(t.map(async t=>{await e.del(`txr.${t}`)}))}}};function A(e,{type:t}={}){const n=function e(t){switch(t){case"memory":return M.memory();case"redis":return M.redis(new h.a(w.redis.url));default:return e("memory")}}(t),r=c()(),s=o.a.Server(r),i=m.a.createLogger(w.logger.options),a=l()(s),u=function({app:e}){return{async"/clients"(t,n){const r=q.paginateArray(Object.keys(await e.get("names")));n.json(r)},"*"(e,t){R.expressjs.convertReadmeToHtml(t)}}}({app:n});return a.on("connection",function(e){i.info(`got socket: ${e.id}`);const t=p()(e),r=function(e,t,n){return{normal:{"txr-regiser-listen":async function({auth:e,user:r}){await n.get("names",r)?(t.emit("txr-user-taken",!0),b.error(`User could not register name: ${r}`)):(await Promise.all([n.set("names",r,t.id),n.set("ids",t.id,r),n.set("auth",t.id,!!e)]),t.emit("txr-user-registered-success",r),b.info(`User successfully registered name: ${r}`))},"txr-send-file-check-auth":async function({filename:r,filesizebytes:s,user:i}){const o=await n.get("names",i),a=await n.get("auth",o),c=v.stringToHash(JSON.stringify({filename:r,filesizebytes:s,user:i}));if(i&&o){const u=e.sockets.connected[o];a?(t.emit("txr-file-permission-waiting"),u.on("file-permission-response",async e=>{"yes"===e.toLowerCase()?(await n.set("unlocked",c,t.id),t.emit("txr-file-permission-granted")):t.emit("txr-file-permission-denied")}),u.emit("txr-file-permission",{filename:r,filesizebytes:s,user:i})):(await n.set("unlocked",c,t.id),t.emit("txr-file-permission-granted"))}else b.error(`Tried to send a file to '${i}' who has not registered.`),t.emit("txr-no-user",{user:i})},"txr-send-chat-message":async function({targetUser:r,user:s,message:i}){const o=await n.get("names",r);if(!o)return t.emit("txr-destination-user-not-registered",r);e.sockets.connected[o].emit("txr-receive-chat-message",{targetUser:s,message:i})},"txr-reply-to-chat-message":async function({user:r,replyMessage:s}){const[i,o]=await Promise.all([n.get("ids",t.id),n.get("names",r)]);o&&e.sockets.connected[o].emit("txr-receive-reply",{user:i,replyMessage:s})},disconnect:async function(){b.info(`socket disconnected: ${t.id}`);const e=await n.get("ids",t.id);await Promise.all([n.del("ids",t.id),n.del("auth",t.id),n.del("names",e)])}},stream:{"txr-upload":async function(r,s){b.info(`Received 'upload' event with data: ${JSON.stringify(s)}`);const i=s.user,o=await n.get("names",i),a=v.stringToHash(JSON.stringify(s));if(i&&o){const i=await n.get("unlocked",a);if(i&&i==t.id){const n=e.sockets.connected[o],i=p.a.createStream();r.on("data",e=>b.info(`Received ${e.length} bytes of data.`)),r.on("error",e=>b.error(`socket: ${t.id}`,e)),r.on("end",()=>b.info(`Completed receiving file with data: ${JSON.stringify(s)}!`)),i.on("end",()=>t.emit("txr-finished-uploading")),r.pipe(i),p()(n).emit("txr-file",i,s)}else t.emit("txr-file-data-hash-mismatch");await n.del("unlocked",a)}else b.error(`Tried to send a file to '${i}' who has not registered.`),t.emit("txr-no-user",{user:i})}}}}(a,e,n);Object.keys(r.normal).forEach(t=>e.on(t,r.normal[t])),Object.keys(r.stream).forEach(e=>t.on(e,r.stream[e]))}),Object.keys(u).forEach(e=>r.get(e,u[e])),s.listen(e,()=>i.info(`server listening on *: ${e}`)),{app:r,httpServer:s,socketApp:n}}const L=()=>{},J=s()(process.argv.slice(2)),C=J.t||J.type||"memory";let I=J.p||J.port||w.server.port;async function U(e=L){"function"==typeof e&&await e(),process.exit()}I=isNaN(I)?w.server.port:I,async function(){const{socketApp:e}=await A(I,{type:C});process.on("SIGINT",()=>U(e.flush)),process.on("SIGTERM",()=>U(e.flush))}()}]);
+/******/ (function(modules) { // webpackBootstrap
+/******/ 	// The module cache
+/******/ 	var installedModules = {};
+/******/
+/******/ 	// The require function
+/******/ 	function __webpack_require__(moduleId) {
+/******/
+/******/ 		// Check if module is in cache
+/******/ 		if(installedModules[moduleId]) {
+/******/ 			return installedModules[moduleId].exports;
+/******/ 		}
+/******/ 		// Create a new module (and put it into the cache)
+/******/ 		var module = installedModules[moduleId] = {
+/******/ 			i: moduleId,
+/******/ 			l: false,
+/******/ 			exports: {}
+/******/ 		};
+/******/
+/******/ 		// Execute the module function
+/******/ 		modules[moduleId].call(module.exports, module, module.exports, __webpack_require__);
+/******/
+/******/ 		// Flag the module as loaded
+/******/ 		module.l = true;
+/******/
+/******/ 		// Return the exports of the module
+/******/ 		return module.exports;
+/******/ 	}
+/******/
+/******/
+/******/ 	// expose the modules object (__webpack_modules__)
+/******/ 	__webpack_require__.m = modules;
+/******/
+/******/ 	// expose the module cache
+/******/ 	__webpack_require__.c = installedModules;
+/******/
+/******/ 	// define getter function for harmony exports
+/******/ 	__webpack_require__.d = function(exports, name, getter) {
+/******/ 		if(!__webpack_require__.o(exports, name)) {
+/******/ 			Object.defineProperty(exports, name, { enumerable: true, get: getter });
+/******/ 		}
+/******/ 	};
+/******/
+/******/ 	// define __esModule on exports
+/******/ 	__webpack_require__.r = function(exports) {
+/******/ 		if(typeof Symbol !== 'undefined' && Symbol.toStringTag) {
+/******/ 			Object.defineProperty(exports, Symbol.toStringTag, { value: 'Module' });
+/******/ 		}
+/******/ 		Object.defineProperty(exports, '__esModule', { value: true });
+/******/ 	};
+/******/
+/******/ 	// create a fake namespace object
+/******/ 	// mode & 1: value is a module id, require it
+/******/ 	// mode & 2: merge all properties of value into the ns
+/******/ 	// mode & 4: return value when already ns object
+/******/ 	// mode & 8|1: behave like require
+/******/ 	__webpack_require__.t = function(value, mode) {
+/******/ 		if(mode & 1) value = __webpack_require__(value);
+/******/ 		if(mode & 8) return value;
+/******/ 		if((mode & 4) && typeof value === 'object' && value && value.__esModule) return value;
+/******/ 		var ns = Object.create(null);
+/******/ 		__webpack_require__.r(ns);
+/******/ 		Object.defineProperty(ns, 'default', { enumerable: true, value: value });
+/******/ 		if(mode & 2 && typeof value != 'string') for(var key in value) __webpack_require__.d(ns, key, function(key) { return value[key]; }.bind(null, key));
+/******/ 		return ns;
+/******/ 	};
+/******/
+/******/ 	// getDefaultExport function for compatibility with non-harmony modules
+/******/ 	__webpack_require__.n = function(module) {
+/******/ 		var getter = module && module.__esModule ?
+/******/ 			function getDefault() { return module['default']; } :
+/******/ 			function getModuleExports() { return module; };
+/******/ 		__webpack_require__.d(getter, 'a', getter);
+/******/ 		return getter;
+/******/ 	};
+/******/
+/******/ 	// Object.prototype.hasOwnProperty.call
+/******/ 	__webpack_require__.o = function(object, property) { return Object.prototype.hasOwnProperty.call(object, property); };
+/******/
+/******/ 	// __webpack_public_path__
+/******/ 	__webpack_require__.p = "";
+/******/
+/******/
+/******/ 	// Load entry module and return exports
+/******/ 	return __webpack_require__(__webpack_require__.s = 4);
+/******/ })
+/************************************************************************/
+/******/ ([
+/* 0 */
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+
+Object.defineProperty(exports, "__esModule", { value: true });
+const opts = {
+    filepath: process.env.TXR_PATH ||
+        process.env[process.platform == 'win32' ? 'USERPROFILE' : 'HOME'] ||
+        '.',
+    server: {
+        port: process.env.PORT || 8000,
+        web_conc: process.env.WEB_CONCURRENCY || 1,
+        host: process.env.TXR_HOST || 'https://txr.euphoritech.com',
+    },
+    redis: {
+        url: process.env.REDIS_URL || 'redis://localhost:6379',
+    },
+    logger: {
+        options: {
+            name: process.env.APP_NAME || 'txr',
+            level: 'info',
+            stream: process.stdout,
+        },
+    },
+};
+exports.default = opts;
+
+
+/***/ }),
+/* 1 */
+/***/ (function(module, exports) {
+
+module.exports = require("bunyan");
+
+/***/ }),
+/* 2 */
+/***/ (function(module, exports) {
+
+module.exports = require("socket.io-stream");
+
+/***/ }),
+/* 3 */
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+
+Object.defineProperty(exports, "__esModule", { value: true });
+function memoryApp() {
+    return {
+        app: {
+            names: {
+            // holds key/value pairs - name: socket.id
+            },
+            ids: {
+            // holds key/value pairs - socket.id: name
+            },
+            auth: {
+            // holds key/value pairs - socket.id: true/false, where the boolean
+            // determines if a listening user wants to be notified before
+            // a file is sent to her
+            },
+            unlocked: {
+            // holds key/value pairs - [hash]: socket.id, where the hash
+            // is an md5 hash from the stringified object that defined the
+            // data wanting to be send by the sending client to the listener.
+            },
+        },
+        async set(namespace, key, value) {
+            return (this.app[namespace][key] = value);
+        },
+        async get(namespace, key = null) {
+            return key ? this.app[namespace][key] : this.app[namespace];
+        },
+        async del(namespace, key) {
+            delete this.app[namespace][key];
+        },
+    };
+}
+exports.default = memoryApp;
+
+
+/***/ }),
+/* 4 */
+/***/ (function(module, exports, __webpack_require__) {
+
+module.exports = __webpack_require__(5);
+
+
+/***/ }),
+/* 5 */
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+
+var __importDefault = (this && this.__importDefault) || function (mod) {
+    return (mod && mod.__esModule) ? mod : { "default": mod };
+};
+Object.defineProperty(exports, "__esModule", { value: true });
+const minimist_1 = __importDefault(__webpack_require__(6));
+const server_1 = __importDefault(__webpack_require__(7));
+const config_1 = __importDefault(__webpack_require__(0));
+const argv = minimist_1.default(process.argv.slice(2));
+const type = argv.t || argv.type || 'memory';
+let port = argv.p || argv.port || config_1.default.server.port;
+port = isNaN(port) ? config_1.default.server.port : port;
+(async function createTxrServer() {
+    const { socketApp } = await server_1.default(port, { type });
+    //handle signals saying for the server to die
+    process.on('SIGINT', () => stopAndTerminateServer(socketApp.flush));
+    process.on('SIGTERM', () => stopAndTerminateServer(socketApp.flush));
+})();
+async function stopAndTerminateServer(asyncFunctionToGracefullExit) {
+    if (typeof asyncFunctionToGracefullExit === 'function')
+        await asyncFunctionToGracefullExit();
+    process.exit();
+}
+
+
+/***/ }),
+/* 6 */
+/***/ (function(module, exports) {
+
+module.exports = require("minimist");
+
+/***/ }),
+/* 7 */
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+
+var __importDefault = (this && this.__importDefault) || function (mod) {
+    return (mod && mod.__esModule) ? mod : { "default": mod };
+};
+Object.defineProperty(exports, "__esModule", { value: true });
+const http_1 = __importDefault(__webpack_require__(8));
+const express_1 = __importDefault(__webpack_require__(9));
+const socket_io_1 = __importDefault(__webpack_require__(10));
+const bunyan_1 = __importDefault(__webpack_require__(1));
+const ioredis_1 = __importDefault(__webpack_require__(11));
+const listeners_1 = __importDefault(__webpack_require__(12));
+const routes_1 = __importDefault(__webpack_require__(15));
+const app_types_1 = __importDefault(__webpack_require__(21));
+const config_1 = __importDefault(__webpack_require__(0));
+// import socketStream from 'socket.io-stream'
+const socketStream = __webpack_require__(2);
+function createServer(port, opts) {
+    const type = opts && opts.type;
+    const socketApp = getAppType(type);
+    const app = express_1.default();
+    const httpServer = new http_1.default.Server(app);
+    const log = bunyan_1.default.createLogger(config_1.default.logger.options);
+    const io = socket_io_1.default(httpServer);
+    const routes = routes_1.default({ app: socketApp });
+    io.on('connection', function (socket) {
+        log.info(`got socket: ${socket.id}`);
+        const ssSocket = socketStream(socket);
+        const list = listeners_1.default(io, socket, socketApp);
+        Object.keys(list.normal).forEach((key) => socket.on(key, list.normal[key]));
+        Object.keys(list.stream).forEach((key) => ssSocket.on(key, list.stream[key]));
+    });
+    Object.keys(routes).forEach((method) => app.get(method, routes[method]));
+    httpServer.listen(port, () => log.info(`server listening on *: ${port}`));
+    return { app, httpServer, socketApp };
+}
+exports.default = createServer;
+function getAppType(type) {
+    switch (type) {
+        case 'memory':
+            return app_types_1.default.memory();
+        case 'redis':
+            return app_types_1.default.redis(new ioredis_1.default(config_1.default.redis.url));
+        default:
+            return getAppType('memory');
+    }
+}
+
+
+/***/ }),
+/* 8 */
+/***/ (function(module, exports) {
+
+module.exports = require("http");
+
+/***/ }),
+/* 9 */
+/***/ (function(module, exports) {
+
+module.exports = require("express");
+
+/***/ }),
+/* 10 */
+/***/ (function(module, exports) {
+
+module.exports = require("socket.io");
+
+/***/ }),
+/* 11 */
+/***/ (function(module, exports) {
+
+module.exports = require("ioredis");
+
+/***/ }),
+/* 12 */
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+
+var __importDefault = (this && this.__importDefault) || function (mod) {
+    return (mod && mod.__esModule) ? mod : { "default": mod };
+};
+Object.defineProperty(exports, "__esModule", { value: true });
+const bunyan_1 = __importDefault(__webpack_require__(1));
+const Encryption_1 = __importDefault(__webpack_require__(13));
+const config_1 = __importDefault(__webpack_require__(0));
+// import ss from 'socket.io-stream'
+const ss = __webpack_require__(2);
+const log = bunyan_1.default.createLogger(config_1.default.logger.options);
+function listeners(io, socket, socketApp) {
+    return {
+        normal: {
+            'txr-regiser-listen': async function ({ auth, user, }) {
+                if (await socketApp.get('names', user)) {
+                    socket.emit('txr-user-taken', true);
+                    log.error(`User could not register name: ${user}`);
+                }
+                else {
+                    await Promise.all([
+                        socketApp.set('names', user, socket.id),
+                        socketApp.set('ids', socket.id, user),
+                        socketApp.set('auth', socket.id, !!auth),
+                    ]);
+                    socket.emit('txr-user-registered-success', user);
+                    log.info(`User successfully registered name: ${user}`);
+                }
+            },
+            'txr-send-file-check-auth': async function ({ filename, filesizebytes, user, }) {
+                const destinationSocketId = await socketApp.get('names', user);
+                const sendingRequiresAuth = await socketApp.get('auth', destinationSocketId);
+                const dataHash = Encryption_1.default.stringToHash(JSON.stringify({ filename, filesizebytes, user }));
+                if (user && destinationSocketId) {
+                    const destinationSocket = io.sockets.connected[destinationSocketId];
+                    if (sendingRequiresAuth) {
+                        socket.emit('txr-file-permission-waiting');
+                        destinationSocket.on('file-permission-response', async (answer) => {
+                            if (answer.toLowerCase() === 'yes') {
+                                await socketApp.set('unlocked', dataHash, socket.id);
+                                socket.emit('txr-file-permission-granted');
+                            }
+                            else {
+                                socket.emit('txr-file-permission-denied');
+                            }
+                        });
+                        destinationSocket.emit('txr-file-permission', {
+                            filename,
+                            filesizebytes,
+                            user,
+                        });
+                    }
+                    else {
+                        await socketApp.set('unlocked', dataHash, socket.id);
+                        socket.emit('txr-file-permission-granted');
+                    }
+                }
+                else {
+                    log.error(`Tried to send a file to '${user}' who has not registered.`);
+                    socket.emit('txr-no-user', { user });
+                }
+            },
+            'txr-send-chat-message': async function ({ targetUser, user, message, }) {
+                const destinationSocketId = await socketApp.get('names', targetUser);
+                if (!destinationSocketId) {
+                    socket.emit('txr-destination-user-not-registered', targetUser);
+                    return;
+                }
+                const destinationSocket = io.sockets.connected[destinationSocketId];
+                destinationSocket.emit('txr-receive-chat-message', {
+                    targetUser: user,
+                    message,
+                });
+            },
+            'txr-reply-to-chat-message': async function ({ user, replyMessage, }) {
+                const [replyingUserName, destinationSocketId] = await Promise.all([
+                    socketApp.get('ids', socket.id),
+                    socketApp.get('names', user),
+                ]);
+                if (destinationSocketId) {
+                    const destinationSocket = io.sockets.connected[destinationSocketId];
+                    destinationSocket.emit('txr-receive-reply', {
+                        user: replyingUserName,
+                        replyMessage,
+                    });
+                }
+            },
+            disconnect: async function () {
+                log.info(`socket disconnected: ${socket.id}`);
+                const name = await socketApp.get('ids', socket.id);
+                await Promise.all([
+                    socketApp.del('ids', socket.id),
+                    socketApp.del('auth', socket.id),
+                    socketApp.del('names', name),
+                ]);
+            },
+        },
+        stream: {
+            'txr-upload': async function (stream, data) {
+                log.info(`Received 'upload' event with data: ${JSON.stringify(data)}`);
+                const userToSend = data.user;
+                const destinationSocketId = await socketApp.get('names', userToSend);
+                const dataHash = Encryption_1.default.stringToHash(JSON.stringify(data));
+                if (userToSend && destinationSocketId) {
+                    const unlockedSocketId = await socketApp.get('unlocked', dataHash);
+                    if (unlockedSocketId && unlockedSocketId == socket.id) {
+                        const destinationSocket = io.sockets.connected[destinationSocketId];
+                        const destinationStream = ss.createStream();
+                        stream.on('data', (chunk) => log.info(`Received ${chunk.length} bytes of data.`));
+                        stream.on('error', (err) => log.error(`socket: ${socket.id}`, err));
+                        stream.on('end', () => log.info(`Completed receiving file with data: ${JSON.stringify(data)}!`));
+                        destinationStream.on('end', () => socket.emit('txr-finished-uploading'));
+                        stream.pipe(destinationStream);
+                        ss(destinationSocket).emit('txr-file', destinationStream, data);
+                    }
+                    else {
+                        socket.emit('txr-file-data-hash-mismatch');
+                    }
+                    await socketApp.del('unlocked', dataHash);
+                }
+                else {
+                    log.error(`Tried to send a file to '${userToSend}' who has not registered.`);
+                    socket.emit('txr-no-user', { user: userToSend });
+                }
+            },
+        },
+    };
+}
+exports.default = listeners;
+
+
+/***/ }),
+/* 13 */
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+
+var __importDefault = (this && this.__importDefault) || function (mod) {
+    return (mod && mod.__esModule) ? mod : { "default": mod };
+};
+Object.defineProperty(exports, "__esModule", { value: true });
+const crypto_1 = __importDefault(__webpack_require__(14));
+exports.default = {
+    stringToHash(str) {
+        const md5Sum = crypto_1.default.createHash('md5');
+        md5Sum.update(str);
+        return md5Sum.digest('hex');
+    },
+};
+
+
+/***/ }),
+/* 14 */
+/***/ (function(module, exports) {
+
+module.exports = require("crypto");
+
+/***/ }),
+/* 15 */
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+
+var __importDefault = (this && this.__importDefault) || function (mod) {
+    return (mod && mod.__esModule) ? mod : { "default": mod };
+};
+Object.defineProperty(exports, "__esModule", { value: true });
+const FileHelpers_1 = __importDefault(__webpack_require__(16));
+const Helpers_1 = __importDefault(__webpack_require__(20));
+function Routes({ app }) {
+    return {
+        async ['/clients'](req, res) {
+            const clientInfo = Helpers_1.default.paginateArray(Object.keys(await app.get('names')));
+            res.json(clientInfo);
+        },
+        ['*'](req, res) {
+            FileHelpers_1.default.expressjs.convertReadmeToHtml(res);
+        },
+    };
+}
+exports.default = Routes;
+
+
+/***/ }),
+/* 16 */
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+
+var __importDefault = (this && this.__importDefault) || function (mod) {
+    return (mod && mod.__esModule) ? mod : { "default": mod };
+};
+Object.defineProperty(exports, "__esModule", { value: true });
+const fs_1 = __importDefault(__webpack_require__(17));
+const highlight_js_1 = __importDefault(__webpack_require__(18));
+const markdown_it_1 = __importDefault(__webpack_require__(19));
+const markdown = markdown_it_1.default({
+    highlight: function (str, lang) {
+        if (lang && highlight_js_1.default.getLanguage(lang)) {
+            try {
+                return `<pre class="hljs"><code>${highlight_js_1.default.highlight(lang, str, true).value}</code></pre>`;
+            }
+            catch (__) { }
+        }
+        return ''; // use external default escaping
+    },
+});
+const readFile = fs_1.default.promises.readFile;
+exports.default = {
+    getFileName(fileName, extraText = Date.now()) {
+        const lastPeriod = fileName.lastIndexOf('.');
+        const extension = fileName.substring(lastPeriod);
+        return `${fileName.substring(0, lastPeriod)}_${extraText}${extension}`;
+    },
+    expressjs: {
+        async convertReadmeToHtml(res) {
+            const mdRaw = await readFile('README.md', 'utf8');
+            const mdHtml = markdown.render(mdRaw, {});
+            return res.send(this.createHtmlPage(mdHtml));
+        },
+        createHtmlPage(bodyHtml) {
+            return `
+        <!DOCTYPE html>
+        <html>
+          <head>
+            <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+            <title>txr - Transfer Files to Friends</title>
+
+            <style>
+              body {
+                font-family: "Helvetica Neue", Helvetica, Arial, sans-serif;
+              }
+
+              a {
+                color: inherit;
+              }
+
+              pre.hljs {
+                border-radius: 5px;
+                border: 1px solid #a0a0a0;
+                background: #f5f5f5;
+                overflow-x: scroll;
+                padding: 5px;
+              }
+
+              .container {
+                max-width: 700px;
+                margin-right: auto;
+                margin-left: auto;
+              }
+
+              .notice {
+                border-radius: 5px;
+                border: 1px solid #a0a0a0;
+                background: #28a745;
+                color: white;
+                padding: 15px;
+                margin: 25px 0px;
+              }
+            </style>
+          </head>
+
+          <body>
+            <div class="container">
+              <div class="notice">
+                You navigated to a txr server to transfer files easily to and
+                from machines/servers. Learn more below or by visiting
+                <a href="https://github.com/whatl3y/txr">https://github.com/whatl3y/txr</a>
+              </div>
+              ${bodyHtml}
+            </div>
+          </body>
+        </html>
+      `;
+        },
+    },
+};
+
+
+/***/ }),
+/* 17 */
+/***/ (function(module, exports) {
+
+module.exports = require("fs");
+
+/***/ }),
+/* 18 */
+/***/ (function(module, exports) {
+
+module.exports = require("highlight.js");
+
+/***/ }),
+/* 19 */
+/***/ (function(module, exports) {
+
+module.exports = require("markdown-it");
+
+/***/ }),
+/* 20 */
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+
+Object.defineProperty(exports, "__esModule", { value: true });
+exports.default = {
+    paginateArray(ary, perPage = 9e7, pageNumber = 1) {
+        const start = perPage * (pageNumber - 1);
+        if (ary instanceof Array) {
+            const size = ary.length;
+            return {
+                data: ary.slice(start, start + perPage),
+                number_of_pages: Math.ceil(size / perPage),
+                current_page: pageNumber,
+                data_length: size,
+            };
+        }
+        else if (typeof ary === 'object' && ary != null) {
+            const obj = ary;
+            const keys = Object.keys(obj).sort();
+            const size = keys.length;
+            const filteredKeys = keys.slice(start, start + perPage);
+            let filteredObj = {};
+            for (var _i = 0; _i < filteredKeys.length; _i++) {
+                filteredObj[filteredKeys[_i]] = obj[filteredKeys[_i]];
+            }
+            return {
+                data: filteredObj,
+                number_of_pages: Math.ceil(size / perPage),
+                current_page: pageNumber,
+                data_length: size,
+            };
+        }
+        return ary;
+    },
+};
+
+
+/***/ }),
+/* 21 */
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+
+var __importDefault = (this && this.__importDefault) || function (mod) {
+    return (mod && mod.__esModule) ? mod : { "default": mod };
+};
+Object.defineProperty(exports, "__esModule", { value: true });
+const memory_1 = __importDefault(__webpack_require__(3));
+const redis_1 = __importDefault(__webpack_require__(22));
+exports.default = {
+    memory: memory_1.default,
+    redis: redis_1.default,
+};
+
+
+/***/ }),
+/* 22 */
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+
+var __importDefault = (this && this.__importDefault) || function (mod) {
+    return (mod && mod.__esModule) ? mod : { "default": mod };
+};
+Object.defineProperty(exports, "__esModule", { value: true });
+const memory_1 = __importDefault(__webpack_require__(3));
+function redisApp(redis) {
+    return {
+        async set(namespace, key, value) {
+            let currentNamespaceData = JSON.parse((await redis.get(`txr.${namespace}`)) || '{}');
+            currentNamespaceData[key] = value;
+            await redis.set(`txr.${namespace}`, JSON.stringify(currentNamespaceData));
+            return value;
+        },
+        async get(namespace, key = null) {
+            const currentNamespaceData = JSON.parse((await redis.get(`txr.${namespace}`)) || '{}');
+            return key ? currentNamespaceData[key] : currentNamespaceData;
+        },
+        async del(namespace, key) {
+            let currentNamespaceData = JSON.parse((await redis.get(`txr.${namespace}`)) || '{}');
+            delete currentNamespaceData[key];
+            await redis.set(`txr.${namespace}`, JSON.stringify(currentNamespaceData));
+        },
+        async flush(namespaces = Object.keys(memory_1.default().app)) {
+            return await Promise.all(namespaces.map(async (namespace) => {
+                await redis.del(`txr.${namespace}`);
+            }));
+        },
+    };
+}
+exports.default = redisApp;
+
+
+/***/ })
+/******/ ]);
