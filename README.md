@@ -24,6 +24,16 @@ $ txr send computer1 -f ./a/config/file.json
 # Your file has successfully sent to computer1!
 ```
 
+## Install
+
+```bash
+# for CLI use
+$ npm install -g txr
+
+# for library use
+$ npm install txr
+```
+
 ## What is this, and why?
 
 The goal of this package is to make it stupid easy to send files to other computers without needing to connect to them via ssh, scp, ftp, or any other protocol that requires some sysadmin and networking skills to setup. This package includes both a client and server component. The server listens for connections from clients and handles sending files to and from each other. Clients can listen for files, send files, and even chat with others all with a single identifier (what we call a "username").
@@ -35,16 +45,6 @@ We have a default server listening for connections on Heroku at `https://txr.eup
 ## node-txr's goal
 
 Ease-of-use and simplicity, period. I'm aware there are already industry standard and well audited tools built for security (ssh, sftp, scp, etc.) to accomplish the same end goal this package serves, but all require a level of sysadmin and networking skills to setup and get running. If I setup a small EC2 machine and want to send a directory of 100 images to it that is on my computer for example, or want to send a coworker and small config file quickly and easily, this package hopefully removes the hoops you would usually have to jump through to get them there.
-
-## Install
-
-```bash
-# for CLI use
-$ npm install -g txr
-
-# for library use
-$ npm install txr
-```
 
 ## Quick Start (cli)
 
