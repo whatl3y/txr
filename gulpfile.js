@@ -2,11 +2,8 @@ const gulp = require('gulp')
 const plumber = require('gulp-plumber')
 const insert = require('gulp-insert')
 const ts = require('gulp-typescript')
-const uglifyComposer = require('gulp-uglify/composer')
-const uglifyes = require('uglify-es')
 const webpack = require('webpack-stream')
 const webpackConfig = require('./webpack.config.js')
-const uglify = uglifyComposer(uglifyes, console)
 
 const tsProject1 = ts.createProject('tsconfig.json')
 const tsProject2 = ts.createProject('tsconfig.json')
@@ -18,28 +15,22 @@ const serverWebpackConfig = webpackConfig('server')
 
 // Client Library
 gulp.task('build-library-client', function () {
-  return (
-    gulp
-      .src('./src/client/**/*.{js,ts}')
-      .pipe(plumber())
-      .pipe(tsProject1())
-      .pipe(webpack(libraryClientWebpackConfig))
-      // .pipe(uglify())
-      .pipe(gulp.dest('./dist'))
-  )
+  return gulp
+    .src(['./src/client/**/*.ts', '!./src/client/**/*.spec.ts'])
+    .pipe(plumber())
+    .pipe(tsProject1())
+    .pipe(webpack(libraryClientWebpackConfig))
+    .pipe(gulp.dest('./dist'))
 })
 
 // Client CLI
 gulp.task('transpile-cli-client', function () {
-  return (
-    gulp
-      .src('./src/client/**/*.{js,ts}')
-      .pipe(plumber())
-      .pipe(tsProject2())
-      .pipe(webpack(cliClientWebpackConfig))
-      // .pipe(uglify())
-      .pipe(gulp.dest('./bin'))
-  )
+  return gulp
+    .src(['./src/client/**/*.ts', '!./src/client/**/*.spec.ts'])
+    .pipe(plumber())
+    .pipe(tsProject2())
+    .pipe(webpack(cliClientWebpackConfig))
+    .pipe(gulp.dest('./bin'))
 })
 
 gulp.task('index-cli-client', function () {
@@ -51,15 +42,12 @@ gulp.task('index-cli-client', function () {
 
 // Server CLI
 gulp.task('transpile-cli-server', function () {
-  return (
-    gulp
-      .src('./src/client/**/*.{js,ts}')
-      .pipe(plumber())
-      .pipe(tsProject3())
-      .pipe(webpack(serverWebpackConfig))
-      // .pipe(uglify())
-      .pipe(gulp.dest('./bin'))
-  )
+  return gulp
+    .src(['./src/server/**/*.ts', '!./src/server/**/*.spec.ts'])
+    .pipe(plumber())
+    .pipe(tsProject3())
+    .pipe(webpack(serverWebpackConfig))
+    .pipe(gulp.dest('./bin'))
 })
 
 gulp.task('index-cli-server', function () {
