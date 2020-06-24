@@ -1,7 +1,7 @@
 {
   "name": "txr",
   "version": "0.4.2",
-  "description": "Send files easily to other computers using WebSockets.",
+  "description": "Send files hilariously easily to other computers using WebSockets.",
   "author": "Lance Whatley <whatl3y@gmail.com>",
   "license": "MIT",
   "main": "./dist/txr-library.js",
