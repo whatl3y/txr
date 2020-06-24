@@ -1,3 +1,928 @@
 #!/usr/bin/env node
 
-!function(e){var t={};function r(n){if(t[n])return t[n].exports;var s=t[n]={i:n,l:!1,exports:{}};return e[n].call(s.exports,s,s.exports,r),s.l=!0,s.exports}r.m=e,r.c=t,r.d=function(e,t,n){r.o(e,t)||Object.defineProperty(e,t,{enumerable:!0,get:n})},r.r=function(e){"undefined"!=typeof Symbol&&Symbol.toStringTag&&Object.defineProperty(e,Symbol.toStringTag,{value:"Module"}),Object.defineProperty(e,"__esModule",{value:!0})},r.t=function(e,t){if(1&t&&(e=r(e)),8&t)return e;if(4&t&&"object"==typeof e&&e&&e.__esModule)return e;var n=Object.create(null);if(r.r(n),Object.defineProperty(n,"default",{enumerable:!0,value:e}),2&t&&"string"!=typeof e)for(var s in e)r.d(n,s,function(t){return e[t]}.bind(null,s));return n},r.n=function(e){var t=e&&e.__esModule?function(){return e.default}:function(){return e};return r.d(t,"a",t),t},r.o=function(e,t){return Object.prototype.hasOwnProperty.call(e,t)},r.p="",r(r.s=10)}([function(e,t){e.exports=require("fs")},function(e,t){e.exports=require("es6-promisify")},function(e,t){e.exports=require("path")},function(e,t){e.exports=require("socket.io-stream")},function(e,t){e.exports=require("socket.io-client")},function(e,t){e.exports=require("highlight.js")},function(e,t){e.exports=require("minimist")},function(e,t){e.exports=require("zip-dir")},function(e,t){e.exports=require("markdown-it")},function(e,t){e.exports=require("readline")},function(e,t,r){e.exports=r(12)},function(e,t){e.exports=require("colors")},function(e,t,r){"use strict";r.r(t);var n=r(6),s=r.n(n),i=r(4),o=r.n(i),a=r(3),c=r.n(a),l={filepath:process.env.TXR_PATH||process.env["win32"==process.platform?"USERPROFILE":"HOME"],server:{port:process.env.PORT||8e3,web_conc:process.env.WEB_CONCURRENCY||1,host:process.env.TXR_HOST||"https://txr.euphoritech.com"},redis:{url:process.env.REDIS_URL||"redis://localhost:6379"},logger:{options:{name:process.env.APP_NAME||"txr",level:process.env.LOGGING_LEVEL||"info",stream:process.stdout}}};var u=r(0),d=r.n(u),f=r(2),h=r.n(f),g=r(1),m=r.n(g),p=r(7),y=r.n(p),w=r(5),x=r.n(w),v=r(8);const b=new(r.n(v).a)({highlight:function(e,t){if(t&&x.a.getLanguage(t))try{return`<pre class="hljs"><code>${x.a.highlight(t,e,!0).value}</code></pre>`}catch(e){}return""}}),k=m()(d.a.readFile);var j={getFileName(e,t=Date.now()){const r=e.lastIndexOf("."),n=e.substring(r);return`${e.substring(0,r)}_${t}${n}`},expressjs:{async convertReadmeToHtml(e){const t=await k("README.md","utf8"),r=b.render(t);return e.send(this.createHtmlPage(r))},createHtmlPage:e=>`\n        <!DOCTYPE html>\n        <html>\n          <head>\n            <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />\n            <title>txr - Transfer Files to Friends</title>\n\n            <style>\n              body {\n                font-family: "Helvetica Neue", Helvetica, Arial, sans-serif;\n              }\n\n              a {\n                color: inherit;\n              }\n\n              pre.hljs {\n                border-radius: 5px;\n                border: 1px solid #a0a0a0;\n                background: #f5f5f5;\n                overflow-x: scroll;\n                padding: 5px;\n              }\n\n              .container {\n                max-width: 700px;\n                margin-right: auto;\n                margin-left: auto;\n              }\n\n              .notice {\n                border-radius: 5px;\n                border: 1px solid #a0a0a0;\n                background: #28a745;\n                color: white;\n                padding: 15px;\n                margin: 25px 0px;\n              }\n            </style>\n          </head>\n\n          <body>\n            <div class="container">\n              <div class="notice">\n                You navigated to a txr server to transfer files easily to and\n                from machines/servers. Learn more below or by visiting\n                <a href="https://github.com/whatl3y/txr">https://github.com/whatl3y/txr</a>\n              </div>\n              ${e}\n            </div>\n          </body>\n        </html>\n      `}};r(11);var S={twoLinesDifferentColors(e,t,r="blue",n="green"){this.wrapInNewlines(()=>{e.length>0&&console.log(e[r]),t.length>0&&console.log(t[n])})},singleLine(e,t="blue",r=1){this.wrapInNewlines(()=>console.log(e[t]),r)},success(e){this.wrapInNewlines(()=>console.log(e.green))},error(e){this.wrapInNewlines(()=>console.log(e.red))},progress(e){process.stdout.write(e)},chatMessage(e){this.wrapInNewlines(()=>console.log(e.cyan))},wrapInNewlines(e=(()=>{}),t=0){const r=t-1>0?new Array(t-1).fill("\n").join(""):"";t>0&&console.log(r),e(),t>0&&console.log(r)}};const $=m()(d.a.access),T=m()(d.a.lstat),F=m()(d.a.writeFile),M=m()(y.a);var O={chat:async function({client:e,user:t,targetUser:r,host:n,reject:s,resolve:i}){const a=o.a.connect(n||l.server.host),c=e({socket:a,user:t,targetUser:r,host:n,reject:s,resolve:i});if(!t)return c.reject("Make sure you pass a user (-u or --username) to listen for files that could be sent to you.\n");if(!r)return c.reject("Make sure you pass a target user (-t or --target_user) to send chat messages to.\n");a.emit("txr-regiser-listen",{user:t});const u=c.chat;if(!u)return c.reject("The interface provided does not support the chat command.\n");const d=u.normal;Object.keys(d).forEach(e=>a.on(e,d[e].bind(u)))},listen:async function({client:e,file:t,user:r,auth:n,host:s,callback:i,reject:a,resolve:u}){const d=o.a.connect(s||l.server.host),f=e({socket:d,socketStream:c.a,file:t,user:r,auth:n,host:s,callback:i,reject:a,resolve:u});if(!r)return f.reject("Make sure you pass a user (-u or --username) to listen for files that could be sent to you.\n");d.emit("txr-regiser-listen",{user:r,auth:n});const h=f.listen,g=h.normal,m=h.stream;Object.keys(g).forEach(e=>d.on(e,g[e].bind(h))),Object.keys(m).forEach(e=>c()(d).on(e,m[e].bind(h)))},send:async function({client:e,file:t,user:r,host:n,reject:s,resolve:i}){const a=o.a.connect(n||l.server.host),u=c.a.createStream(),f=e({socket:a,socketStream:c.a,writeStream:u,file:t,user:r,host:n,reject:s,resolve:i}),g=t,m=r;if(!g)return f.reject("Make sure you pass an absolute filepath (-f or --file) to send a file.\n");if(!m)return f.reject("Make sure you pass a user (-u or --username) to send a file to.\n");if(!await(async e=>{try{return await $(g),!0}catch(e){return!1}})())return f.reject(`We couldn't find a file or directory located in the following location:\n${g}\n`);const p=await T(g),y=p.isDirectory(),w=p.isFile();let x,v,b,k=p.size;if(y)S.success(`We are zipping and sending the directory: ${g}. This may take some time depending on how large the directory is...`),x=await M(g),v=j.getFileName(`${g}.zip`),b=!0,k=`${k} (directory)`;else{if(!w)return f.reject(`The path specified is not a file or directory. The specified path needs to be a file or directory.\n${g}\n`);x=g,v=g}x instanceof Buffer&&await F(v,x);const O={filename:h.a.basename(v),filesizebytes:k,user:m};a.emit("txr-send-file-check-auth",O);const E=d.a.createReadStream(v),N=f.send;N.finalFilename=v,N.dataForFileToSend=O,N.deleteFileAfterSend=b;const A=N.normal,P=N.stream;Object.keys(A).forEach(e=>a.on(e,A[e].bind(N))),Object.keys(P).forEach(e=>E.on(e,P[e].bind(N))),E.pipe(u)}},E=r(9),N=r.n(E);function A(e=process.stdin,t=process.stdout){return{rl:N.a.createInterface({input:e,output:t}),ask(e,t=!0){return new Promise((r,n)=>{this.rl.question(e,e=>{r(e),t&&this.close()})})},close(){this.rl.close()}}}const P=m()(d.a.unlink),_=e=>{S.error.bind(S)(e),process.exit()},U=process.exit;const q=()=>{};var R={cli:function({socket:e,socketStream:t,writeStream:r,file:n,user:s,targetUser:i,auth:o,host:a,reject:c,resolve:u}){return{reject:c=c||_,resolve:u=u||U,chat:{readline:null,async waitAndSendMessage(){this.readline&&this.readline.close(),this.readline=A();const t=await this.readline.ask(`[${s}]: `);if(["end","exit","quit"].includes(t)&&(S.success("Goodbye!"),u()),0===t.length)return await this.waitAndSendMessage();e.emit("txr-send-chat-message",{user:s,targetUser:i,message:t}),await this.waitAndSendMessage()},normal:{"txr-user-taken":function(){c(`The user you chose, ${s}, is already registered with the server. Please try another username.`)},"txr-destination-user-not-registered":function(e){c(`(There is no user currently registered with the username ${e}.)`)},"txr-receive-chat-message":async function({targetUser:e,message:t}){S.chatMessage(`[${e}]: ${t}`),await this.waitAndSendMessage()},"txr-receive-reply":async function({user:e,replyMessage:t}){this.readline&&(this.readline.close(),this.readonly=null),S.chatMessage(`[${e}]: ${t}`),await this.waitAndSendMessage()},"txr-user-registered-success":async function(e){S.success(`Successfully registered name: ${e}. You can now send messages to ${i} below.\n`),S.success("(type 'exit' or 'quit' to stop sending messages)"),await this.waitAndSendMessage()}}},listen:{readline:null,async askToReply(t){this.readline&&this.readline.close(),this.readline=A();const r=await this.readline.ask(`reply to ${t} - [${s}]: `);r.length>0?(e.emit("txr-reply-to-chat-message",{user:t,replyMessage:r}),S.success(`Thanks, your reply was sent to ${t}!`)):await this.askToReply(t)},normal:{"txr-user-taken":function(){c(`The user you chose, ${s}, is already registered with the server. Please try another username.`)},"txr-user-registered-success":function(e){S.success(`Successfully registered name: ${e}. You are now listening for files.`)},"txr-file-permission":async function(t){delete t.user;const r=await A().ask(`\nSomeone wants to send you a file. Are you okay receiving a file with this data: ${JSON.stringify(t)} -- answer (yes/no): `);S.success(`You answered '${r}', we're letting the server and sender know now.`),e.emit("txr-file-permission-response",r)},"txr-receive-chat-message":async function({targetUser:e,message:t}){S.chatMessage(`[${e}]: ${t}`),await this.askToReply(e)},disconnect:function(){c("You were disconnected from the server.")}},stream:{"txr-file":function(e,t={}){delete t.user,S.success(`Starting to receive file with data: ${JSON.stringify(t)}`);const r=j.getFileName(t.filename||"txr.file"),n=h.a.join(l.filepath,h.a.basename(r)),s=d.a.createWriteStream(n);let i=0;e.on("data",e=>{i+=e.length,S.progress(".")}),e.on("error",e=>S.error(`\nError reading stream: ${e.toString()}`)),e.on("end",()=>{S.success(`\nFinished receiving file with data: ${JSON.stringify(t)}`),S.success(`Target file path: ${n}`)}),e.pipe(s)}}},send:{bytesTracker:0,dataForFileToSend:null,deleteFileAfterSend:!1,finalFilename:null,async exitGracefully(e=(()=>{})){this.deleteFileAfterSend&&await P(this.finalFilename),e(),u()},normal:{"txr-no-user":function(e){this.exitGracefully(()=>S.error(`No user registered with username: ${e.user}`))},"txr-file-permission-granted":function(){t(e).emit("txr-upload",r,this.dataForFileToSend)},"txr-file-permission-waiting":function(){S.success("Waiting for user to grant or reject receiving the file.")},"txr-file-permission-denied":function(){this.exitGracefully(()=>S.error("User did not grant permission to send file."))},"txr-file-data-hash-mismatch":function(){this.exitGracefully(()=>S.error("We can't validate the file you're sending."))},"txr-finished-uploading":function(){this.exitGracefully(()=>S.success(`Your file has successfully sent to ${s}!`))},disconnect:function(){this.exitGracefully(()=>S.error("You were disconnected from the server."))}},stream:{data:function(e){this.bytesTracker=this.bytesTracker+e.length,S.progress(".")},end:function(){S.success(`\nAll bytes have been read from file: ${this.finalFilename}.`)}}}}},library:function({socket:e,socketStream:t,writeStream:r,file:n,user:s,targetUser:i,host:o,logger:a,callback:c,reject:u,resolve:f}){return a=a||{debug:q,info:q},{reject:u,resolve:f,listen:{normal:{"txr-user-taken":function(){u(`The user you chose, ${s}, is already registered with the server. Please try another username.`)},disconnect:function(){u("You were disconnected from the server.")}},stream:{"txr-file":function(e,t={}){const r="function"==typeof c?c:f,n=j.getFileName(t.filename||"txr.file"),s=h.a.join(l.filepath,h.a.basename(n)),i=d.a.createWriteStream(s);let o=0;e.on("data",e=>{o+=e.length,a.debug(".")}),e.on("error",u),e.on("end",()=>r(s)),e.pipe(i)}}},send:{bytesTracker:0,dataForFileToSend:null,normal:{"txr-no-user":function(e){u(`No user registered with username: ${e.user}`)},"txr-file-permission-granted":function(){t(e).emit("txr-upload",r,this.dataForFileToSend)},"txr-file-permission-waiting":function(){a.info("Waiting for user to grant or reject receiving the file.")},"txr-file-permission-denied":function(){u("User did not grant permission to send file.")},"txr-file-data-hash-mismatch":function(){u("We can't validate the file you're sending.")},"txr-finished-uploading":function(){f(`Your file has successfully sent to ${s}!`)},disconnect:function(){u("You were disconnected from the server.")}},stream:{data:function(e){this.bytesTracker=this.bytesTracker+e.length,a.debug(".")},end:function(){a.info(`All bytes have been read from file: ${this.finalFilename}.`)}}}}}};const I=s()(process.argv.slice(2)),[Y,W,G]=I._;!async function(){const e=I.c||I.command||Y,t=I.f||I.file||I.d||I.dir||W,r=I.u||I.username||I.user||G||W,n=I.t||I.target_user||I.targetUser||G,s=I.a||I.auth,i=I.h||I.host;await async function({typeInterface:e,command:t,file:r,user:n,targetUser:s,auth:i,host:o,logger:a,callback:c,reject:l,resolve:u}){if(!e||!R[e])throw new Error(`We don't recognize the interface provided: ${e}`);{const d=R[e];if(!t||!O[t])throw new Error(`We don't recognize the command provided: ${t}`);await O[t]({client:d,file:r,user:n,targetUser:s,auth:i,host:o,logger:a,callback:c,reject:l,resolve:u})}}({typeInterface:"cli",command:e,file:t,user:r,targetUser:n,auth:s,host:i})}()}]);
+/******/ (function(modules) { // webpackBootstrap
+/******/ 	// The module cache
+/******/ 	var installedModules = {};
+/******/
+/******/ 	// The require function
+/******/ 	function __webpack_require__(moduleId) {
+/******/
+/******/ 		// Check if module is in cache
+/******/ 		if(installedModules[moduleId]) {
+/******/ 			return installedModules[moduleId].exports;
+/******/ 		}
+/******/ 		// Create a new module (and put it into the cache)
+/******/ 		var module = installedModules[moduleId] = {
+/******/ 			i: moduleId,
+/******/ 			l: false,
+/******/ 			exports: {}
+/******/ 		};
+/******/
+/******/ 		// Execute the module function
+/******/ 		modules[moduleId].call(module.exports, module, module.exports, __webpack_require__);
+/******/
+/******/ 		// Flag the module as loaded
+/******/ 		module.l = true;
+/******/
+/******/ 		// Return the exports of the module
+/******/ 		return module.exports;
+/******/ 	}
+/******/
+/******/
+/******/ 	// expose the modules object (__webpack_modules__)
+/******/ 	__webpack_require__.m = modules;
+/******/
+/******/ 	// expose the module cache
+/******/ 	__webpack_require__.c = installedModules;
+/******/
+/******/ 	// define getter function for harmony exports
+/******/ 	__webpack_require__.d = function(exports, name, getter) {
+/******/ 		if(!__webpack_require__.o(exports, name)) {
+/******/ 			Object.defineProperty(exports, name, { enumerable: true, get: getter });
+/******/ 		}
+/******/ 	};
+/******/
+/******/ 	// define __esModule on exports
+/******/ 	__webpack_require__.r = function(exports) {
+/******/ 		if(typeof Symbol !== 'undefined' && Symbol.toStringTag) {
+/******/ 			Object.defineProperty(exports, Symbol.toStringTag, { value: 'Module' });
+/******/ 		}
+/******/ 		Object.defineProperty(exports, '__esModule', { value: true });
+/******/ 	};
+/******/
+/******/ 	// create a fake namespace object
+/******/ 	// mode & 1: value is a module id, require it
+/******/ 	// mode & 2: merge all properties of value into the ns
+/******/ 	// mode & 4: return value when already ns object
+/******/ 	// mode & 8|1: behave like require
+/******/ 	__webpack_require__.t = function(value, mode) {
+/******/ 		if(mode & 1) value = __webpack_require__(value);
+/******/ 		if(mode & 8) return value;
+/******/ 		if((mode & 4) && typeof value === 'object' && value && value.__esModule) return value;
+/******/ 		var ns = Object.create(null);
+/******/ 		__webpack_require__.r(ns);
+/******/ 		Object.defineProperty(ns, 'default', { enumerable: true, value: value });
+/******/ 		if(mode & 2 && typeof value != 'string') for(var key in value) __webpack_require__.d(ns, key, function(key) { return value[key]; }.bind(null, key));
+/******/ 		return ns;
+/******/ 	};
+/******/
+/******/ 	// getDefaultExport function for compatibility with non-harmony modules
+/******/ 	__webpack_require__.n = function(module) {
+/******/ 		var getter = module && module.__esModule ?
+/******/ 			function getDefault() { return module['default']; } :
+/******/ 			function getModuleExports() { return module; };
+/******/ 		__webpack_require__.d(getter, 'a', getter);
+/******/ 		return getter;
+/******/ 	};
+/******/
+/******/ 	// Object.prototype.hasOwnProperty.call
+/******/ 	__webpack_require__.o = function(object, property) { return Object.prototype.hasOwnProperty.call(object, property); };
+/******/
+/******/ 	// __webpack_public_path__
+/******/ 	__webpack_require__.p = "";
+/******/
+/******/
+/******/ 	// Load entry module and return exports
+/******/ 	return __webpack_require__(__webpack_require__.s = 7);
+/******/ })
+/************************************************************************/
+/******/ ([
+/* 0 */
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+
+Object.defineProperty(exports, "__esModule", { value: true });
+const opts = {
+    filepath: process.env.TXR_PATH ||
+        process.env[process.platform == 'win32' ? 'USERPROFILE' : 'HOME'] ||
+        '.',
+    server: {
+        port: process.env.PORT || 8000,
+        web_conc: process.env.WEB_CONCURRENCY || 1,
+        host: process.env.TXR_HOST || 'https://txr.euphoritech.com',
+    },
+    redis: {
+        url: process.env.REDIS_URL || 'redis://localhost:6379',
+    },
+    logger: {
+        options: {
+            name: process.env.APP_NAME || 'txr',
+            level: 'info',
+            stream: process.stdout,
+        },
+    },
+};
+exports.default = opts;
+
+
+/***/ }),
+/* 1 */
+/***/ (function(module, exports) {
+
+module.exports = require("fs");
+
+/***/ }),
+/* 2 */
+/***/ (function(module, exports) {
+
+module.exports = require("socket.io-client");
+
+/***/ }),
+/* 3 */
+/***/ (function(module, exports) {
+
+module.exports = require("path");
+
+/***/ }),
+/* 4 */
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+
+var __importDefault = (this && this.__importDefault) || function (mod) {
+    return (mod && mod.__esModule) ? mod : { "default": mod };
+};
+Object.defineProperty(exports, "__esModule", { value: true });
+const fs_1 = __importDefault(__webpack_require__(1));
+const highlight_js_1 = __importDefault(__webpack_require__(15));
+const markdown_it_1 = __importDefault(__webpack_require__(16));
+const markdown = markdown_it_1.default({
+    highlight: function (str, lang) {
+        if (lang && highlight_js_1.default.getLanguage(lang)) {
+            try {
+                return `<pre class="hljs"><code>${highlight_js_1.default.highlight(lang, str, true).value}</code></pre>`;
+            }
+            catch (__) { }
+        }
+        return ''; // use external default escaping
+    },
+});
+const readFile = fs_1.default.promises.readFile;
+exports.default = {
+    getFileName(fileName, extraText = Date.now()) {
+        const lastPeriod = fileName.lastIndexOf('.');
+        const extension = fileName.substring(lastPeriod);
+        return `${fileName.substring(0, lastPeriod)}_${extraText}${extension}`;
+    },
+    expressjs: {
+        async convertReadmeToHtml(res) {
+            const mdRaw = await readFile('README.md', 'utf8');
+            const mdHtml = markdown.render(mdRaw, {});
+            return res.send(this.createHtmlPage(mdHtml));
+        },
+        createHtmlPage(bodyHtml) {
+            return `
+        <!DOCTYPE html>
+        <html>
+          <head>
+            <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+            <title>txr - Transfer Files to Friends</title>
+
+            <style>
+              body {
+                font-family: "Helvetica Neue", Helvetica, Arial, sans-serif;
+              }
+
+              a {
+                color: inherit;
+              }
+
+              pre.hljs {
+                border-radius: 5px;
+                border: 1px solid #a0a0a0;
+                background: #f5f5f5;
+                overflow-x: scroll;
+                padding: 5px;
+              }
+
+              .container {
+                max-width: 700px;
+                margin-right: auto;
+                margin-left: auto;
+              }
+
+              .notice {
+                border-radius: 5px;
+                border: 1px solid #a0a0a0;
+                background: #28a745;
+                color: white;
+                padding: 15px;
+                margin: 25px 0px;
+              }
+            </style>
+          </head>
+
+          <body>
+            <div class="container">
+              <div class="notice">
+                You navigated to a txr server to transfer files easily to and
+                from machines/servers. Learn more below or by visiting
+                <a href="https://github.com/whatl3y/txr">https://github.com/whatl3y/txr</a>
+              </div>
+              ${bodyHtml}
+            </div>
+          </body>
+        </html>
+      `;
+        },
+    },
+};
+
+
+/***/ }),
+/* 5 */
+/***/ (function(module, exports) {
+
+module.exports = require("socket.io-stream");
+
+/***/ }),
+/* 6 */
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+
+Object.defineProperty(exports, "__esModule", { value: true });
+__webpack_require__(17);
+const NOOP = () => { };
+exports.default = {
+    success(string) {
+        this.wrapInNewlines(() => console.log(string.green));
+    },
+    error(string) {
+        this.wrapInNewlines(() => console.log(string.red));
+    },
+    progress(progressString) {
+        process.stdout.write(progressString);
+    },
+    chatMessage(string) {
+        this.wrapInNewlines(() => console.log(string.cyan));
+    },
+    wrapInNewlines(functionToWriteMoreOutput = NOOP, howMany = 0) {
+        const newlineString = howMany - 1 > 0 ? new Array(howMany - 1).fill('\n').join('') : '';
+        if (howMany > 0)
+            console.log(newlineString);
+        functionToWriteMoreOutput();
+        if (howMany > 0)
+            console.log(newlineString);
+    },
+};
+
+
+/***/ }),
+/* 7 */
+/***/ (function(module, exports, __webpack_require__) {
+
+module.exports = __webpack_require__(8);
+
+
+/***/ }),
+/* 8 */
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+
+var __importDefault = (this && this.__importDefault) || function (mod) {
+    return (mod && mod.__esModule) ? mod : { "default": mod };
+};
+Object.defineProperty(exports, "__esModule", { value: true });
+const minimist_1 = __importDefault(__webpack_require__(9));
+const client_1 = __importDefault(__webpack_require__(10));
+const argv = minimist_1.default(process.argv.slice(2));
+const [first, second, third] = argv._;
+(async function txrCliClient() {
+    const typeInterface = 'cli';
+    const command = argv.c || argv.command || first;
+    const file = argv.f || argv.file || argv.d || argv.dir || second;
+    const user = argv.u || argv.username || argv.user || third || second;
+    const targetUser = argv.t || argv.target_user || argv.targetUser || third;
+    const auth = argv.a || argv.auth;
+    const host = argv.h || argv.host;
+    await client_1.default({
+        typeInterface,
+        command,
+        file,
+        user,
+        targetUser,
+        auth,
+        host,
+    });
+})();
+
+
+/***/ }),
+/* 9 */
+/***/ (function(module, exports) {
+
+module.exports = require("minimist");
+
+/***/ }),
+/* 10 */
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+
+var __importDefault = (this && this.__importDefault) || function (mod) {
+    return (mod && mod.__esModule) ? mod : { "default": mod };
+};
+Object.defineProperty(exports, "__esModule", { value: true });
+const commands_1 = __importDefault(__webpack_require__(11));
+const interfaces_1 = __importDefault(__webpack_require__(19));
+async function createClient({ typeInterface, // 'cli' or 'library'
+command, // 'send', 'listen', or 'chat'
+file, // filepath on file system to send to listening user
+user, // username to register (if listening) or send file to if sending
+targetUser, // username to send chat message to, if command == 'chat'
+auth, // if listening and 'cli' interface, whether to request confirmation on receiving a file
+host, // host of server to connect to
+logger, // node-bunyan logging interface if interface == 'library'
+callback, // if provided and using 'library' interface, will be a callback to invoke INSTEAD OF `resolve` when receiving a file as a listening client
+reject, // function to invoke if something goes wrong
+resolve, }) {
+    if (typeInterface && interfaces_1.default[typeInterface]) {
+        const client = interfaces_1.default[typeInterface];
+        if (command && commands_1.default[command]) {
+            await commands_1.default[command]({
+                client,
+                file,
+                user,
+                targetUser,
+                auth,
+                host,
+                logger,
+                callback,
+                reject,
+                resolve,
+            });
+        }
+        else {
+            throw new Error(`We don't recognize the command provided: ${command}`);
+        }
+    }
+    else {
+        throw new Error(`We don't recognize the interface provided: ${typeInterface}`);
+    }
+}
+exports.default = createClient;
+
+
+/***/ }),
+/* 11 */
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+
+var __importDefault = (this && this.__importDefault) || function (mod) {
+    return (mod && mod.__esModule) ? mod : { "default": mod };
+};
+Object.defineProperty(exports, "__esModule", { value: true });
+const chat_1 = __importDefault(__webpack_require__(12));
+const listen_1 = __importDefault(__webpack_require__(13));
+const send_1 = __importDefault(__webpack_require__(14));
+exports.default = {
+    chat: chat_1.default,
+    listen: listen_1.default,
+    send: send_1.default,
+};
+
+
+/***/ }),
+/* 12 */
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+
+var __importDefault = (this && this.__importDefault) || function (mod) {
+    return (mod && mod.__esModule) ? mod : { "default": mod };
+};
+Object.defineProperty(exports, "__esModule", { value: true });
+const socket_io_client_1 = __importDefault(__webpack_require__(2));
+const config_1 = __importDefault(__webpack_require__(0));
+async function chat({ client, user, targetUser, host, reject, resolve, }) {
+    const socket = socket_io_client_1.default.connect(host || config_1.default.server.host);
+    const clientObj = client({ socket, user, targetUser, host, reject, resolve });
+    if (!user)
+        return clientObj.reject(`Make sure you pass a user (-u or --username) to listen for files that could be sent to you.\n`);
+    if (!targetUser)
+        return clientObj.reject(`Make sure you pass a target user (-t or --target_user) to send chat messages to.\n`);
+    socket.emit('txr-regiser-listen', { user });
+    const listenersRoot = clientObj.chat;
+    if (!listenersRoot)
+        return clientObj.reject(`The interface provided does not support the chat command.\n`);
+    const normalListeners = listenersRoot.normal;
+    Object.keys(normalListeners).forEach((listener) => socket.on(listener, normalListeners[listener].bind(listenersRoot)));
+}
+exports.default = chat;
+
+
+/***/ }),
+/* 13 */
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+
+var __importDefault = (this && this.__importDefault) || function (mod) {
+    return (mod && mod.__esModule) ? mod : { "default": mod };
+};
+Object.defineProperty(exports, "__esModule", { value: true });
+const socket_io_client_1 = __importDefault(__webpack_require__(2));
+const config_1 = __importDefault(__webpack_require__(0));
+// import socketStream from 'socket.io-stream'
+const socketStream = __webpack_require__(5);
+async function listen({ client, file, user, auth, host, callback, reject, resolve, }) {
+    const socket = socket_io_client_1.default.connect(host || config_1.default.server.host);
+    const clientObj = client({
+        socket,
+        socketStream,
+        file,
+        user,
+        auth,
+        host,
+        callback,
+        reject,
+        resolve,
+    });
+    if (!user)
+        return clientObj.reject(`Make sure you pass a user (-u or --username) to listen for files that could be sent to you.\n`);
+    socket.emit('txr-regiser-listen', { user, auth });
+    const listenersRoot = clientObj.listen;
+    const normalListeners = listenersRoot.normal;
+    const streamListeners = listenersRoot.stream;
+    Object.keys(normalListeners).forEach((listener) => socket.on(listener, normalListeners[listener].bind(listenersRoot)));
+    Object.keys(streamListeners).forEach((listener) => socketStream(socket, null).on(listener, streamListeners[listener].bind(listenersRoot)));
+}
+exports.default = listen;
+
+
+/***/ }),
+/* 14 */
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+
+var __importDefault = (this && this.__importDefault) || function (mod) {
+    return (mod && mod.__esModule) ? mod : { "default": mod };
+};
+Object.defineProperty(exports, "__esModule", { value: true });
+const fs_1 = __importDefault(__webpack_require__(1));
+const path_1 = __importDefault(__webpack_require__(3));
+const socket_io_client_1 = __importDefault(__webpack_require__(2));
+const FileHelpers_1 = __importDefault(__webpack_require__(4));
+const Vomit_1 = __importDefault(__webpack_require__(6));
+const config_1 = __importDefault(__webpack_require__(0));
+// import socketStream from 'socket.io-stream'
+const socketStream = __webpack_require__(5);
+// import zd from 'zip-dir'
+const zd = __webpack_require__(18);
+const access = fs_1.default.promises.access;
+const lstat = fs_1.default.promises.lstat;
+const writeFile = fs_1.default.promises.writeFile;
+const zipdir = async function (dir) {
+    return new Promise((resolve, reject) => {
+        zd(dir, (err, buffer) => {
+            if (err)
+                return reject(err);
+            resolve(buffer);
+        });
+    });
+};
+async function send({ client, file, user, host, reject, resolve, }) {
+    const socket = socket_io_client_1.default.connect(host || config_1.default.server.host);
+    const writeStream = socketStream.createStream(null);
+    const clientObj = client({
+        socket,
+        socketStream,
+        writeStream,
+        file,
+        user,
+        host,
+        reject,
+        resolve,
+    });
+    const filePathToSend = file;
+    const userToSend = user;
+    if (!filePathToSend)
+        return clientObj.reject(`Make sure you pass an absolute filepath (-f or --file) to send a file.\n`);
+    if (!userToSend)
+        return clientObj.reject(`Make sure you pass a user (-u or --username) to send a file to.\n`);
+    const fileExists = await (async (filePath) => {
+        try {
+            await access(filePathToSend);
+            return true;
+        }
+        catch (e) {
+            return false;
+        }
+    })(filePathToSend);
+    if (!fileExists)
+        return clientObj.reject(`We couldn't find a file or directory located in the following location:\n${filePathToSend}\n`);
+    const fileStats = await lstat(filePathToSend);
+    const isDir = fileStats.isDirectory();
+    const isFile = fileStats.isFile();
+    let fileSize = fileStats.size;
+    let finalFilePathOrBuffer, finalFilename, deleteFileAfterSend;
+    if (isDir) {
+        Vomit_1.default.success(`We are zipping and sending the directory: ${filePathToSend}. This may take some time depending on how large the directory is...`);
+        finalFilePathOrBuffer = await zipdir(filePathToSend);
+        finalFilename = FileHelpers_1.default.getFileName(`${filePathToSend}.zip`);
+        deleteFileAfterSend = true;
+        fileSize = `${fileSize} (directory)`;
+    }
+    else if (isFile) {
+        finalFilePathOrBuffer = filePathToSend;
+        finalFilename = filePathToSend;
+    }
+    else {
+        return clientObj.reject(`The path specified is not a file or directory. The specified path needs to be a file or directory.\n${filePathToSend}\n`);
+    }
+    // Needs to be before creating the txrReadStream so the file
+    // will exist on disk before beginning to stream data over
+    if (finalFilePathOrBuffer instanceof Buffer) {
+        // directory was zipped to a buffer
+        await writeFile(finalFilename, finalFilePathOrBuffer);
+    }
+    const filename = path_1.default.basename(finalFilename);
+    const dataForFileToSend = {
+        filename: filename,
+        filesizebytes: fileSize,
+        user: userToSend,
+    };
+    socket.emit('txr-send-file-check-auth', dataForFileToSend);
+    const txrReadStream = fs_1.default.createReadStream(finalFilename);
+    const listenersRoot = clientObj.send;
+    listenersRoot.finalFilename = finalFilename;
+    listenersRoot.dataForFileToSend = dataForFileToSend;
+    listenersRoot.deleteFileAfterSend = deleteFileAfterSend;
+    const normalListeners = listenersRoot.normal;
+    const streamListeners = listenersRoot.stream;
+    Object.keys(normalListeners).forEach((listener) => socket.on(listener, normalListeners[listener].bind(listenersRoot)));
+    Object.keys(streamListeners).forEach((listener) => txrReadStream.on(listener, streamListeners[listener].bind(listenersRoot)));
+    txrReadStream.pipe(writeStream);
+}
+exports.default = send;
+
+
+/***/ }),
+/* 15 */
+/***/ (function(module, exports) {
+
+module.exports = require("highlight.js");
+
+/***/ }),
+/* 16 */
+/***/ (function(module, exports) {
+
+module.exports = require("markdown-it");
+
+/***/ }),
+/* 17 */
+/***/ (function(module, exports) {
+
+module.exports = require("colors");
+
+/***/ }),
+/* 18 */
+/***/ (function(module, exports) {
+
+module.exports = require("zip-dir");
+
+/***/ }),
+/* 19 */
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+
+var __importDefault = (this && this.__importDefault) || function (mod) {
+    return (mod && mod.__esModule) ? mod : { "default": mod };
+};
+Object.defineProperty(exports, "__esModule", { value: true });
+const cli_1 = __importDefault(__webpack_require__(20));
+const library_1 = __importDefault(__webpack_require__(23));
+exports.default = {
+    cli: cli_1.default,
+    library: library_1.default,
+};
+
+
+/***/ }),
+/* 20 */
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+
+var __importDefault = (this && this.__importDefault) || function (mod) {
+    return (mod && mod.__esModule) ? mod : { "default": mod };
+};
+Object.defineProperty(exports, "__esModule", { value: true });
+const fs_1 = __importDefault(__webpack_require__(1));
+const path_1 = __importDefault(__webpack_require__(3));
+const FileHelpers_1 = __importDefault(__webpack_require__(4));
+const Readline_1 = __importDefault(__webpack_require__(21));
+const Vomit_1 = __importDefault(__webpack_require__(6));
+const config_1 = __importDefault(__webpack_require__(0));
+const delFile = fs_1.default.promises.unlink;
+const thereWasAnError = (message) => {
+    Vomit_1.default.error.bind(Vomit_1.default)(message);
+    process.exit();
+};
+const everythingWorked = process.exit;
+function cliClientInterface({ socket, socketStream, writeStream, file, user, targetUser, auth, host, reject, resolve, }) {
+    reject = reject || thereWasAnError;
+    resolve = resolve || everythingWorked;
+    return {
+        reject,
+        resolve,
+        chat: {
+            readline: null,
+            async waitAndSendMessage() {
+                if (this.readline)
+                    this.readline.close();
+                this.readline = Readline_1.default();
+                const message = await this.readline.ask(`[${user}]: `);
+                if (['end', 'exit', 'quit'].includes(message)) {
+                    Vomit_1.default.success('Goodbye!');
+                    resolve();
+                }
+                if (message.length === 0 && this.waitAndSendMessage)
+                    return await this.waitAndSendMessage();
+                socket.emit('txr-send-chat-message', { user, targetUser, message });
+                if (this.waitAndSendMessage)
+                    await this.waitAndSendMessage();
+            },
+            normal: {
+                'txr-user-taken': function () {
+                    reject(`The user you chose, ${user}, is already registered with the server. Please try another username.`);
+                },
+                'txr-destination-user-not-registered': function (user) {
+                    reject(`(There is no user currently registered with the username ${user}.)`);
+                },
+                'txr-receive-chat-message': async function ({ targetUser, message }) {
+                    Vomit_1.default.chatMessage(`[${targetUser}]: ${message}`);
+                    if (this.waitAndSendMessage)
+                        await this.waitAndSendMessage();
+                },
+                'txr-receive-reply': async function ({ user, replyMessage }) {
+                    if (this.readline) {
+                        this.readline.close();
+                        this.readline = null;
+                    }
+                    Vomit_1.default.chatMessage(`[${user}]: ${replyMessage}`);
+                    if (this.waitAndSendMessage)
+                        await this.waitAndSendMessage();
+                },
+                'txr-user-registered-success': async function (name) {
+                    Vomit_1.default.success(`Successfully registered name: ${name}. You can now send messages to ${targetUser} below.\n`);
+                    Vomit_1.default.success(`(type 'exit' or 'quit' to stop sending messages)`);
+                    if (this.waitAndSendMessage)
+                        await this.waitAndSendMessage();
+                },
+            },
+        },
+        listen: {
+            readline: null,
+            async askToReply(targetUser) {
+                if (this.readline)
+                    this.readline.close();
+                this.readline = Readline_1.default();
+                const replyMessage = await this.readline.ask(`reply to ${targetUser} - [${user}]: `);
+                if (replyMessage.length > 0) {
+                    socket.emit('txr-reply-to-chat-message', {
+                        user: targetUser,
+                        replyMessage,
+                    });
+                    Vomit_1.default.success(`Thanks, your reply was sent to ${targetUser}!`);
+                }
+                else {
+                    if (this.askToReply)
+                        await this.askToReply(targetUser);
+                }
+            },
+            normal: {
+                'txr-user-taken': function () {
+                    reject(`The user you chose, ${user}, is already registered with the server. Please try another username.`);
+                },
+                'txr-user-registered-success': function (name) {
+                    Vomit_1.default.success(`Successfully registered name: ${name}. You are now listening for files.`);
+                },
+                'txr-file-permission': async function (fileData) {
+                    delete fileData.user;
+                    const answer = await Readline_1.default().ask(`\nSomeone wants to send you a file. Are you okay receiving a file with this data: ${JSON.stringify(fileData)} -- answer (yes/no): `);
+                    Vomit_1.default.success(`You answered '${answer}', we're letting the server and sender know now.`);
+                    socket.emit('txr-file-permission-response', answer);
+                },
+                'txr-receive-chat-message': async function ({ targetUser, message }) {
+                    Vomit_1.default.chatMessage(`[${targetUser}]: ${message}`);
+                    if (this.askToReply)
+                        await this.askToReply(targetUser);
+                },
+                disconnect: function () {
+                    reject(`You were disconnected from the server.`);
+                },
+            },
+            stream: {
+                'txr-file': function (stream, data = {}) {
+                    delete data.user;
+                    Vomit_1.default.success(`Starting to receive file with data: ${JSON.stringify(data)}`);
+                    const newFileName = FileHelpers_1.default.getFileName(data.filename || 'txr.file');
+                    const targetFilePath = path_1.default.join(config_1.default.filepath, path_1.default.basename(newFileName));
+                    const fileWriteStream = fs_1.default.createWriteStream(targetFilePath);
+                    let bytesTracker = 0;
+                    stream.on('data', (chunk) => {
+                        bytesTracker = bytesTracker + chunk.length;
+                        Vomit_1.default.progress('.');
+                    });
+                    stream.on('error', (err) => Vomit_1.default.error(`\nError reading stream: ${err.toString()}`));
+                    stream.on('end', () => {
+                        Vomit_1.default.success(`\nFinished receiving file with data: ${JSON.stringify(data)}`);
+                        Vomit_1.default.success(`Target file path: ${targetFilePath}`);
+                    });
+                    stream.pipe(fileWriteStream);
+                },
+            },
+        },
+        send: {
+            bytesTracker: 0,
+            dataForFileToSend: null,
+            deleteFileAfterSend: false,
+            finalFilename: null,
+            async exitGracefully(callback = () => { }) {
+                if (this.deleteFileAfterSend && this.finalFilename)
+                    await delFile(this.finalFilename);
+                callback();
+                resolve();
+            },
+            normal: {
+                'txr-no-user': function (obj) {
+                    if (this.exitGracefully) {
+                        this.exitGracefully(() => Vomit_1.default.error(`No user registered with username: ${obj.user}`));
+                    }
+                },
+                'txr-file-permission-granted': function () {
+                    socketStream(socket).emit('txr-upload', writeStream, this.dataForFileToSend);
+                },
+                'txr-file-permission-waiting': function () {
+                    Vomit_1.default.success(`Waiting for user to grant or reject receiving the file.`);
+                },
+                'txr-file-permission-denied': function () {
+                    if (this.exitGracefully) {
+                        this.exitGracefully(() => Vomit_1.default.error(`User did not grant permission to send file.`));
+                    }
+                },
+                'txr-file-data-hash-mismatch': function () {
+                    if (this.exitGracefully) {
+                        this.exitGracefully(() => Vomit_1.default.error(`We can't validate the file you're sending.`));
+                    }
+                },
+                'txr-finished-uploading': function () {
+                    if (this.exitGracefully) {
+                        this.exitGracefully(() => Vomit_1.default.success(`Your file has successfully sent to ${user}!`));
+                    }
+                },
+                disconnect: function () {
+                    if (this.exitGracefully) {
+                        this.exitGracefully(() => Vomit_1.default.error(`You were disconnected from the server.`));
+                    }
+                },
+            },
+            stream: {
+                data: function (chunk) {
+                    this.bytesTracker = this.bytesTracker + chunk.length;
+                    Vomit_1.default.progress('.');
+                },
+                end: function () {
+                    Vomit_1.default.success(`\nAll bytes have been read from file: ${this.finalFilename}.`);
+                },
+            },
+        },
+    };
+}
+exports.default = cliClientInterface;
+
+
+/***/ }),
+/* 21 */
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+
+var __importDefault = (this && this.__importDefault) || function (mod) {
+    return (mod && mod.__esModule) ? mod : { "default": mod };
+};
+Object.defineProperty(exports, "__esModule", { value: true });
+const readline_1 = __importDefault(__webpack_require__(22));
+function Readline(inputStream = process.stdin, outputStream = process.stdout) {
+    return {
+        rl: readline_1.default.createInterface({ input: inputStream, output: outputStream }),
+        async ask(question, close = true) {
+            return await new Promise((resolve, reject) => {
+                this.rl.question(question, (answer) => {
+                    resolve(answer);
+                    if (close)
+                        this.close();
+                });
+            });
+        },
+        close() {
+            this.rl.close();
+        },
+    };
+}
+exports.default = Readline;
+
+
+/***/ }),
+/* 22 */
+/***/ (function(module, exports) {
+
+module.exports = require("readline");
+
+/***/ }),
+/* 23 */
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+
+var __importDefault = (this && this.__importDefault) || function (mod) {
+    return (mod && mod.__esModule) ? mod : { "default": mod };
+};
+Object.defineProperty(exports, "__esModule", { value: true });
+const fs_1 = __importDefault(__webpack_require__(1));
+const path_1 = __importDefault(__webpack_require__(3));
+const FileHelpers_1 = __importDefault(__webpack_require__(4));
+const config_1 = __importDefault(__webpack_require__(0));
+const NOOP = () => { };
+function libraryClientInterface({ socket, socketStream, writeStream, file, user, targetUser, host, logger, callback, reject, resolve, }) {
+    logger = logger || { debug: NOOP, info: NOOP };
+    return {
+        reject,
+        resolve,
+        listen: {
+            normal: {
+                'txr-user-taken': function () {
+                    reject(`The user you chose, ${user}, is already registered with the server. Please try another username.`);
+                },
+                disconnect: function () {
+                    reject(`You were disconnected from the server.`);
+                },
+            },
+            stream: {
+                'txr-file': function (stream, data = {}) {
+                    const resolveFile = typeof callback === 'function' ? callback : resolve;
+                    const newFileName = FileHelpers_1.default.getFileName(data.filename || 'txr.file');
+                    const targetFilePath = path_1.default.join(config_1.default.filepath, path_1.default.basename(newFileName));
+                    const fileWriteStream = fs_1.default.createWriteStream(targetFilePath);
+                    let bytesTracker = 0;
+                    stream.on('data', (chunk) => {
+                        bytesTracker = bytesTracker + chunk.length;
+                        logger.debug('.');
+                    });
+                    stream.on('error', reject);
+                    stream.on('end', () => resolveFile(targetFilePath));
+                    stream.pipe(fileWriteStream);
+                },
+            },
+        },
+        send: {
+            bytesTracker: 0,
+            dataForFileToSend: null,
+            finalFilename: null,
+            normal: {
+                'txr-no-user': function (obj) {
+                    reject(`No user registered with username: ${obj.user}`);
+                },
+                'txr-file-permission-granted': function () {
+                    socketStream(socket).emit('txr-upload', writeStream, this.dataForFileToSend);
+                },
+                'txr-file-permission-waiting': function () {
+                    logger.info(`Waiting for user to grant or reject receiving the file.`);
+                },
+                'txr-file-permission-denied': function () {
+                    reject(`User did not grant permission to send file.`);
+                },
+                'txr-file-data-hash-mismatch': function () {
+                    reject(`We can't validate the file you're sending.`);
+                },
+                'txr-finished-uploading': function () {
+                    resolve(`Your file has successfully sent to ${user}!`);
+                },
+                disconnect: function () {
+                    reject(`You were disconnected from the server.`);
+                },
+            },
+            stream: {
+                data: function (chunk) {
+                    this.bytesTracker = this.bytesTracker + chunk.length;
+                    logger.debug('.');
+                },
+                end: function () {
+                    logger.info(`All bytes have been read from file: ${this.finalFilename}.`);
+                },
+            },
+        },
+    };
+}
+exports.default = libraryClientInterface;
+
+
+/***/ })
+/******/ ]);
