@@ -1,6 +1,6 @@
 {
   "name": "txr",
-  "version": "0.5.1",
+  "version": "0.5.2",
   "description": "Send files hilariously easily to other computers using WebSockets.",
   "author": "Lance Whatley <whatl3y@gmail.com>",
   "license": "MIT",
