@@ -46,7 +46,7 @@
     "express": "^4.17.1",
     "highlight.js": "^10.1.1",
     "ioredis": "^4.17.3",
-    "markdown-it": "^11.0.0",
+    "markdown-it": "^12.3.2",
     "minimist": "^1.2.5",
     "socket.io": "^2.3.0",
     "socket.io-client": "^2.3.0",
