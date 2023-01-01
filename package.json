@@ -33,11 +33,11 @@
     "gulp-plumber": "^1.2.1",
     "gulp-typescript": "^6.0.0-alpha.1",
     "mocha": "^8.0.1",
-    "ts-loader": "^7.0.5",
+    "ts-loader": "^9.4.2",
     "ts-node": "^8.10.2",
     "typescript": "^3.9.5",
     "webpack-node-externals": "^1.7.2",
-    "webpack-stream": "^5.2.1"
+    "webpack-stream": "^7.0.0"
   },
   "dependencies": {
     "axios": "^0.19.2",
