@@ -57,7 +57,7 @@ describe('Client interfaces', function () {
         file: './README.md',
         host: `http://localhost:${port}`,
       })
-    } catch (err) {
+    } catch (err: any) {
       assert.equal(true, err instanceof Error || typeof err === 'string')
       assert.equal(true, err.toString().length > 0)
     }

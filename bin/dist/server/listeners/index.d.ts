@@ -1,4 +1,3 @@
-/// <reference types="node" />
 import socketIo from 'socket.io';
 import { Readable } from 'stream';
 export interface IListeners {

@@ -1,98 +1,44 @@
 #!/usr/bin/env node
 
-/******/ (function(modules) { // webpackBootstrap
-/******/ 	// The module cache
-/******/ 	var installedModules = {};
-/******/
-/******/ 	// The require function
-/******/ 	function __webpack_require__(moduleId) {
-/******/
-/******/ 		// Check if module is in cache
-/******/ 		if(installedModules[moduleId]) {
-/******/ 			return installedModules[moduleId].exports;
-/******/ 		}
-/******/ 		// Create a new module (and put it into the cache)
-/******/ 		var module = installedModules[moduleId] = {
-/******/ 			i: moduleId,
-/******/ 			l: false,
-/******/ 			exports: {}
-/******/ 		};
-/******/
-/******/ 		// Execute the module function
-/******/ 		modules[moduleId].call(module.exports, module, module.exports, __webpack_require__);
-/******/
-/******/ 		// Flag the module as loaded
-/******/ 		module.l = true;
-/******/
-/******/ 		// Return the exports of the module
-/******/ 		return module.exports;
-/******/ 	}
-/******/
-/******/
-/******/ 	// expose the modules object (__webpack_modules__)
-/******/ 	__webpack_require__.m = modules;
-/******/
-/******/ 	// expose the module cache
-/******/ 	__webpack_require__.c = installedModules;
-/******/
-/******/ 	// define getter function for harmony exports
-/******/ 	__webpack_require__.d = function(exports, name, getter) {
-/******/ 		if(!__webpack_require__.o(exports, name)) {
-/******/ 			Object.defineProperty(exports, name, { enumerable: true, get: getter });
-/******/ 		}
-/******/ 	};
-/******/
-/******/ 	// define __esModule on exports
-/******/ 	__webpack_require__.r = function(exports) {
-/******/ 		if(typeof Symbol !== 'undefined' && Symbol.toStringTag) {
-/******/ 			Object.defineProperty(exports, Symbol.toStringTag, { value: 'Module' });
-/******/ 		}
-/******/ 		Object.defineProperty(exports, '__esModule', { value: true });
-/******/ 	};
-/******/
-/******/ 	// create a fake namespace object
-/******/ 	// mode & 1: value is a module id, require it
-/******/ 	// mode & 2: merge all properties of value into the ns
-/******/ 	// mode & 4: return value when already ns object
-/******/ 	// mode & 8|1: behave like require
-/******/ 	__webpack_require__.t = function(value, mode) {
-/******/ 		if(mode & 1) value = __webpack_require__(value);
-/******/ 		if(mode & 8) return value;
-/******/ 		if((mode & 4) && typeof value === 'object' && value && value.__esModule) return value;
-/******/ 		var ns = Object.create(null);
-/******/ 		__webpack_require__.r(ns);
-/******/ 		Object.defineProperty(ns, 'default', { enumerable: true, value: value });
-/******/ 		if(mode & 2 && typeof value != 'string') for(var key in value) __webpack_require__.d(ns, key, function(key) { return value[key]; }.bind(null, key));
-/******/ 		return ns;
-/******/ 	};
-/******/
-/******/ 	// getDefaultExport function for compatibility with non-harmony modules
-/******/ 	__webpack_require__.n = function(module) {
-/******/ 		var getter = module && module.__esModule ?
-/******/ 			function getDefault() { return module['default']; } :
-/******/ 			function getModuleExports() { return module; };
-/******/ 		__webpack_require__.d(getter, 'a', getter);
-/******/ 		return getter;
-/******/ 	};
-/******/
-/******/ 	// Object.prototype.hasOwnProperty.call
-/******/ 	__webpack_require__.o = function(object, property) { return Object.prototype.hasOwnProperty.call(object, property); };
-/******/
-/******/ 	// __webpack_public_path__
-/******/ 	__webpack_require__.p = "";
-/******/
-/******/
-/******/ 	// Load entry module and return exports
-/******/ 	return __webpack_require__(__webpack_require__.s = 4);
-/******/ })
-/************************************************************************/
-/******/ ([
-/* 0 */
-/***/ (function(module, exports, __webpack_require__) {
+/******/ (() => { // webpackBootstrap
+/******/ 	"use strict";
+/******/ 	var __webpack_modules__ = ({
 
-"use strict";
+/***/ 927
+(__unused_webpack_module, exports, __webpack_require__) {
 
-Object.defineProperty(exports, "__esModule", { value: true });
+
+var __importDefault = (this && this.__importDefault) || function (mod) {
+    return (mod && mod.__esModule) ? mod : { "default": mod };
+};
+Object.defineProperty(exports, "__esModule", ({ value: true }));
+const minimist_1 = __importDefault(__webpack_require__(214));
+const server_1 = __importDefault(__webpack_require__(38));
+const config_1 = __importDefault(__webpack_require__(28));
+const argv = (0, minimist_1.default)(process.argv.slice(2));
+const type = argv.t || argv.type || 'memory';
+let port = argv.p || argv.port || config_1.default.server.port;
+port = isNaN(port) ? config_1.default.server.port : port;
+(async function createTxrServer() {
+    const { socketApp } = await (0, server_1.default)(port, { type });
+    //handle signals saying for the server to die
+    process.on('SIGINT', () => stopAndTerminateServer(socketApp.flush));
+    process.on('SIGTERM', () => stopAndTerminateServer(socketApp.flush));
+})();
+async function stopAndTerminateServer(asyncFunctionToGracefullExit) {
+    if (typeof asyncFunctionToGracefullExit === 'function')
+        await asyncFunctionToGracefullExit();
+    process.exit();
+}
+
+
+/***/ },
+
+/***/ 28
+(__unused_webpack_module, exports) {
+
+
+Object.defineProperty(exports, "__esModule", ({ value: true }));
 const opts = {
     filepath: process.env.TXR_PATH ||
         process.env[process.platform == 'win32' ? 'USERPROFILE' : 'HOME'] ||
@@ -100,7 +46,7 @@ const opts = {
     server: {
         port: process.env.PORT || 8000,
         web_conc: process.env.WEB_CONCURRENCY || 1,
-        host: process.env.TXR_HOST || 'https://txr.euphoritech.com',
+        host: process.env.TXR_HOST || 'https://txr.grep3.com',
     },
     redis: {
         url: process.env.REDIS_URL || 'redis://localhost:6379',
@@ -108,33 +54,196 @@ const opts = {
     logger: {
         options: {
             name: process.env.APP_NAME || 'txr',
-            level: 'info',
+            level: 'info', // process.env.LOGGING_LEVEL
             stream: process.stdout,
         },
     },
 };
-exports.default = opts;
+exports["default"] = opts;
 
 
-/***/ }),
-/* 1 */
-/***/ (function(module, exports) {
+/***/ },
 
-module.exports = require("bunyan");
+/***/ 288
+(__unused_webpack_module, exports, __webpack_require__) {
 
-/***/ }),
-/* 2 */
-/***/ (function(module, exports) {
 
-module.exports = require("socket.io-stream");
+var __importDefault = (this && this.__importDefault) || function (mod) {
+    return (mod && mod.__esModule) ? mod : { "default": mod };
+};
+Object.defineProperty(exports, "__esModule", ({ value: true }));
+const crypto_1 = __importDefault(__webpack_require__(982));
+exports["default"] = {
+    stringToHash(str) {
+        const md5Sum = crypto_1.default.createHash('md5');
+        md5Sum.update(str);
+        return md5Sum.digest('hex');
+    },
+};
 
-/***/ }),
-/* 3 */
-/***/ (function(module, exports, __webpack_require__) {
 
-"use strict";
+/***/ },
 
-Object.defineProperty(exports, "__esModule", { value: true });
+/***/ 370
+(__unused_webpack_module, exports, __webpack_require__) {
+
+
+var __importDefault = (this && this.__importDefault) || function (mod) {
+    return (mod && mod.__esModule) ? mod : { "default": mod };
+};
+Object.defineProperty(exports, "__esModule", ({ value: true }));
+const fs_1 = __importDefault(__webpack_require__(896));
+const highlight_js_1 = __importDefault(__webpack_require__(189));
+const markdown_it_1 = __importDefault(__webpack_require__(97));
+const markdown = (0, markdown_it_1.default)({
+    highlight: function (str, lang) {
+        if (lang && highlight_js_1.default.getLanguage(lang)) {
+            try {
+                return `<pre class="hljs"><code>${highlight_js_1.default.highlight(lang, str, true).value}</code></pre>`;
+            }
+            catch (__) { }
+        }
+        return ''; // use external default escaping
+    },
+});
+const readFile = fs_1.default.promises.readFile;
+exports["default"] = {
+    getFileName(fileName, extraText = Date.now()) {
+        const lastPeriod = fileName.lastIndexOf('.');
+        const extension = fileName.substring(lastPeriod);
+        return `${fileName.substring(0, lastPeriod)}_${extraText}${extension}`;
+    },
+    expressjs: {
+        async convertReadmeToHtml(res) {
+            const mdRaw = await readFile('README.md', 'utf8');
+            const mdHtml = markdown.render(mdRaw, {});
+            return res.send(this.createHtmlPage(mdHtml));
+        },
+        createHtmlPage(bodyHtml) {
+            return `
+        <!DOCTYPE html>
+        <html>
+          <head>
+            <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+            <title>txr - Transfer Files to Friends</title>
+
+            <style>
+              body {
+                font-family: "Helvetica Neue", Helvetica, Arial, sans-serif;
+              }
+
+              a {
+                color: inherit;
+              }
+
+              pre.hljs {
+                border-radius: 5px;
+                border: 1px solid #a0a0a0;
+                background: #f5f5f5;
+                overflow-x: scroll;
+                padding: 5px;
+              }
+
+              .container {
+                max-width: 700px;
+                margin-right: auto;
+                margin-left: auto;
+              }
+
+              .notice {
+                border-radius: 5px;
+                border: 1px solid #a0a0a0;
+                background: #28a745;
+                color: white;
+                padding: 15px;
+                margin: 25px 0px;
+              }
+            </style>
+          </head>
+
+          <body>
+            <div class="container">
+              <div class="notice">
+                You navigated to a txr server to transfer files easily to and
+                from machines/servers. Learn more below or by visiting
+                <a href="https://github.com/whatl3y/txr">https://github.com/whatl3y/txr</a>
+              </div>
+              ${bodyHtml}
+            </div>
+          </body>
+        </html>
+      `;
+        },
+    },
+};
+
+
+/***/ },
+
+/***/ 952
+(__unused_webpack_module, exports) {
+
+
+Object.defineProperty(exports, "__esModule", ({ value: true }));
+exports["default"] = {
+    paginateArray(ary, perPage = 9e7, pageNumber = 1) {
+        const start = perPage * (pageNumber - 1);
+        if (ary instanceof Array) {
+            const size = ary.length;
+            return {
+                data: ary.slice(start, start + perPage),
+                number_of_pages: Math.ceil(size / perPage),
+                current_page: pageNumber,
+                data_length: size,
+            };
+        }
+        else if (typeof ary === 'object' && ary != null) {
+            const obj = ary;
+            const keys = Object.keys(obj).sort();
+            const size = keys.length;
+            const filteredKeys = keys.slice(start, start + perPage);
+            let filteredObj = {};
+            for (var _i = 0; _i < filteredKeys.length; _i++) {
+                filteredObj[filteredKeys[_i]] = obj[filteredKeys[_i]];
+            }
+            return {
+                data: filteredObj,
+                number_of_pages: Math.ceil(size / perPage),
+                current_page: pageNumber,
+                data_length: size,
+            };
+        }
+        return ary;
+    },
+};
+
+
+/***/ },
+
+/***/ 326
+(__unused_webpack_module, exports, __webpack_require__) {
+
+
+var __importDefault = (this && this.__importDefault) || function (mod) {
+    return (mod && mod.__esModule) ? mod : { "default": mod };
+};
+Object.defineProperty(exports, "__esModule", ({ value: true }));
+const memory_1 = __importDefault(__webpack_require__(427));
+const redis_1 = __importDefault(__webpack_require__(409));
+exports["default"] = {
+    memory: memory_1.default,
+    redis: redis_1.default,
+};
+
+
+/***/ },
+
+/***/ 427
+(__unused_webpack_module, exports) {
+
+
+Object.defineProperty(exports, "__esModule", ({ value: true }));
+exports["default"] = memoryApp;
 function memoryApp() {
     return {
         app: {
@@ -166,85 +275,80 @@ function memoryApp() {
         },
     };
 }
-exports.default = memoryApp;
 
 
-/***/ }),
-/* 4 */
-/***/ (function(module, exports, __webpack_require__) {
+/***/ },
 
-module.exports = __webpack_require__(5);
+/***/ 409
+(__unused_webpack_module, exports, __webpack_require__) {
 
-
-/***/ }),
-/* 5 */
-/***/ (function(module, exports, __webpack_require__) {
-
-"use strict";
 
 var __importDefault = (this && this.__importDefault) || function (mod) {
     return (mod && mod.__esModule) ? mod : { "default": mod };
 };
-Object.defineProperty(exports, "__esModule", { value: true });
-const minimist_1 = __importDefault(__webpack_require__(6));
-const server_1 = __importDefault(__webpack_require__(7));
-const config_1 = __importDefault(__webpack_require__(0));
-const argv = minimist_1.default(process.argv.slice(2));
-const type = argv.t || argv.type || 'memory';
-let port = argv.p || argv.port || config_1.default.server.port;
-port = isNaN(port) ? config_1.default.server.port : port;
-(async function createTxrServer() {
-    const { socketApp } = await server_1.default(port, { type });
-    //handle signals saying for the server to die
-    process.on('SIGINT', () => stopAndTerminateServer(socketApp.flush));
-    process.on('SIGTERM', () => stopAndTerminateServer(socketApp.flush));
-})();
-async function stopAndTerminateServer(asyncFunctionToGracefullExit) {
-    if (typeof asyncFunctionToGracefullExit === 'function')
-        await asyncFunctionToGracefullExit();
-    process.exit();
+Object.defineProperty(exports, "__esModule", ({ value: true }));
+exports["default"] = redisApp;
+const memory_1 = __importDefault(__webpack_require__(427));
+function redisApp(redis) {
+    return {
+        async set(namespace, key, value) {
+            let currentNamespaceData = JSON.parse((await redis.get(`txr.${namespace}`)) || '{}');
+            currentNamespaceData[key] = value;
+            await redis.set(`txr.${namespace}`, JSON.stringify(currentNamespaceData));
+            return value;
+        },
+        async get(namespace, key = null) {
+            const currentNamespaceData = JSON.parse((await redis.get(`txr.${namespace}`)) || '{}');
+            return key ? currentNamespaceData[key] : currentNamespaceData;
+        },
+        async del(namespace, key) {
+            let currentNamespaceData = JSON.parse((await redis.get(`txr.${namespace}`)) || '{}');
+            delete currentNamespaceData[key];
+            await redis.set(`txr.${namespace}`, JSON.stringify(currentNamespaceData));
+        },
+        async flush(namespaces = Object.keys((0, memory_1.default)().app)) {
+            return await Promise.all(namespaces.map(async (namespace) => {
+                await redis.del(`txr.${namespace}`);
+            }));
+        },
+    };
 }
 
 
-/***/ }),
-/* 6 */
-/***/ (function(module, exports) {
+/***/ },
 
-module.exports = require("minimist");
+/***/ 38
+(__unused_webpack_module, exports, __webpack_require__) {
 
-/***/ }),
-/* 7 */
-/***/ (function(module, exports, __webpack_require__) {
-
-"use strict";
 
 var __importDefault = (this && this.__importDefault) || function (mod) {
     return (mod && mod.__esModule) ? mod : { "default": mod };
 };
-Object.defineProperty(exports, "__esModule", { value: true });
-const http_1 = __importDefault(__webpack_require__(8));
-const express_1 = __importDefault(__webpack_require__(9));
-const socket_io_1 = __importDefault(__webpack_require__(10));
-const bunyan_1 = __importDefault(__webpack_require__(1));
-const ioredis_1 = __importDefault(__webpack_require__(11));
-const listeners_1 = __importDefault(__webpack_require__(12));
-const routes_1 = __importDefault(__webpack_require__(15));
-const app_types_1 = __importDefault(__webpack_require__(21));
-const config_1 = __importDefault(__webpack_require__(0));
+Object.defineProperty(exports, "__esModule", ({ value: true }));
+exports["default"] = createServer;
+const http_1 = __importDefault(__webpack_require__(611));
+const express_1 = __importDefault(__webpack_require__(252));
+const socket_io_1 = __importDefault(__webpack_require__(437));
+const bunyan_1 = __importDefault(__webpack_require__(755));
+const ioredis_1 = __importDefault(__webpack_require__(659));
+const listeners_1 = __importDefault(__webpack_require__(324));
+const routes_1 = __importDefault(__webpack_require__(842));
+const app_types_1 = __importDefault(__webpack_require__(326));
+const config_1 = __importDefault(__webpack_require__(28));
 // import socketStream from 'socket.io-stream'
-const socketStream = __webpack_require__(2);
+const socketStream = __webpack_require__(404);
 function createServer(port, opts) {
     const type = opts && opts.type;
     const socketApp = getAppType(type);
-    const app = express_1.default();
+    const app = (0, express_1.default)();
     const httpServer = new http_1.default.Server(app);
     const log = bunyan_1.default.createLogger(config_1.default.logger.options);
-    const io = socket_io_1.default(httpServer);
-    const routes = routes_1.default({ app: socketApp });
+    const io = (0, socket_io_1.default)(httpServer);
+    const routes = (0, routes_1.default)({ app: socketApp });
     io.on('connection', function (socket) {
         log.info(`got socket: ${socket.id}`);
         const ssSocket = socketStream(socket);
-        const list = listeners_1.default(io, socket, socketApp);
+        const list = (0, listeners_1.default)(io, socket, socketApp);
         Object.keys(list.normal).forEach((key) => socket.on(key, list.normal[key]));
         Object.keys(list.stream).forEach((key) => ssSocket.on(key, list.stream[key]));
     });
@@ -252,7 +356,6 @@ function createServer(port, opts) {
     httpServer.listen(port, () => log.info(`server listening on *: ${port}`));
     return { app, httpServer, socketApp };
 }
-exports.default = createServer;
 function getAppType(type) {
     switch (type) {
         case 'memory':
@@ -265,45 +368,22 @@ function getAppType(type) {
 }
 
 
-/***/ }),
-/* 8 */
-/***/ (function(module, exports) {
+/***/ },
 
-module.exports = require("http");
+/***/ 324
+(__unused_webpack_module, exports, __webpack_require__) {
 
-/***/ }),
-/* 9 */
-/***/ (function(module, exports) {
-
-module.exports = require("express");
-
-/***/ }),
-/* 10 */
-/***/ (function(module, exports) {
-
-module.exports = require("socket.io");
-
-/***/ }),
-/* 11 */
-/***/ (function(module, exports) {
-
-module.exports = require("ioredis");
-
-/***/ }),
-/* 12 */
-/***/ (function(module, exports, __webpack_require__) {
-
-"use strict";
 
 var __importDefault = (this && this.__importDefault) || function (mod) {
     return (mod && mod.__esModule) ? mod : { "default": mod };
 };
-Object.defineProperty(exports, "__esModule", { value: true });
-const bunyan_1 = __importDefault(__webpack_require__(1));
-const Encryption_1 = __importDefault(__webpack_require__(13));
-const config_1 = __importDefault(__webpack_require__(0));
+Object.defineProperty(exports, "__esModule", ({ value: true }));
+exports["default"] = listeners;
+const bunyan_1 = __importDefault(__webpack_require__(755));
+const Encryption_1 = __importDefault(__webpack_require__(288));
+const config_1 = __importDefault(__webpack_require__(28));
 // import ss from 'socket.io-stream'
-const ss = __webpack_require__(2);
+const ss = __webpack_require__(404);
 const log = bunyan_1.default.createLogger(config_1.default.logger.options);
 function listeners(io, socket, socketApp) {
     return {
@@ -422,47 +502,21 @@ function listeners(io, socket, socketApp) {
         },
     };
 }
-exports.default = listeners;
 
 
-/***/ }),
-/* 13 */
-/***/ (function(module, exports, __webpack_require__) {
+/***/ },
 
-"use strict";
+/***/ 842
+(__unused_webpack_module, exports, __webpack_require__) {
+
 
 var __importDefault = (this && this.__importDefault) || function (mod) {
     return (mod && mod.__esModule) ? mod : { "default": mod };
 };
-Object.defineProperty(exports, "__esModule", { value: true });
-const crypto_1 = __importDefault(__webpack_require__(14));
-exports.default = {
-    stringToHash(str) {
-        const md5Sum = crypto_1.default.createHash('md5');
-        md5Sum.update(str);
-        return md5Sum.digest('hex');
-    },
-};
-
-
-/***/ }),
-/* 14 */
-/***/ (function(module, exports) {
-
-module.exports = require("crypto");
-
-/***/ }),
-/* 15 */
-/***/ (function(module, exports, __webpack_require__) {
-
-"use strict";
-
-var __importDefault = (this && this.__importDefault) || function (mod) {
-    return (mod && mod.__esModule) ? mod : { "default": mod };
-};
-Object.defineProperty(exports, "__esModule", { value: true });
-const FileHelpers_1 = __importDefault(__webpack_require__(16));
-const Helpers_1 = __importDefault(__webpack_require__(20));
+Object.defineProperty(exports, "__esModule", ({ value: true }));
+exports["default"] = Routes;
+const FileHelpers_1 = __importDefault(__webpack_require__(370));
+const Helpers_1 = __importDefault(__webpack_require__(952));
 function Routes({ app }) {
     return {
         async ['/clients'](req, res) {
@@ -474,218 +528,119 @@ function Routes({ app }) {
         },
     };
 }
-exports.default = Routes;
 
 
-/***/ }),
-/* 16 */
-/***/ (function(module, exports, __webpack_require__) {
+/***/ },
 
-"use strict";
+/***/ 755
+(module) {
 
-var __importDefault = (this && this.__importDefault) || function (mod) {
-    return (mod && mod.__esModule) ? mod : { "default": mod };
-};
-Object.defineProperty(exports, "__esModule", { value: true });
-const fs_1 = __importDefault(__webpack_require__(17));
-const highlight_js_1 = __importDefault(__webpack_require__(18));
-const markdown_it_1 = __importDefault(__webpack_require__(19));
-const markdown = markdown_it_1.default({
-    highlight: function (str, lang) {
-        if (lang && highlight_js_1.default.getLanguage(lang)) {
-            try {
-                return `<pre class="hljs"><code>${highlight_js_1.default.highlight(lang, str, true).value}</code></pre>`;
-            }
-            catch (__) { }
-        }
-        return ''; // use external default escaping
-    },
-});
-const readFile = fs_1.default.promises.readFile;
-exports.default = {
-    getFileName(fileName, extraText = Date.now()) {
-        const lastPeriod = fileName.lastIndexOf('.');
-        const extension = fileName.substring(lastPeriod);
-        return `${fileName.substring(0, lastPeriod)}_${extraText}${extension}`;
-    },
-    expressjs: {
-        async convertReadmeToHtml(res) {
-            const mdRaw = await readFile('README.md', 'utf8');
-            const mdHtml = markdown.render(mdRaw, {});
-            return res.send(this.createHtmlPage(mdHtml));
-        },
-        createHtmlPage(bodyHtml) {
-            return `
-        <!DOCTYPE html>
-        <html>
-          <head>
-            <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
-            <title>txr - Transfer Files to Friends</title>
+module.exports = require("bunyan");
 
-            <style>
-              body {
-                font-family: "Helvetica Neue", Helvetica, Arial, sans-serif;
-              }
+/***/ },
 
-              a {
-                color: inherit;
-              }
+/***/ 252
+(module) {
 
-              pre.hljs {
-                border-radius: 5px;
-                border: 1px solid #a0a0a0;
-                background: #f5f5f5;
-                overflow-x: scroll;
-                padding: 5px;
-              }
+module.exports = require("express");
 
-              .container {
-                max-width: 700px;
-                margin-right: auto;
-                margin-left: auto;
-              }
+/***/ },
 
-              .notice {
-                border-radius: 5px;
-                border: 1px solid #a0a0a0;
-                background: #28a745;
-                color: white;
-                padding: 15px;
-                margin: 25px 0px;
-              }
-            </style>
-          </head>
-
-          <body>
-            <div class="container">
-              <div class="notice">
-                You navigated to a txr server to transfer files easily to and
-                from machines/servers. Learn more below or by visiting
-                <a href="https://github.com/whatl3y/txr">https://github.com/whatl3y/txr</a>
-              </div>
-              ${bodyHtml}
-            </div>
-          </body>
-        </html>
-      `;
-        },
-    },
-};
-
-
-/***/ }),
-/* 17 */
-/***/ (function(module, exports) {
-
-module.exports = require("fs");
-
-/***/ }),
-/* 18 */
-/***/ (function(module, exports) {
+/***/ 189
+(module) {
 
 module.exports = require("highlight.js");
 
-/***/ }),
-/* 19 */
-/***/ (function(module, exports) {
+/***/ },
+
+/***/ 659
+(module) {
+
+module.exports = require("ioredis");
+
+/***/ },
+
+/***/ 97
+(module) {
 
 module.exports = require("markdown-it");
 
-/***/ }),
-/* 20 */
-/***/ (function(module, exports, __webpack_require__) {
+/***/ },
 
-"use strict";
+/***/ 214
+(module) {
 
-Object.defineProperty(exports, "__esModule", { value: true });
-exports.default = {
-    paginateArray(ary, perPage = 9e7, pageNumber = 1) {
-        const start = perPage * (pageNumber - 1);
-        if (ary instanceof Array) {
-            const size = ary.length;
-            return {
-                data: ary.slice(start, start + perPage),
-                number_of_pages: Math.ceil(size / perPage),
-                current_page: pageNumber,
-                data_length: size,
-            };
-        }
-        else if (typeof ary === 'object' && ary != null) {
-            const obj = ary;
-            const keys = Object.keys(obj).sort();
-            const size = keys.length;
-            const filteredKeys = keys.slice(start, start + perPage);
-            let filteredObj = {};
-            for (var _i = 0; _i < filteredKeys.length; _i++) {
-                filteredObj[filteredKeys[_i]] = obj[filteredKeys[_i]];
-            }
-            return {
-                data: filteredObj,
-                number_of_pages: Math.ceil(size / perPage),
-                current_page: pageNumber,
-                data_length: size,
-            };
-        }
-        return ary;
-    },
-};
+module.exports = require("minimist");
 
+/***/ },
 
-/***/ }),
-/* 21 */
-/***/ (function(module, exports, __webpack_require__) {
+/***/ 437
+(module) {
 
-"use strict";
+module.exports = require("socket.io");
 
-var __importDefault = (this && this.__importDefault) || function (mod) {
-    return (mod && mod.__esModule) ? mod : { "default": mod };
-};
-Object.defineProperty(exports, "__esModule", { value: true });
-const memory_1 = __importDefault(__webpack_require__(3));
-const redis_1 = __importDefault(__webpack_require__(22));
-exports.default = {
-    memory: memory_1.default,
-    redis: redis_1.default,
-};
+/***/ },
 
+/***/ 404
+(module) {
 
-/***/ }),
-/* 22 */
-/***/ (function(module, exports, __webpack_require__) {
+module.exports = require("socket.io-stream");
 
-"use strict";
+/***/ },
 
-var __importDefault = (this && this.__importDefault) || function (mod) {
-    return (mod && mod.__esModule) ? mod : { "default": mod };
-};
-Object.defineProperty(exports, "__esModule", { value: true });
-const memory_1 = __importDefault(__webpack_require__(3));
-function redisApp(redis) {
-    return {
-        async set(namespace, key, value) {
-            let currentNamespaceData = JSON.parse((await redis.get(`txr.${namespace}`)) || '{}');
-            currentNamespaceData[key] = value;
-            await redis.set(`txr.${namespace}`, JSON.stringify(currentNamespaceData));
-            return value;
-        },
-        async get(namespace, key = null) {
-            const currentNamespaceData = JSON.parse((await redis.get(`txr.${namespace}`)) || '{}');
-            return key ? currentNamespaceData[key] : currentNamespaceData;
-        },
-        async del(namespace, key) {
-            let currentNamespaceData = JSON.parse((await redis.get(`txr.${namespace}`)) || '{}');
-            delete currentNamespaceData[key];
-            await redis.set(`txr.${namespace}`, JSON.stringify(currentNamespaceData));
-        },
-        async flush(namespaces = Object.keys(memory_1.default().app)) {
-            return await Promise.all(namespaces.map(async (namespace) => {
-                await redis.del(`txr.${namespace}`);
-            }));
-        },
-    };
-}
-exports.default = redisApp;
+/***/ 982
+(module) {
 
+module.exports = require("crypto");
 
-/***/ })
-/******/ ]);
+/***/ },
+
+/***/ 896
+(module) {
+
+module.exports = require("fs");
+
+/***/ },
+
+/***/ 611
+(module) {
+
+module.exports = require("http");
+
+/***/ }
+
+/******/ 	});
+/************************************************************************/
+/******/ 	// The module cache
+/******/ 	var __webpack_module_cache__ = {};
+/******/ 	
+/******/ 	// The require function
+/******/ 	function __webpack_require__(moduleId) {
+/******/ 		// Check if module is in cache
+/******/ 		var cachedModule = __webpack_module_cache__[moduleId];
+/******/ 		if (cachedModule !== undefined) {
+/******/ 			return cachedModule.exports;
+/******/ 		}
+/******/ 		// Create a new module (and put it into the cache)
+/******/ 		var module = __webpack_module_cache__[moduleId] = {
+/******/ 			// no module.id needed
+/******/ 			// no module.loaded needed
+/******/ 			exports: {}
+/******/ 		};
+/******/ 	
+/******/ 		// Execute the module function
+/******/ 		__webpack_modules__[moduleId].call(module.exports, module, module.exports, __webpack_require__);
+/******/ 	
+/******/ 		// Return the exports of the module
+/******/ 		return module.exports;
+/******/ 	}
+/******/ 	
+/************************************************************************/
+/******/ 	
+/******/ 	// startup
+/******/ 	// Load entry module and return exports
+/******/ 	// This entry module is referenced by other modules so it can't be inlined
+/******/ 	var __webpack_exports__ = __webpack_require__(927);
+/******/ 	
+/******/ })()
+;

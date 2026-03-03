@@ -15,7 +15,7 @@ function baseWebpackConfig(clientOrServer) {
     filename = 'txr-client'
   }
 
-  return {
+  var config = {
     mode: 'production',
     entry: [entryPoint],
     target: 'node',
@@ -33,4 +33,12 @@ function baseWebpackConfig(clientOrServer) {
       ],
     },
   }
+
+  if (clientOrServer == 'library') {
+    config.output.library = {
+      type: 'commonjs2',
+    }
+  }
+
+  return config
 }

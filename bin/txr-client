@@ -1,294 +1,20 @@
 #!/usr/bin/env node
 
-/******/ (function(modules) { // webpackBootstrap
-/******/ 	// The module cache
-/******/ 	var installedModules = {};
-/******/
-/******/ 	// The require function
-/******/ 	function __webpack_require__(moduleId) {
-/******/
-/******/ 		// Check if module is in cache
-/******/ 		if(installedModules[moduleId]) {
-/******/ 			return installedModules[moduleId].exports;
-/******/ 		}
-/******/ 		// Create a new module (and put it into the cache)
-/******/ 		var module = installedModules[moduleId] = {
-/******/ 			i: moduleId,
-/******/ 			l: false,
-/******/ 			exports: {}
-/******/ 		};
-/******/
-/******/ 		// Execute the module function
-/******/ 		modules[moduleId].call(module.exports, module, module.exports, __webpack_require__);
-/******/
-/******/ 		// Flag the module as loaded
-/******/ 		module.l = true;
-/******/
-/******/ 		// Return the exports of the module
-/******/ 		return module.exports;
-/******/ 	}
-/******/
-/******/
-/******/ 	// expose the modules object (__webpack_modules__)
-/******/ 	__webpack_require__.m = modules;
-/******/
-/******/ 	// expose the module cache
-/******/ 	__webpack_require__.c = installedModules;
-/******/
-/******/ 	// define getter function for harmony exports
-/******/ 	__webpack_require__.d = function(exports, name, getter) {
-/******/ 		if(!__webpack_require__.o(exports, name)) {
-/******/ 			Object.defineProperty(exports, name, { enumerable: true, get: getter });
-/******/ 		}
-/******/ 	};
-/******/
-/******/ 	// define __esModule on exports
-/******/ 	__webpack_require__.r = function(exports) {
-/******/ 		if(typeof Symbol !== 'undefined' && Symbol.toStringTag) {
-/******/ 			Object.defineProperty(exports, Symbol.toStringTag, { value: 'Module' });
-/******/ 		}
-/******/ 		Object.defineProperty(exports, '__esModule', { value: true });
-/******/ 	};
-/******/
-/******/ 	// create a fake namespace object
-/******/ 	// mode & 1: value is a module id, require it
-/******/ 	// mode & 2: merge all properties of value into the ns
-/******/ 	// mode & 4: return value when already ns object
-/******/ 	// mode & 8|1: behave like require
-/******/ 	__webpack_require__.t = function(value, mode) {
-/******/ 		if(mode & 1) value = __webpack_require__(value);
-/******/ 		if(mode & 8) return value;
-/******/ 		if((mode & 4) && typeof value === 'object' && value && value.__esModule) return value;
-/******/ 		var ns = Object.create(null);
-/******/ 		__webpack_require__.r(ns);
-/******/ 		Object.defineProperty(ns, 'default', { enumerable: true, value: value });
-/******/ 		if(mode & 2 && typeof value != 'string') for(var key in value) __webpack_require__.d(ns, key, function(key) { return value[key]; }.bind(null, key));
-/******/ 		return ns;
-/******/ 	};
-/******/
-/******/ 	// getDefaultExport function for compatibility with non-harmony modules
-/******/ 	__webpack_require__.n = function(module) {
-/******/ 		var getter = module && module.__esModule ?
-/******/ 			function getDefault() { return module['default']; } :
-/******/ 			function getModuleExports() { return module; };
-/******/ 		__webpack_require__.d(getter, 'a', getter);
-/******/ 		return getter;
-/******/ 	};
-/******/
-/******/ 	// Object.prototype.hasOwnProperty.call
-/******/ 	__webpack_require__.o = function(object, property) { return Object.prototype.hasOwnProperty.call(object, property); };
-/******/
-/******/ 	// __webpack_public_path__
-/******/ 	__webpack_require__.p = "";
-/******/
-/******/
-/******/ 	// Load entry module and return exports
-/******/ 	return __webpack_require__(__webpack_require__.s = 7);
-/******/ })
-/************************************************************************/
-/******/ ([
-/* 0 */
-/***/ (function(module, exports, __webpack_require__) {
+/******/ (() => { // webpackBootstrap
+/******/ 	"use strict";
+/******/ 	var __webpack_modules__ = ({
 
-"use strict";
+/***/ 304
+(__unused_webpack_module, exports, __webpack_require__) {
 
-Object.defineProperty(exports, "__esModule", { value: true });
-const opts = {
-    filepath: process.env.TXR_PATH ||
-        process.env[process.platform == 'win32' ? 'USERPROFILE' : 'HOME'] ||
-        '.',
-    server: {
-        port: process.env.PORT || 8000,
-        web_conc: process.env.WEB_CONCURRENCY || 1,
-        host: process.env.TXR_HOST || 'https://txr.euphoritech.com',
-    },
-    redis: {
-        url: process.env.REDIS_URL || 'redis://localhost:6379',
-    },
-    logger: {
-        options: {
-            name: process.env.APP_NAME || 'txr',
-            level: 'info',
-            stream: process.stdout,
-        },
-    },
-};
-exports.default = opts;
-
-
-/***/ }),
-/* 1 */
-/***/ (function(module, exports) {
-
-module.exports = require("fs");
-
-/***/ }),
-/* 2 */
-/***/ (function(module, exports) {
-
-module.exports = require("socket.io-client");
-
-/***/ }),
-/* 3 */
-/***/ (function(module, exports) {
-
-module.exports = require("path");
-
-/***/ }),
-/* 4 */
-/***/ (function(module, exports, __webpack_require__) {
-
-"use strict";
 
 var __importDefault = (this && this.__importDefault) || function (mod) {
     return (mod && mod.__esModule) ? mod : { "default": mod };
 };
-Object.defineProperty(exports, "__esModule", { value: true });
-const fs_1 = __importDefault(__webpack_require__(1));
-const highlight_js_1 = __importDefault(__webpack_require__(15));
-const markdown_it_1 = __importDefault(__webpack_require__(16));
-const markdown = markdown_it_1.default({
-    highlight: function (str, lang) {
-        if (lang && highlight_js_1.default.getLanguage(lang)) {
-            try {
-                return `<pre class="hljs"><code>${highlight_js_1.default.highlight(lang, str, true).value}</code></pre>`;
-            }
-            catch (__) { }
-        }
-        return ''; // use external default escaping
-    },
-});
-const readFile = fs_1.default.promises.readFile;
-exports.default = {
-    getFileName(fileName, extraText = Date.now()) {
-        const lastPeriod = fileName.lastIndexOf('.');
-        const extension = fileName.substring(lastPeriod);
-        return `${fileName.substring(0, lastPeriod)}_${extraText}${extension}`;
-    },
-    expressjs: {
-        async convertReadmeToHtml(res) {
-            const mdRaw = await readFile('README.md', 'utf8');
-            const mdHtml = markdown.render(mdRaw, {});
-            return res.send(this.createHtmlPage(mdHtml));
-        },
-        createHtmlPage(bodyHtml) {
-            return `
-        <!DOCTYPE html>
-        <html>
-          <head>
-            <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
-            <title>txr - Transfer Files to Friends</title>
-
-            <style>
-              body {
-                font-family: "Helvetica Neue", Helvetica, Arial, sans-serif;
-              }
-
-              a {
-                color: inherit;
-              }
-
-              pre.hljs {
-                border-radius: 5px;
-                border: 1px solid #a0a0a0;
-                background: #f5f5f5;
-                overflow-x: scroll;
-                padding: 5px;
-              }
-
-              .container {
-                max-width: 700px;
-                margin-right: auto;
-                margin-left: auto;
-              }
-
-              .notice {
-                border-radius: 5px;
-                border: 1px solid #a0a0a0;
-                background: #28a745;
-                color: white;
-                padding: 15px;
-                margin: 25px 0px;
-              }
-            </style>
-          </head>
-
-          <body>
-            <div class="container">
-              <div class="notice">
-                You navigated to a txr server to transfer files easily to and
-                from machines/servers. Learn more below or by visiting
-                <a href="https://github.com/whatl3y/txr">https://github.com/whatl3y/txr</a>
-              </div>
-              ${bodyHtml}
-            </div>
-          </body>
-        </html>
-      `;
-        },
-    },
-};
-
-
-/***/ }),
-/* 5 */
-/***/ (function(module, exports) {
-
-module.exports = require("socket.io-stream");
-
-/***/ }),
-/* 6 */
-/***/ (function(module, exports, __webpack_require__) {
-
-"use strict";
-
-Object.defineProperty(exports, "__esModule", { value: true });
-__webpack_require__(17);
-const NOOP = () => { };
-exports.default = {
-    success(string) {
-        this.wrapInNewlines(() => console.log(string.green));
-    },
-    error(string) {
-        this.wrapInNewlines(() => console.log(string.red));
-    },
-    progress(progressString) {
-        process.stdout.write(progressString);
-    },
-    chatMessage(string) {
-        this.wrapInNewlines(() => console.log(string.cyan));
-    },
-    wrapInNewlines(functionToWriteMoreOutput = NOOP, howMany = 0) {
-        const newlineString = howMany - 1 > 0 ? new Array(howMany - 1).fill('\n').join('') : '';
-        if (howMany > 0)
-            console.log(newlineString);
-        functionToWriteMoreOutput();
-        if (howMany > 0)
-            console.log(newlineString);
-    },
-};
-
-
-/***/ }),
-/* 7 */
-/***/ (function(module, exports, __webpack_require__) {
-
-module.exports = __webpack_require__(8);
-
-
-/***/ }),
-/* 8 */
-/***/ (function(module, exports, __webpack_require__) {
-
-"use strict";
-
-var __importDefault = (this && this.__importDefault) || function (mod) {
-    return (mod && mod.__esModule) ? mod : { "default": mod };
-};
-Object.defineProperty(exports, "__esModule", { value: true });
-const minimist_1 = __importDefault(__webpack_require__(9));
-const client_1 = __importDefault(__webpack_require__(10));
-const argv = minimist_1.default(process.argv.slice(2));
+Object.defineProperty(exports, "__esModule", ({ value: true }));
+const minimist_1 = __importDefault(__webpack_require__(214));
+const client_1 = __importDefault(__webpack_require__(994));
+const argv = (0, minimist_1.default)(process.argv.slice(2));
 const [first, second, third] = argv._;
 (async function txrCliClient() {
     const typeInterface = 'cli';
@@ -298,106 +24,31 @@ const [first, second, third] = argv._;
     const targetUser = argv.t || argv.target_user || argv.targetUser || third;
     const auth = argv.a || argv.auth;
     const host = argv.h || argv.host;
-    await client_1.default({
-        typeInterface,
-        command,
-        file,
-        user,
-        targetUser,
-        auth,
-        host,
+    await (0, client_1.default)({
+        typeInterface, // 'cli' or 'library'
+        command, // 'send', 'listen', or 'chat'
+        file, // filepath on file system to send to listening user
+        user, // username to register (if listening) or send file to if sending
+        targetUser, // username to send chat message to, if command == 'chat'
+        auth, // if listening and 'cli' interface, whether to request confirmation on receiving a file
+        host, // host of server to connect to
     });
 })();
 
 
-/***/ }),
-/* 9 */
-/***/ (function(module, exports) {
+/***/ },
 
-module.exports = require("minimist");
+/***/ 515
+(__unused_webpack_module, exports, __webpack_require__) {
 
-/***/ }),
-/* 10 */
-/***/ (function(module, exports, __webpack_require__) {
-
-"use strict";
 
 var __importDefault = (this && this.__importDefault) || function (mod) {
     return (mod && mod.__esModule) ? mod : { "default": mod };
 };
-Object.defineProperty(exports, "__esModule", { value: true });
-const commands_1 = __importDefault(__webpack_require__(11));
-const interfaces_1 = __importDefault(__webpack_require__(19));
-async function createClient({ typeInterface, // 'cli' or 'library'
-command, // 'send', 'listen', or 'chat'
-file, // filepath on file system to send to listening user
-user, // username to register (if listening) or send file to if sending
-targetUser, // username to send chat message to, if command == 'chat'
-auth, // if listening and 'cli' interface, whether to request confirmation on receiving a file
-host, // host of server to connect to
-logger, // node-bunyan logging interface if interface == 'library'
-callback, // if provided and using 'library' interface, will be a callback to invoke INSTEAD OF `resolve` when receiving a file as a listening client
-reject, // function to invoke if something goes wrong
-resolve, }) {
-    if (typeInterface && interfaces_1.default[typeInterface]) {
-        const client = interfaces_1.default[typeInterface];
-        if (command && commands_1.default[command]) {
-            await commands_1.default[command]({
-                client,
-                file,
-                user,
-                targetUser,
-                auth,
-                host,
-                logger,
-                callback,
-                reject,
-                resolve,
-            });
-        }
-        else {
-            throw new Error(`We don't recognize the command provided: ${command}`);
-        }
-    }
-    else {
-        throw new Error(`We don't recognize the interface provided: ${typeInterface}`);
-    }
-}
-exports.default = createClient;
-
-
-/***/ }),
-/* 11 */
-/***/ (function(module, exports, __webpack_require__) {
-
-"use strict";
-
-var __importDefault = (this && this.__importDefault) || function (mod) {
-    return (mod && mod.__esModule) ? mod : { "default": mod };
-};
-Object.defineProperty(exports, "__esModule", { value: true });
-const chat_1 = __importDefault(__webpack_require__(12));
-const listen_1 = __importDefault(__webpack_require__(13));
-const send_1 = __importDefault(__webpack_require__(14));
-exports.default = {
-    chat: chat_1.default,
-    listen: listen_1.default,
-    send: send_1.default,
-};
-
-
-/***/ }),
-/* 12 */
-/***/ (function(module, exports, __webpack_require__) {
-
-"use strict";
-
-var __importDefault = (this && this.__importDefault) || function (mod) {
-    return (mod && mod.__esModule) ? mod : { "default": mod };
-};
-Object.defineProperty(exports, "__esModule", { value: true });
-const socket_io_client_1 = __importDefault(__webpack_require__(2));
-const config_1 = __importDefault(__webpack_require__(0));
+Object.defineProperty(exports, "__esModule", ({ value: true }));
+exports["default"] = chat;
+const socket_io_client_1 = __importDefault(__webpack_require__(199));
+const config_1 = __importDefault(__webpack_require__(28));
 async function chat({ client, user, targetUser, host, reject, resolve, }) {
     const socket = socket_io_client_1.default.connect(host || config_1.default.server.host);
     const clientObj = client({ socket, user, targetUser, host, reject, resolve });
@@ -412,23 +63,43 @@ async function chat({ client, user, targetUser, host, reject, resolve, }) {
     const normalListeners = listenersRoot.normal;
     Object.keys(normalListeners).forEach((listener) => socket.on(listener, normalListeners[listener].bind(listenersRoot)));
 }
-exports.default = chat;
 
 
-/***/ }),
-/* 13 */
-/***/ (function(module, exports, __webpack_require__) {
+/***/ },
 
-"use strict";
+/***/ 465
+(__unused_webpack_module, exports, __webpack_require__) {
+
 
 var __importDefault = (this && this.__importDefault) || function (mod) {
     return (mod && mod.__esModule) ? mod : { "default": mod };
 };
-Object.defineProperty(exports, "__esModule", { value: true });
-const socket_io_client_1 = __importDefault(__webpack_require__(2));
-const config_1 = __importDefault(__webpack_require__(0));
+Object.defineProperty(exports, "__esModule", ({ value: true }));
+const chat_1 = __importDefault(__webpack_require__(515));
+const listen_1 = __importDefault(__webpack_require__(734));
+const send_1 = __importDefault(__webpack_require__(339));
+exports["default"] = {
+    chat: chat_1.default,
+    listen: listen_1.default,
+    send: send_1.default,
+};
+
+
+/***/ },
+
+/***/ 734
+(__unused_webpack_module, exports, __webpack_require__) {
+
+
+var __importDefault = (this && this.__importDefault) || function (mod) {
+    return (mod && mod.__esModule) ? mod : { "default": mod };
+};
+Object.defineProperty(exports, "__esModule", ({ value: true }));
+exports["default"] = listen;
+const socket_io_client_1 = __importDefault(__webpack_require__(199));
+const config_1 = __importDefault(__webpack_require__(28));
 // import socketStream from 'socket.io-stream'
-const socketStream = __webpack_require__(5);
+const socketStream = __webpack_require__(404);
 async function listen({ client, file, user, auth, host, callback, reject, resolve, }) {
     const socket = socket_io_client_1.default.connect(host || config_1.default.server.host);
     const clientObj = client({
@@ -451,29 +122,29 @@ async function listen({ client, file, user, auth, host, callback, reject, resolv
     Object.keys(normalListeners).forEach((listener) => socket.on(listener, normalListeners[listener].bind(listenersRoot)));
     Object.keys(streamListeners).forEach((listener) => socketStream(socket, null).on(listener, streamListeners[listener].bind(listenersRoot)));
 }
-exports.default = listen;
 
 
-/***/ }),
-/* 14 */
-/***/ (function(module, exports, __webpack_require__) {
+/***/ },
 
-"use strict";
+/***/ 339
+(__unused_webpack_module, exports, __webpack_require__) {
+
 
 var __importDefault = (this && this.__importDefault) || function (mod) {
     return (mod && mod.__esModule) ? mod : { "default": mod };
 };
-Object.defineProperty(exports, "__esModule", { value: true });
-const fs_1 = __importDefault(__webpack_require__(1));
-const path_1 = __importDefault(__webpack_require__(3));
-const socket_io_client_1 = __importDefault(__webpack_require__(2));
-const FileHelpers_1 = __importDefault(__webpack_require__(4));
-const Vomit_1 = __importDefault(__webpack_require__(6));
-const config_1 = __importDefault(__webpack_require__(0));
+Object.defineProperty(exports, "__esModule", ({ value: true }));
+exports["default"] = send;
+const fs_1 = __importDefault(__webpack_require__(896));
+const path_1 = __importDefault(__webpack_require__(928));
+const socket_io_client_1 = __importDefault(__webpack_require__(199));
+const FileHelpers_1 = __importDefault(__webpack_require__(370));
+const Vomit_1 = __importDefault(__webpack_require__(786));
+const config_1 = __importDefault(__webpack_require__(28));
 // import socketStream from 'socket.io-stream'
-const socketStream = __webpack_require__(5);
+const socketStream = __webpack_require__(404);
 // import zd from 'zip-dir'
-const zd = __webpack_require__(18);
+const zd = __webpack_require__(425);
 const access = fs_1.default.promises.access;
 const lstat = fs_1.default.promises.lstat;
 const writeFile = fs_1.default.promises.writeFile;
@@ -559,67 +230,76 @@ async function send({ client, file, user, host, reject, resolve, }) {
     Object.keys(streamListeners).forEach((listener) => txrReadStream.on(listener, streamListeners[listener].bind(listenersRoot)));
     txrReadStream.pipe(writeStream);
 }
-exports.default = send;
 
 
-/***/ }),
-/* 15 */
-/***/ (function(module, exports) {
+/***/ },
 
-module.exports = require("highlight.js");
+/***/ 994
+(__unused_webpack_module, exports, __webpack_require__) {
 
-/***/ }),
-/* 16 */
-/***/ (function(module, exports) {
-
-module.exports = require("markdown-it");
-
-/***/ }),
-/* 17 */
-/***/ (function(module, exports) {
-
-module.exports = require("colors");
-
-/***/ }),
-/* 18 */
-/***/ (function(module, exports) {
-
-module.exports = require("zip-dir");
-
-/***/ }),
-/* 19 */
-/***/ (function(module, exports, __webpack_require__) {
-
-"use strict";
 
 var __importDefault = (this && this.__importDefault) || function (mod) {
     return (mod && mod.__esModule) ? mod : { "default": mod };
 };
-Object.defineProperty(exports, "__esModule", { value: true });
-const cli_1 = __importDefault(__webpack_require__(20));
-const library_1 = __importDefault(__webpack_require__(23));
-exports.default = {
-    cli: cli_1.default,
-    library: library_1.default,
-};
+Object.defineProperty(exports, "__esModule", ({ value: true }));
+exports["default"] = createClient;
+const commands_1 = __importDefault(__webpack_require__(465));
+const interfaces_1 = __importDefault(__webpack_require__(591));
+async function createClient({ typeInterface, // 'cli' or 'library'
+command, // 'send', 'listen', or 'chat'
+file, // filepath on file system to send to listening user
+user, // username to register (if listening) or send file to if sending
+targetUser, // username to send chat message to, if command == 'chat'
+auth, // if listening and 'cli' interface, whether to request confirmation on receiving a file
+host, // host of server to connect to
+logger, // node-bunyan logging interface if interface == 'library'
+callback, // if provided and using 'library' interface, will be a callback to invoke INSTEAD OF `resolve` when receiving a file as a listening client
+reject, // function to invoke if something goes wrong
+resolve, // function to invoke after everything goes right and we're done
+ }) {
+    if (typeInterface && interfaces_1.default[typeInterface]) {
+        const client = interfaces_1.default[typeInterface];
+        if (command && commands_1.default[command]) {
+            await commands_1.default[command]({
+                client,
+                file,
+                user,
+                targetUser,
+                auth,
+                host,
+                logger,
+                callback,
+                reject,
+                resolve,
+            });
+        }
+        else {
+            throw new Error(`We don't recognize the command provided: ${command}`);
+        }
+    }
+    else {
+        throw new Error(`We don't recognize the interface provided: ${typeInterface}`);
+    }
+}
 
 
-/***/ }),
-/* 20 */
-/***/ (function(module, exports, __webpack_require__) {
+/***/ },
 
-"use strict";
+/***/ 813
+(__unused_webpack_module, exports, __webpack_require__) {
+
 
 var __importDefault = (this && this.__importDefault) || function (mod) {
     return (mod && mod.__esModule) ? mod : { "default": mod };
 };
-Object.defineProperty(exports, "__esModule", { value: true });
-const fs_1 = __importDefault(__webpack_require__(1));
-const path_1 = __importDefault(__webpack_require__(3));
-const FileHelpers_1 = __importDefault(__webpack_require__(4));
-const Readline_1 = __importDefault(__webpack_require__(21));
-const Vomit_1 = __importDefault(__webpack_require__(6));
-const config_1 = __importDefault(__webpack_require__(0));
+Object.defineProperty(exports, "__esModule", ({ value: true }));
+exports["default"] = cliClientInterface;
+const fs_1 = __importDefault(__webpack_require__(896));
+const path_1 = __importDefault(__webpack_require__(928));
+const FileHelpers_1 = __importDefault(__webpack_require__(370));
+const Readline_1 = __importDefault(__webpack_require__(767));
+const Vomit_1 = __importDefault(__webpack_require__(786));
+const config_1 = __importDefault(__webpack_require__(28));
 const delFile = fs_1.default.promises.unlink;
 const thereWasAnError = (message) => {
     Vomit_1.default.error.bind(Vomit_1.default)(message);
@@ -637,7 +317,7 @@ function cliClientInterface({ socket, socketStream, writeStream, file, user, tar
             async waitAndSendMessage() {
                 if (this.readline)
                     this.readline.close();
-                this.readline = Readline_1.default();
+                this.readline = (0, Readline_1.default)();
                 const message = await this.readline.ask(`[${user}]: `);
                 if (['end', 'exit', 'quit'].includes(message)) {
                     Vomit_1.default.success('Goodbye!');
@@ -683,7 +363,7 @@ function cliClientInterface({ socket, socketStream, writeStream, file, user, tar
             async askToReply(targetUser) {
                 if (this.readline)
                     this.readline.close();
-                this.readline = Readline_1.default();
+                this.readline = (0, Readline_1.default)();
                 const replyMessage = await this.readline.ask(`reply to ${targetUser} - [${user}]: `);
                 if (replyMessage.length > 0) {
                     socket.emit('txr-reply-to-chat-message', {
@@ -706,7 +386,7 @@ function cliClientInterface({ socket, socketStream, writeStream, file, user, tar
                 },
                 'txr-file-permission': async function (fileData) {
                     delete fileData.user;
-                    const answer = await Readline_1.default().ask(`\nSomeone wants to send you a file. Are you okay receiving a file with this data: ${JSON.stringify(fileData)} -- answer (yes/no): `);
+                    const answer = await (0, Readline_1.default)().ask(`\nSomeone wants to send you a file. Are you okay receiving a file with this data: ${JSON.stringify(fileData)} -- answer (yes/no): `);
                     Vomit_1.default.success(`You answered '${answer}', we're letting the server and sender know now.`);
                     socket.emit('txr-file-permission-response', answer);
                 },
@@ -796,60 +476,41 @@ function cliClientInterface({ socket, socketStream, writeStream, file, user, tar
         },
     };
 }
-exports.default = cliClientInterface;
 
 
-/***/ }),
-/* 21 */
-/***/ (function(module, exports, __webpack_require__) {
+/***/ },
 
-"use strict";
+/***/ 591
+(__unused_webpack_module, exports, __webpack_require__) {
+
 
 var __importDefault = (this && this.__importDefault) || function (mod) {
     return (mod && mod.__esModule) ? mod : { "default": mod };
 };
-Object.defineProperty(exports, "__esModule", { value: true });
-const readline_1 = __importDefault(__webpack_require__(22));
-function Readline(inputStream = process.stdin, outputStream = process.stdout) {
-    return {
-        rl: readline_1.default.createInterface({ input: inputStream, output: outputStream }),
-        async ask(question, close = true) {
-            return await new Promise((resolve, reject) => {
-                this.rl.question(question, (answer) => {
-                    resolve(answer);
-                    if (close)
-                        this.close();
-                });
-            });
-        },
-        close() {
-            this.rl.close();
-        },
-    };
-}
-exports.default = Readline;
+Object.defineProperty(exports, "__esModule", ({ value: true }));
+const cli_1 = __importDefault(__webpack_require__(813));
+const library_1 = __importDefault(__webpack_require__(23));
+exports["default"] = {
+    cli: cli_1.default,
+    library: library_1.default,
+};
 
 
-/***/ }),
-/* 22 */
-/***/ (function(module, exports) {
+/***/ },
 
-module.exports = require("readline");
+/***/ 23
+(__unused_webpack_module, exports, __webpack_require__) {
 
-/***/ }),
-/* 23 */
-/***/ (function(module, exports, __webpack_require__) {
-
-"use strict";
 
 var __importDefault = (this && this.__importDefault) || function (mod) {
     return (mod && mod.__esModule) ? mod : { "default": mod };
 };
-Object.defineProperty(exports, "__esModule", { value: true });
-const fs_1 = __importDefault(__webpack_require__(1));
-const path_1 = __importDefault(__webpack_require__(3));
-const FileHelpers_1 = __importDefault(__webpack_require__(4));
-const config_1 = __importDefault(__webpack_require__(0));
+Object.defineProperty(exports, "__esModule", ({ value: true }));
+exports["default"] = libraryClientInterface;
+const fs_1 = __importDefault(__webpack_require__(896));
+const path_1 = __importDefault(__webpack_require__(928));
+const FileHelpers_1 = __importDefault(__webpack_require__(370));
+const config_1 = __importDefault(__webpack_require__(28));
 const NOOP = () => { };
 function libraryClientInterface({ socket, socketStream, writeStream, file, user, targetUser, host, logger, callback, reject, resolve, }) {
     logger = logger || { debug: NOOP, info: NOOP };
@@ -921,8 +582,302 @@ function libraryClientInterface({ socket, socketStream, writeStream, file, user,
         },
     };
 }
-exports.default = libraryClientInterface;
 
 
-/***/ })
-/******/ ]);
+/***/ },
+
+/***/ 28
+(__unused_webpack_module, exports) {
+
+
+Object.defineProperty(exports, "__esModule", ({ value: true }));
+const opts = {
+    filepath: process.env.TXR_PATH ||
+        process.env[process.platform == 'win32' ? 'USERPROFILE' : 'HOME'] ||
+        '.',
+    server: {
+        port: process.env.PORT || 8000,
+        web_conc: process.env.WEB_CONCURRENCY || 1,
+        host: process.env.TXR_HOST || 'https://txr.grep3.com',
+    },
+    redis: {
+        url: process.env.REDIS_URL || 'redis://localhost:6379',
+    },
+    logger: {
+        options: {
+            name: process.env.APP_NAME || 'txr',
+            level: 'info', // process.env.LOGGING_LEVEL
+            stream: process.stdout,
+        },
+    },
+};
+exports["default"] = opts;
+
+
+/***/ },
+
+/***/ 370
+(__unused_webpack_module, exports, __webpack_require__) {
+
+
+var __importDefault = (this && this.__importDefault) || function (mod) {
+    return (mod && mod.__esModule) ? mod : { "default": mod };
+};
+Object.defineProperty(exports, "__esModule", ({ value: true }));
+const fs_1 = __importDefault(__webpack_require__(896));
+const highlight_js_1 = __importDefault(__webpack_require__(189));
+const markdown_it_1 = __importDefault(__webpack_require__(97));
+const markdown = (0, markdown_it_1.default)({
+    highlight: function (str, lang) {
+        if (lang && highlight_js_1.default.getLanguage(lang)) {
+            try {
+                return `<pre class="hljs"><code>${highlight_js_1.default.highlight(lang, str, true).value}</code></pre>`;
+            }
+            catch (__) { }
+        }
+        return ''; // use external default escaping
+    },
+});
+const readFile = fs_1.default.promises.readFile;
+exports["default"] = {
+    getFileName(fileName, extraText = Date.now()) {
+        const lastPeriod = fileName.lastIndexOf('.');
+        const extension = fileName.substring(lastPeriod);
+        return `${fileName.substring(0, lastPeriod)}_${extraText}${extension}`;
+    },
+    expressjs: {
+        async convertReadmeToHtml(res) {
+            const mdRaw = await readFile('README.md', 'utf8');
+            const mdHtml = markdown.render(mdRaw, {});
+            return res.send(this.createHtmlPage(mdHtml));
+        },
+        createHtmlPage(bodyHtml) {
+            return `
+        <!DOCTYPE html>
+        <html>
+          <head>
+            <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+            <title>txr - Transfer Files to Friends</title>
+
+            <style>
+              body {
+                font-family: "Helvetica Neue", Helvetica, Arial, sans-serif;
+              }
+
+              a {
+                color: inherit;
+              }
+
+              pre.hljs {
+                border-radius: 5px;
+                border: 1px solid #a0a0a0;
+                background: #f5f5f5;
+                overflow-x: scroll;
+                padding: 5px;
+              }
+
+              .container {
+                max-width: 700px;
+                margin-right: auto;
+                margin-left: auto;
+              }
+
+              .notice {
+                border-radius: 5px;
+                border: 1px solid #a0a0a0;
+                background: #28a745;
+                color: white;
+                padding: 15px;
+                margin: 25px 0px;
+              }
+            </style>
+          </head>
+
+          <body>
+            <div class="container">
+              <div class="notice">
+                You navigated to a txr server to transfer files easily to and
+                from machines/servers. Learn more below or by visiting
+                <a href="https://github.com/whatl3y/txr">https://github.com/whatl3y/txr</a>
+              </div>
+              ${bodyHtml}
+            </div>
+          </body>
+        </html>
+      `;
+        },
+    },
+};
+
+
+/***/ },
+
+/***/ 767
+(__unused_webpack_module, exports, __webpack_require__) {
+
+
+var __importDefault = (this && this.__importDefault) || function (mod) {
+    return (mod && mod.__esModule) ? mod : { "default": mod };
+};
+Object.defineProperty(exports, "__esModule", ({ value: true }));
+exports["default"] = Readline;
+const readline_1 = __importDefault(__webpack_require__(785));
+function Readline(inputStream = process.stdin, outputStream = process.stdout) {
+    return {
+        rl: readline_1.default.createInterface({ input: inputStream, output: outputStream }),
+        async ask(question, close = true) {
+            return await new Promise((resolve, reject) => {
+                this.rl.question(question, (answer) => {
+                    resolve(answer);
+                    if (close)
+                        this.close();
+                });
+            });
+        },
+        close() {
+            this.rl.close();
+        },
+    };
+}
+
+
+/***/ },
+
+/***/ 786
+(__unused_webpack_module, exports, __webpack_require__) {
+
+
+Object.defineProperty(exports, "__esModule", ({ value: true }));
+__webpack_require__(672);
+const NOOP = () => { };
+exports["default"] = {
+    success(string) {
+        this.wrapInNewlines(() => console.log(string.green));
+    },
+    error(string) {
+        this.wrapInNewlines(() => console.log(string.red));
+    },
+    progress(progressString) {
+        process.stdout.write(progressString);
+    },
+    chatMessage(string) {
+        this.wrapInNewlines(() => console.log(string.cyan));
+    },
+    wrapInNewlines(functionToWriteMoreOutput = NOOP, howMany = 0) {
+        const newlineString = howMany - 1 > 0 ? new Array(howMany - 1).fill('\n').join('') : '';
+        if (howMany > 0)
+            console.log(newlineString);
+        functionToWriteMoreOutput();
+        if (howMany > 0)
+            console.log(newlineString);
+    },
+};
+
+
+/***/ },
+
+/***/ 672
+(module) {
+
+module.exports = require("colors");
+
+/***/ },
+
+/***/ 189
+(module) {
+
+module.exports = require("highlight.js");
+
+/***/ },
+
+/***/ 97
+(module) {
+
+module.exports = require("markdown-it");
+
+/***/ },
+
+/***/ 214
+(module) {
+
+module.exports = require("minimist");
+
+/***/ },
+
+/***/ 199
+(module) {
+
+module.exports = require("socket.io-client");
+
+/***/ },
+
+/***/ 404
+(module) {
+
+module.exports = require("socket.io-stream");
+
+/***/ },
+
+/***/ 425
+(module) {
+
+module.exports = require("zip-dir");
+
+/***/ },
+
+/***/ 896
+(module) {
+
+module.exports = require("fs");
+
+/***/ },
+
+/***/ 928
+(module) {
+
+module.exports = require("path");
+
+/***/ },
+
+/***/ 785
+(module) {
+
+module.exports = require("readline");
+
+/***/ }
+
+/******/ 	});
+/************************************************************************/
+/******/ 	// The module cache
+/******/ 	var __webpack_module_cache__ = {};
+/******/ 	
+/******/ 	// The require function
+/******/ 	function __webpack_require__(moduleId) {
+/******/ 		// Check if module is in cache
+/******/ 		var cachedModule = __webpack_module_cache__[moduleId];
+/******/ 		if (cachedModule !== undefined) {
+/******/ 			return cachedModule.exports;
+/******/ 		}
+/******/ 		// Create a new module (and put it into the cache)
+/******/ 		var module = __webpack_module_cache__[moduleId] = {
+/******/ 			// no module.id needed
+/******/ 			// no module.loaded needed
+/******/ 			exports: {}
+/******/ 		};
+/******/ 	
+/******/ 		// Execute the module function
+/******/ 		__webpack_modules__[moduleId].call(module.exports, module, module.exports, __webpack_require__);
+/******/ 	
+/******/ 		// Return the exports of the module
+/******/ 		return module.exports;
+/******/ 	}
+/******/ 	
+/************************************************************************/
+/******/ 	
+/******/ 	// startup
+/******/ 	// Load entry module and return exports
+/******/ 	// This entry module is referenced by other modules so it can't be inlined
+/******/ 	var __webpack_exports__ = __webpack_require__(304);
+/******/ 	
+/******/ })()
+;

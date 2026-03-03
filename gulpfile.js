@@ -3,6 +3,7 @@ const plumber = require('gulp-plumber')
 const insert = require('gulp-insert')
 const ts = require('gulp-typescript')
 const webpack = require('webpack-stream')
+const webpackLib = require('webpack')
 const webpackConfig = require('./webpack.config.js')
 
 const tsProject1 = ts.createProject('tsconfig.json')
@@ -19,7 +20,7 @@ gulp.task('build-library-client', function () {
     .src(['./src/client/**/*.ts', '!./src/client/**/*.spec.ts'])
     .pipe(plumber())
     .pipe(tsProject1())
-    .pipe(webpack(libraryClientWebpackConfig))
+    .pipe(webpack(libraryClientWebpackConfig, webpackLib))
     .pipe(gulp.dest('./dist'))
 })
 
@@ -29,7 +30,7 @@ gulp.task('transpile-cli-client', function () {
     .src(['./src/client/**/*.ts', '!./src/client/**/*.spec.ts'])
     .pipe(plumber())
     .pipe(tsProject2())
-    .pipe(webpack(cliClientWebpackConfig))
+    .pipe(webpack(cliClientWebpackConfig, webpackLib))
     .pipe(gulp.dest('./bin'))
 })
 
@@ -46,7 +47,7 @@ gulp.task('transpile-cli-server', function () {
     .src(['./src/server/**/*.ts', '!./src/server/**/*.spec.ts'])
     .pipe(plumber())
     .pipe(tsProject3())
-    .pipe(webpack(serverWebpackConfig))
+    .pipe(webpack(serverWebpackConfig, webpackLib))
     .pipe(gulp.dest('./bin'))
 })
 

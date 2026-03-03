@@ -38,7 +38,7 @@ $ npm install txr
 
 This package hopefully makes it stupid easy to send files to other computers without needing to setup scp, sftp, or any other protocol that requires some sysadmin and networking skills to setup. This package includes both a client and server component. The server listens for connections from clients and handles sending files to and from each other. Clients can listen for files, send files, and even chat with others all with a single identifier (what we call a "username").
 
-We have a default server listening for connections on Heroku at `https://txr.euphoritech.com`, which is what any new client will connect to by default. Files are **never** stored anywhere on the server since it's basically just serving as a middleman between clients, but feel free to audit the code to confirm. I also encourage you to [setup your own server](#server) to use offline or in your own secure network if you're passing sensitive data to others and/or have more stringent security requirements.
+We have a default server listening for connections on Heroku at `https://txr.grep3.com`, which is what any new client will connect to by default. Files are **never** stored anywhere on the server since it's basically just serving as a middleman between clients, but feel free to audit the code to confirm. I also encourage you to [setup your own server](#server) to use offline or in your own secure network if you're passing sensitive data to others and/or have more stringent security requirements.
 
 ![Easily setup a server and 2 clients!](https://user-images.githubusercontent.com/13718950/32149608-89e29732-bcdd-11e7-96cf-ee9fbb1aeca8.gif)
 
@@ -51,7 +51,7 @@ Ease-of-use and simplicity, period. I'm aware there are already industry standar
 ### Setup listening client
 
 ```bash
-$ # Connect to the default server (https://txr.euphoritech.com) to listen for files sent to your username
+$ # Connect to the default server (https://txr.grep3.com) to listen for files sent to your username
 $ txr listen -u myname123
 Successfully registered name: myname123. You are now listening for files.
 ```
@@ -59,7 +59,7 @@ Successfully registered name: myname123. You are now listening for files.
 ### Send a file to your listening client
 
 ```bash
-$ # Connect to the default server (https://txr.euphoritech.com) to send the specified file to your listening client
+$ # Connect to the default server (https://txr.grep3.com) to send the specified file to your listening client
 $ txr send -u myname123 -f /path/to/file/to/send
 ........
 All bytes have been read from file: /path/to/file/to/send.
@@ -83,7 +83,7 @@ Your file has successfully sent to myname123!
 ## Server
 
 As of today, there is a Heroku hobby dyno that has a server waiting for
-client connections (https://txr.euphoritech.com). If you install this
+client connections (https://txr.grep3.com). If you install this
 package you can start a listening client with that server without doing
 anything else other than running the client "listener" command below.
 If you want to run a txr-server separately than the Heroku dyno,
@@ -124,7 +124,7 @@ The following are environment variables you can configure to
 customize your clients:
 
 1. TXR_HOST: The full URL (including protocol and port) of the txr-server
-   you are connecting to. DEFAULT: https://txr.euphoritech.com
+   you are connecting to. DEFAULT: https://txr.grep3.com
 2. TXR_PATH: For "listener" clients, this is the path to a directory
    where files you receive will be delivered to.
    DEFAULT: process.env.HOME - unix/linux, process.env.USERPROFILE - windows

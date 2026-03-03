@@ -30,7 +30,7 @@ const opts: ITxrConfig = {
   server: {
     port: process.env.PORT || 8000,
     web_conc: process.env.WEB_CONCURRENCY || 1,
-    host: process.env.TXR_HOST || 'https://txr.euphoritech.com',
+    host: process.env.TXR_HOST || 'https://txr.grep3.com',
   },
 
   redis: {

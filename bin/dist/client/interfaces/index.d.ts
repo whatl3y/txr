@@ -1,4 +1,3 @@
-/// <reference types="node" />
 import { Readable, Writable } from 'stream';
 import socketIo from 'socket.io';
 import cli from './cli';
